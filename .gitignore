@@ -1,6 +1,6 @@
 OLD*
 generate_presets.py
-*.h5
+# *.h5
 __pycache__/
 *.pyc
 *.pyo
