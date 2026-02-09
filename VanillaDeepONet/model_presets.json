@@ -1,867 +1,138 @@
 {
-    "S0_full": {
-        "model_name": "pn_s0_full",
-        "latent_dim": 96,
-        "pre_hidden": [
-            48,
-            48
-        ],
-        "sa_blocks": [
-            {
-                "n_samples": 0,
-                "radius": 0.02,
-                "max_k": 32,
-                "out_ch": 96,
-                "mlp_hidden": [
-                    48
-                ]
-            },
-            {
-                "n_samples": 0,
-                "radius": 0.06,
-                "max_k": 32,
-                "out_ch": 192,
-                "mlp_hidden": [
-                    96
-                ]
-            }
-        ],
-        "gf_hidden": [
-            64
-        ],
-        "head_hidden": [
-            192,
-            192,
-            96
-        ],
-        "train_batch_size": 6,
-        "train_points_per_geom": 4096,
-        "norm": "batch",
-        "head_norm": "batch"
-    },
-    "S0_full_ln_pos12": {
-        "model_name": "pn_s0_full_ln_pos12",
-        "latent_dim": 96,
-        "pre_hidden": [
-            48,
-            48
-        ],
-        "sa_blocks": [
-            {
-                "n_samples": 0,
-                "radius": 0.02,
-                "max_k": 32,
-                "out_ch": 96,
-                "mlp_hidden": [
-                    48
-                ]
-            },
-            {
-                "n_samples": 0,
-                "radius": 0.06,
-                "max_k": 32,
-                "out_ch": 192,
-                "mlp_hidden": [
-                    96
-                ]
-            }
-        ],
-        "gf_hidden": [
-            64
-        ],
-        "head_hidden": [
-            192,
-            192,
-            96
-        ],
-        "train_batch_size": 6,
-        "train_points_per_geom": 4096,
-        "norm": "layer",
-        "head_norm": "layer",
-        "head_dropout": 0.0
-    },
-    "S_full": {
-        "model_name": "pn_s_full",
+    "S": {
+        "model_name": "vanilla_s",
         "latent_dim": 128,
-        "pre_hidden": [
-            64,
-            64
-        ],
+        "pre_hidden": [64, 64],
         "sa_blocks": [
             {
                 "n_samples": 0,
                 "radius": 0.02,
                 "max_k": 32,
                 "out_ch": 128,
-                "mlp_hidden": [
-                    64
-                ]
+                "mlp_hidden": [64]
             },
             {
                 "n_samples": 0,
                 "radius": 0.06,
                 "max_k": 32,
                 "out_ch": 256,
-                "mlp_hidden": [
-                    128
-                ]
+                "mlp_hidden": [128]
             }
         ],
-        "gf_hidden": [
-            64
-        ],
-        "head_hidden": [
-            256,
-            256,
-            128
-        ],
-        "train_batch_size": 6,
-        "train_points_per_geom": 4096,
-        "norm": "batch",
-        "head_norm": "batch"
-    },
-    "S_full_ln_pos12": {
-        "model_name": "pn_s_full_ln_pos12",
-        "latent_dim": 128,
-        "pre_hidden": [
-            64,
-            64
-        ],
-        "sa_blocks": [
-            {
-                "n_samples": 0,
-                "radius": 0.02,
-                "max_k": 32,
-                "out_ch": 128,
-                "mlp_hidden": [
-                    64
-                ]
-            },
-            {
-                "n_samples": 0,
-                "radius": 0.06,
-                "max_k": 32,
-                "out_ch": 256,
-                "mlp_hidden": [
-                    128
-                ]
-            }
-        ],
-        "gf_hidden": [
-            64
-        ],
-        "head_hidden": [
-            256,
-            256,
-            128
-        ],
+        "gf_hidden": [64],
+        "head_hidden": [256, 256, 128],
         "train_batch_size": 6,
         "train_points_per_geom": 4096,
         "norm": "layer",
         "head_norm": "layer",
         "head_dropout": 0.0
     },
-    "M_full": {
-        "model_name": "pn_m_full",
+    "M": {
+        "model_name": "vanilla_m",
         "latent_dim": 160,
-        "pre_hidden": [
-            96,
-            96
-        ],
+        "pre_hidden": [96, 96],
         "sa_blocks": [
             {
                 "n_samples": 0,
                 "radius": 0.02,
                 "max_k": 40,
                 "out_ch": 192,
-                "mlp_hidden": [
-                    96
-                ]
+                "mlp_hidden": [96]
             },
             {
                 "n_samples": 0,
                 "radius": 0.06,
                 "max_k": 40,
                 "out_ch": 384,
-                "mlp_hidden": [
-                    192
-                ]
+                "mlp_hidden": [192]
             }
         ],
-        "gf_hidden": [
-            96
-        ],
-        "head_hidden": [
-            384,
-            384,
-            192
-        ],
-        "train_batch_size": 6,
-        "train_points_per_geom": 4096,
-        "norm": "batch",
-        "head_norm": "batch"
-    },
-    "M_full_ln_pos12": {
-        "model_name": "pn_m_full_ln_pos12",
-        "latent_dim": 160,
-        "pre_hidden": [
-            96,
-            96
-        ],
-        "sa_blocks": [
-            {
-                "n_samples": 0,
-                "radius": 0.02,
-                "max_k": 40,
-                "out_ch": 192,
-                "mlp_hidden": [
-                    96
-                ]
-            },
-            {
-                "n_samples": 0,
-                "radius": 0.06,
-                "max_k": 40,
-                "out_ch": 384,
-                "mlp_hidden": [
-                    192
-                ]
-            }
-        ],
-        "gf_hidden": [
-            96
-        ],
-        "head_hidden": [
-            384,
-            384,
-            192
-        ],
+        "gf_hidden": [96],
+        "head_hidden": [384, 384, 192],
         "train_batch_size": 6,
         "train_points_per_geom": 4096,
         "norm": "layer",
         "head_norm": "layer",
         "head_dropout": 0.0
     },
-    "M_full_ln_pos8_drop": {
-        "model_name": "pn_m_full_ln_pos8_drop",
-        "latent_dim": 160,
-        "pre_hidden": [
-            96,
-            96
-        ],
-        "sa_blocks": [
-            {
-                "n_samples": 0,
-                "radius": 0.02,
-                "max_k": 40,
-                "out_ch": 192,
-                "mlp_hidden": [
-                    96
-                ]
-            },
-            {
-                "n_samples": 0,
-                "radius": 0.06,
-                "max_k": 40,
-                "out_ch": 384,
-                "mlp_hidden": [
-                    192
-                ]
-            }
-        ],
-        "gf_hidden": [
-            96
-        ],
-        "head_hidden": [
-            384,
-            384,
-            192
-        ],
-        "train_batch_size": 6,
-        "train_points_per_geom": 4096,
-        "norm": "layer",
-        "head_norm": "layer",
-        "head_dropout": 0.25
-    },
-    "M_full_ln_pos12_drop": {
-        "model_name": "pn_m_full_ln_pos12_drop",
-        "latent_dim": 160,
-        "pre_hidden": [
-            96,
-            96
-        ],
-        "sa_blocks": [
-            {
-                "n_samples": 0,
-                "radius": 0.02,
-                "max_k": 40,
-                "out_ch": 192,
-                "mlp_hidden": [
-                    96
-                ]
-            },
-            {
-                "n_samples": 0,
-                "radius": 0.06,
-                "max_k": 40,
-                "out_ch": 384,
-                "mlp_hidden": [
-                    192
-                ]
-            }
-        ],
-        "gf_hidden": [
-            96
-        ],
-        "head_hidden": [
-            384,
-            384,
-            192
-        ],
-        "train_batch_size": 6,
-        "train_points_per_geom": 4096,
-        "norm": "layer",
-        "head_norm": "layer",
-        "head_dropout": 0.25
-    },
-    "M_full_ln_pos8": {
-        "model_name": "pn_m_full_ln_pos8",
-        "latent_dim": 160,
-        "pre_hidden": [
-            96,
-            96
-        ],
-        "sa_blocks": [
-            {
-                "n_samples": 0,
-                "radius": 0.02,
-                "max_k": 40,
-                "out_ch": 192,
-                "mlp_hidden": [
-                    96
-                ]
-            },
-            {
-                "n_samples": 0,
-                "radius": 0.06,
-                "max_k": 40,
-                "out_ch": 384,
-                "mlp_hidden": [
-                    192
-                ]
-            }
-        ],
-        "gf_hidden": [
-            96
-        ],
-        "head_hidden": [
-            384,
-            384,
-            192
-        ],
-        "train_batch_size": 6,
-        "train_points_per_geom": 4096,
-        "norm": "layer",
-        "head_norm": "layer",
-        "head_dropout": 0.0
-    },
-    "M_full_ln_pos4_drop": {
-        "model_name": "pn_m_full_ln_pos4_drop",
-        "latent_dim": 160,
-        "pre_hidden": [
-            96,
-            96
-        ],
-        "sa_blocks": [
-            {
-                "n_samples": 0,
-                "radius": 0.02,
-                "max_k": 40,
-                "out_ch": 192,
-                "mlp_hidden": [
-                    96
-                ]
-            },
-            {
-                "n_samples": 0,
-                "radius": 0.06,
-                "max_k": 40,
-                "out_ch": 384,
-                "mlp_hidden": [
-                    192
-                ]
-            }
-        ],
-        "gf_hidden": [
-            96
-        ],
-        "head_hidden": [
-            384,
-            384,
-            192
-        ],
-        "train_batch_size": 6,
-        "train_points_per_geom": 4096,
-        "norm": "layer",
-        "head_norm": "layer",
-        "head_dropout": 0.25
-    },
-    "M_full_ln_pos24": {
-        "model_name": "pn_m_full_ln_pos24",
-        "latent_dim": 160,
-        "pre_hidden": [
-            96,
-            96
-        ],
-        "sa_blocks": [
-            {
-                "n_samples": 0,
-                "radius": 0.02,
-                "max_k": 40,
-                "out_ch": 192,
-                "mlp_hidden": [
-                    96
-                ]
-            },
-            {
-                "n_samples": 0,
-                "radius": 0.06,
-                "max_k": 40,
-                "out_ch": 384,
-                "mlp_hidden": [
-                    192
-                ]
-            }
-        ],
-        "gf_hidden": [
-            96
-        ],
-        "head_hidden": [
-            384,
-            384,
-            192
-        ],
-        "train_batch_size": 6,
-        "train_points_per_geom": 4096,
-        "norm": "layer",
-        "head_norm": "layer",
-        "head_dropout": 0.0
-    },
-    "L_full": {
-        "model_name": "pn_l_full",
+    "L": {
+        "model_name": "vanilla_l",
         "latent_dim": 192,
-        "pre_hidden": [
-            128,
-            128
-        ],
+        "pre_hidden": [128, 128],
         "sa_blocks": [
             {
                 "n_samples": 0,
                 "radius": 0.02,
                 "max_k": 48,
                 "out_ch": 256,
-                "mlp_hidden": [
-                    128,
-                    128
-                ]
+                "mlp_hidden": [128, 128]
             },
             {
                 "n_samples": 0,
                 "radius": 0.05,
                 "max_k": 48,
                 "out_ch": 512,
-                "mlp_hidden": [
-                    256
-                ]
+                "mlp_hidden": [256]
             }
         ],
-        "gf_hidden": [
-            128
-        ],
-        "head_hidden": [
-            512,
-            512,
-            256
-        ],
-        "train_batch_size": 4,
-        "train_points_per_geom": 4096,
-        "norm": "batch",
-        "head_norm": "batch"
-    },
-    "L_full_ln_pos12": {
-        "model_name": "pn_l_full_ln_pos12",
-        "latent_dim": 192,
-        "pre_hidden": [
-            128,
-            128
-        ],
-        "sa_blocks": [
-            {
-                "n_samples": 0,
-                "radius": 0.02,
-                "max_k": 48,
-                "out_ch": 256,
-                "mlp_hidden": [
-                    128,
-                    128
-                ]
-            },
-            {
-                "n_samples": 0,
-                "radius": 0.05,
-                "max_k": 48,
-                "out_ch": 512,
-                "mlp_hidden": [
-                    256
-                ]
-            }
-        ],
-        "gf_hidden": [
-            128
-        ],
-        "head_hidden": [
-            512,
-            512,
-            256
-        ],
+        "gf_hidden": [128],
+        "head_hidden": [512, 512, 256],
         "train_batch_size": 4,
         "train_points_per_geom": 4096,
         "norm": "layer",
         "head_norm": "layer",
         "head_dropout": 0.0
     },
-    "L_full_ln_pos24_drop": {
-        "model_name": "pn_l_full_ln_pos24_drop",
-        "latent_dim": 192,
-        "pre_hidden": [
-            128,
-            128
-        ],
-        "sa_blocks": [
-            {
-                "n_samples": 0,
-                "radius": 0.02,
-                "max_k": 48,
-                "out_ch": 256,
-                "mlp_hidden": [
-                    128,
-                    128
-                ]
-            },
-            {
-                "n_samples": 0,
-                "radius": 0.05,
-                "max_k": 48,
-                "out_ch": 512,
-                "mlp_hidden": [
-                    256
-                ]
-            }
-        ],
-        "gf_hidden": [
-            128
-        ],
-        "head_hidden": [
-            512,
-            512,
-            256
-        ],
-        "train_batch_size": 4,
-        "train_points_per_geom": 4096,
-        "norm": "layer",
-        "head_norm": "layer",
-        "head_dropout": 0.3
-    },
-    "L_full_ln_pos12_drop_rad": {
-        "model_name": "pn_l_full_ln_pos12_drop_rad",
-        "latent_dim": 192,
-        "pre_hidden": [
-            128,
-            128
-        ],
-        "sa_blocks": [
-            {
-                "n_samples": 0,
-                "radius": 0.04,
-                "max_k": 64,
-                "out_ch": 256,
-                "mlp_hidden": [
-                    128,
-                    128
-                ]
-            },
-            {
-                "n_samples": 0,
-                "radius": 0.1,
-                "max_k": 64,
-                "out_ch": 512,
-                "mlp_hidden": [
-                    256
-                ]
-            }
-        ],
-        "gf_hidden": [
-            128
-        ],
-        "head_hidden": [
-            512,
-            512,
-            256
-        ],
-        "train_batch_size": 4,
-        "train_points_per_geom": 4096,
-        "norm": "layer",
-        "head_norm": "layer",
-        "head_dropout": 0.3
-    },
-    "L_full_ln_pos12_drop": {
-        "model_name": "pn_l_full_ln_pos12_drop",
-        "latent_dim": 192,
-        "pre_hidden": [
-            128,
-            128
-        ],
-        "sa_blocks": [
-            {
-                "n_samples": 0,
-                "radius": 0.02,
-                "max_k": 48,
-                "out_ch": 256,
-                "mlp_hidden": [
-                    128,
-                    128
-                ]
-            },
-            {
-                "n_samples": 0,
-                "radius": 0.05,
-                "max_k": 48,
-                "out_ch": 512,
-                "mlp_hidden": [
-                    256
-                ]
-            }
-        ],
-        "gf_hidden": [
-            128
-        ],
-        "head_hidden": [
-            512,
-            512,
-            256
-        ],
-        "train_batch_size": 4,
-        "train_points_per_geom": 4096,
-        "norm": "layer",
-        "head_norm": "layer",
-        "head_dropout": 0.3
-    },
-    "L_full_ln_pos8_drop": {
-        "model_name": "pn_l_full_ln_pos8_drop",
-        "latent_dim": 192,
-        "pre_hidden": [
-            128,
-            128
-        ],
-        "sa_blocks": [
-            {
-                "n_samples": 0,
-                "radius": 0.02,
-                "max_k": 48,
-                "out_ch": 256,
-                "mlp_hidden": [
-                    128,
-                    128
-                ]
-            },
-            {
-                "n_samples": 0,
-                "radius": 0.05,
-                "max_k": 48,
-                "out_ch": 512,
-                "mlp_hidden": [
-                    256
-                ]
-            }
-        ],
-        "gf_hidden": [
-            128
-        ],
-        "head_hidden": [
-            512,
-            512,
-            256
-        ],
-        "train_batch_size": 4,
-        "train_points_per_geom": 4096,
-        "norm": "layer",
-        "head_norm": "layer",
-        "head_dropout": 0.3
-    },
-    "XL_full": {
-        "model_name": "pn_xl_full",
+    "XL": {
+        "model_name": "vanilla_xl",
         "latent_dim": 256,
-        "pre_hidden": [
-            128,
-            128
-        ],
+        "pre_hidden": [128, 128],
         "sa_blocks": [
             {
                 "n_samples": 0,
                 "radius": 0.02,
                 "max_k": 64,
                 "out_ch": 256,
-                "mlp_hidden": [
-                    128,
-                    128
-                ]
+                "mlp_hidden": [128, 128]
             },
             {
                 "n_samples": 0,
                 "radius": 0.05,
                 "max_k": 64,
                 "out_ch": 512,
-                "mlp_hidden": [
-                    256,
-                    256
-                ]
+                "mlp_hidden": [256, 256]
             }
         ],
-        "gf_hidden": [
-            192
-        ],
-        "head_hidden": [
-            512,
-            512,
-            256
-        ],
-        "train_batch_size": 4,
-        "train_points_per_geom": 4096,
-        "norm": "batch",
-        "head_norm": "batch"
-    },
-    "XL_full_ln_pos12": {
-        "model_name": "pn_xl_full_ln_pos12",
-        "latent_dim": 256,
-        "pre_hidden": [
-            128,
-            128
-        ],
-        "sa_blocks": [
-            {
-                "n_samples": 0,
-                "radius": 0.02,
-                "max_k": 64,
-                "out_ch": 256,
-                "mlp_hidden": [
-                    128,
-                    128
-                ]
-            },
-            {
-                "n_samples": 0,
-                "radius": 0.05,
-                "max_k": 64,
-                "out_ch": 512,
-                "mlp_hidden": [
-                    256,
-                    256
-                ]
-            }
-        ],
-        "gf_hidden": [
-            192
-        ],
-        "head_hidden": [
-            512,
-            512,
-            256
-        ],
+        "gf_hidden": [192],
+        "head_hidden": [512, 512, 256],
         "train_batch_size": 4,
         "train_points_per_geom": 4096,
         "norm": "layer",
         "head_norm": "layer",
         "head_dropout": 0.0
     },
-    "XXL_full": {
-        "model_name": "pn_xxl_full",
+    "XXL": {
+        "model_name": "vanilla_xxl",
         "latent_dim": 384,
-        "pre_hidden": [
-            192,
-            192
-        ],
+        "pre_hidden": [192, 192],
         "sa_blocks": [
             {
                 "n_samples": 0,
                 "radius": 0.02,
                 "max_k": 96,
                 "out_ch": 384,
-                "mlp_hidden": [
-                    192,
-                    192
-                ]
+                "mlp_hidden": [192, 192]
             },
             {
                 "n_samples": 0,
                 "radius": 0.05,
                 "max_k": 96,
                 "out_ch": 768,
-                "mlp_hidden": [
-                    384,
-                    384
-                ]
+                "mlp_hidden": [384, 384]
             }
         ],
-        "gf_hidden": [
-            256
-        ],
-        "head_hidden": [
-            768,
-            768,
-            384
-        ],
-        "train_batch_size": 2,
-        "train_points_per_geom": 4096,
-        "norm": "batch",
-        "head_norm": "batch"
-    },
-    "XXL_full_ln_pos12": {
-        "model_name": "pn_xxl_full_ln_pos12",
-        "latent_dim": 384,
-        "pre_hidden": [
-            192,
-            192
-        ],
-        "sa_blocks": [
-            {
-                "n_samples": 0,
-                "radius": 0.02,
-                "max_k": 96,
-                "out_ch": 384,
-                "mlp_hidden": [
-                    192,
-                    192
-                ]
-            },
-            {
-                "n_samples": 0,
-                "radius": 0.05,
-                "max_k": 96,
-                "out_ch": 768,
-                "mlp_hidden": [
-                    384,
-                    384
-                ]
-            }
-        ],
-        "gf_hidden": [
-            256
-        ],
-        "head_hidden": [
-            768,
-            768,
-            384
-        ],
+        "gf_hidden": [256],
+        "head_hidden": [768, 768, 384],
         "train_batch_size": 2,
         "train_points_per_geom": 4096,
         "norm": "layer",
