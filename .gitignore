@@ -1,3 +1,7 @@
 OLD*
 generate_presets.py
 *.h5
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store

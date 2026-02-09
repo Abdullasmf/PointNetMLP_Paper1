@@ -728,7 +728,7 @@ def main(preset_name: str = "S0", batch=8) -> None:
 
 if __name__ == "__main__":
     try:
-        main("S0", 8)
+        main("L_full", 8)
     except Exception as e:
         print(f"Error during training: {e}")
         raise

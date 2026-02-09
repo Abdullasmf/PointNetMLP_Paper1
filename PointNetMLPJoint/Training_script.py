@@ -28,22 +28,29 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def load_h5_pointsets(path: Path) -> List[torch.Tensor]:
-    """
-    Load all datasets (geometries) from an HDF5 file. Each dataset is expected to be [N,3] = (x, y, stress).
-    Returns a list of FloatTensors per geometry with shape [N,3].
-    """
-    sets: List[torch.Tensor] = []
-    with h5py.File(path, "r") as f:
-        dataset_names = sorted(list(f.keys()))
-        print(f"Found {len(dataset_names)} datasets")
-        for name in dataset_names:
-            arr = f[name][:]  # np array shape [N, 3]
-            if arr.ndim != 2 or arr.shape[1] < 3:
-                raise ValueError(
-                    f"Dataset {name} must be [N,3] (x,y,stress), got {arr.shape}"
-                )
-            sets.append(torch.from_numpy(arr).float())
-    return sets
+    all_data = []
+    coord_stress_list = []
+    with h5py.File(path, 'r') as hf:
+        # Sort keys to ensure numerical order (sample_0, sample_1, ...)
+        # splitting by '_' and taking the last part ensures 'sample_10' comes after 'sample_2'
+        keys = sorted(hf.keys(), key=lambda x: int(x.split('_')[1]))
+        
+        print(f"Found {len(keys)} samples. Loading...")
+        
+        for key in keys:
+            group = hf[key]
+            
+            # Create a dictionary for this sample
+            sample = {
+                'points': group['points'][:],  # (N, 2)
+                'stress': group['stress'][:],  # (N, 1)
+                'corner': group['corner'][:]   # (2,)
+            }
+            coord_stress = np.hstack((sample['points'], sample['stress']))  # (N, 3)
+            coord_stress_list.append(torch.from_numpy(coord_stress).float())
+            all_data.append(sample)
+        
+    return coord_stress_list
 
 
 # Loaded in main()
@@ -473,15 +480,8 @@ def main(preset_name: str = "S0", batch=8) -> None:
     print(f"Using device: {device}")
 
     # Locate HDF5 file only in main
-    h5py_path = Path(project_dir, "STG1_edge.h5")
-    if not h5py_path.exists():
-        candidate = Path(project_dir).parent / "DGCNN_Edge" / "STG1_edge.h5"
-        if candidate.exists():
-            h5py_path = candidate
-    if not h5py_path.exists():
-        raise FileNotFoundError(
-            f"STG1_edge.h5 not found next to training script or in sibling 'DGCNN_Edge'. Checked: {Path(project_dir, 'STG1_edge.h5')} and {Path(project_dir).parent / 'DGCNN_Edge' / 'STG1_edge.h5'}"
-        )
+    parent_dir = Path(project_dir).parent
+    h5py_path = Path(parent_dir, "L_Bracket", "L_bracket_stress.h5")
     print(f"Loading data from: {h5py_path}")
     PS_list_whole = load_h5_pointsets(h5py_path)
     print(f"Loaded {len(PS_list_whole)} datasets from the HDF5 file.")
@@ -686,7 +686,7 @@ def main(preset_name: str = "S0", batch=8) -> None:
 
 if __name__ == "__main__":
     try:
-        main("S0", 8)
+        main("L_full", 8)
     except Exception as e:
         print(f"Error during training: {e}")
         raise
