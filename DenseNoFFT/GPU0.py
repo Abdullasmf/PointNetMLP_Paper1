@@ -15,19 +15,20 @@ from Training_script import main as train_main  # noqa: E402
 
 
 PRESETS_GPU0 = [
-    "L"
+    ["L","L_bracket"],
+    ["L","Plate_hole"],
 ]
 
 
-def run_with_fallback(preset: str, initial_batch: int) -> bool:
+def run_with_fallback(preset: str, initial_batch: int, geometry: str) -> bool:
     """Try training with a sequence of decreasing batch sizes upon OOM."""
-    batch_plan = list(range(initial_batch, 0, -3))
+    batch_plan = list(range(initial_batch, 0, -50))
     batch_plan.append(1)
     for b in batch_plan:
         try:
-            print(f"\n[GPU0] Preset={preset} | Trying batch={b}")
-            train_main(preset, b)
-            print(f"[GPU0] Preset={preset} | Completed with batch={b}")
+            print(f"\n[GPU0] Preset={preset} | Trying batch={b} | Geometry={geometry}")
+            train_main(preset, b, geometry)
+            print(f"[GPU0] Preset={preset} | Completed with batch={b} | Geometry={geometry}")
             return True
         except RuntimeError as e:
             low = str(e).lower()
@@ -39,10 +40,10 @@ def run_with_fallback(preset: str, initial_batch: int) -> bool:
                     pass
                 time.sleep(2)
                 continue
-            print(f"[GPU0] Non-recoverable RuntimeError for preset {preset}: {e}")
+            print(f"[GPU0] Non-recoverable RuntimeError for preset {preset} | Geometry={geometry}: {e}")
             return False
         except Exception as e:
-            print(f"[GPU0] Unexpected error for preset {preset}: {e}")
+            print(f"[GPU0] Unexpected error for preset {preset} | Geometry={geometry}: {e}")
             return False
     return False
 
@@ -55,7 +56,7 @@ def main_gpu0() -> None:
     print(model_name)
     for preset in PRESETS_GPU0:
         # Small presets can start higher
-        run_with_fallback(preset, initial_batch=40)
+        run_with_fallback(preset[0], initial_batch=500, geometry=preset[1])
     print("GPU0 run set finished.")
 
 
