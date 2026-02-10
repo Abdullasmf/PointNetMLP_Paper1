@@ -41,11 +41,17 @@ def load_h5_pointsets(path: Path) -> List[torch.Tensor]:
             group = hf[key]
             
             # Create a dictionary for this sample
+            # Handle both 'corner' (L_bracket) and 'params' (Plate_hole) metadata
             sample = {
                 'points': group['points'][:],  # (N, 2)
                 'stress': group['stress'][:],  # (N, 1)
-                'corner': group['corner'][:]   # (2,)
             }
+            # Add metadata if present (not used in training, but kept for compatibility)
+            if 'corner' in group:
+                sample['corner'] = group['corner'][:]
+            if 'params' in group:
+                sample['params'] = group['params'][:]
+            
             coord_stress = np.hstack((sample['points'], sample['stress']))  # (N, 3)
             coord_stress_list.append(torch.from_numpy(coord_stress).float())
             all_data.append(sample)
