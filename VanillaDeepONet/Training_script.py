@@ -466,11 +466,12 @@ def train(
     print(f"Training finished in {dt/60:.1f} min. Best val MSE: {best_val:.6f}")
 
 
-def main(preset_name: str = "S0", batch=8) -> None:
+def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
     # preset_name = "S0"
     # batch = 8
+    # dataset = "L_bracket" or "Plate_hole"
     print(
-        f"Starting training script with preset '{preset_name}' and batch size {batch}"
+        f"Starting training script with preset '{preset_name}', batch size {batch}, and dataset '{dataset}'"
     )
     # Device/backend setup
 
@@ -480,9 +481,17 @@ def main(preset_name: str = "S0", batch=8) -> None:
     torch.set_float32_matmul_precision("high")
     print(f"Using device: {device}")
 
-    # Locate HDF5 file only in main
+    # Locate HDF5 file based on dataset choice
     parent_dir = Path(project_dir).parent
-    h5py_path = Path(parent_dir, "L_Bracket", "L_bracket_stress.h5")
+    if dataset == "L_bracket":
+        h5py_path = Path(parent_dir, "L_Bracket", "L_bracket_stress.h5")
+        geom_prefix = "L-"
+    elif dataset == "Plate_hole":
+        h5py_path = Path(parent_dir, "Plate_Hole", "Plate_hole_stress.h5")
+        geom_prefix = "H-"
+    else:
+        raise ValueError(f"Invalid dataset '{dataset}'. Must be 'L_bracket' or 'Plate_hole'")
+    
     print(f"Loading data from: {h5py_path}")
     PS_list_whole = load_h5_pointsets(h5py_path)
     print(f"Loaded {len(PS_list_whole)} datasets from the HDF5 file.")
@@ -558,7 +567,7 @@ def main(preset_name: str = "S0", batch=8) -> None:
     ).hexdigest()[:8]
     save_dir = Path(project_dir, "Trained_models")
     base_name = model_name if model_name else "pnmlp"
-    save_path = save_dir / f"{base_name}_{arch_hash}.pt"
+    save_path = save_dir / f"{geom_prefix}{base_name}_{arch_hash}.pt"
 
     set_seed(42)
 
@@ -718,7 +727,8 @@ def main(preset_name: str = "S0", batch=8) -> None:
 
 if __name__ == "__main__":
     try:
-        main("L_full", 8)
+        # Choose dataset: "L_bracket" for L-bracket geometry or "Plate_hole" for hole plate geometry
+        main("L", batch=8, dataset="L_bracket")
     except Exception as e:
         print(f"Error during training: {e}")
         raise
