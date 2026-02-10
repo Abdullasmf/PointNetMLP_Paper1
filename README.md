@@ -1,6 +1,6 @@
 # PointNet-MLP Benchmarking Repository
 
-This repository contains benchmarking code for 4 different neural network architectures for stress prediction on L-bracket geometries.
+This repository contains benchmarking code for 4 different neural network architectures for stress prediction on two different geometries: **L-bracket** and **Hole plate**.
 
 ## Models
 
@@ -61,12 +61,23 @@ This repository contains benchmarking code for 4 different neural network archit
 
 ## Data
 
-The training data is stored in `L_Bracket/L_bracket_stress.h5` with the following structure:
+The repository includes training data for two different geometries:
+
+### L-Bracket Dataset
+- **Location**: `L_Bracket/L_bracket_stress.h5`
 - **Format**: HDF5 file with groups `sample_0`, `sample_1`, ..., `sample_N`
 - Each sample contains:
   - `points`: (N, 2) array of (x, y) coordinates
   - `stress`: (N, 1) array of stress values
   - `corner`: (2,) corner position for L-bracket geometry
+
+### Hole Plate Dataset
+- **Location**: `Plate_Hole/Plate_hole_stress.h5`
+- **Format**: HDF5 file with groups `sample_0`, `sample_1`, ..., `sample_N`
+- Each sample contains:
+  - `points`: (N, 2) array of (x, y) coordinates
+  - `stress`: (N, 1) array of stress values
+  - `params`: Geometry parameters for hole plate
 
 ## Training Configuration
 
@@ -89,12 +100,21 @@ All models use **standardized** training settings for fair comparison:
   - Stress: mean and standard deviation normalization
 - **Training Mode**: "batched_all" (uses all nodes with padding)
 
-### Model Architecture (L_full preset)
+### Model Architecture Presets
+
+Available presets in `model_presets.json` (S, M, L, XL, XXL):
+- **S (Small)**: Latent dim 128, suitable for quick experiments
+- **M (Medium)**: Latent dim 160, balanced performance
+- **L (Large)**: Latent dim 192, recommended for benchmarking
+- **XL (Extra Large)**: Latent dim 256, high capacity
+- **XXL (Double Extra Large)**: Latent dim 384, maximum capacity
+
+Example L preset architecture:
 - **Latent Dimension**: 192
 - **Pre-hidden Layers**: [128, 128]
 - **Set Abstraction Blocks**: 2
-  - Block 1: radius=0.04, max_k=32, out_ch=192
-  - Block 2: radius=0.12, max_k=32, out_ch=384
+  - Block 1: radius=0.02, max_k=48, out_ch=256
+  - Block 2: radius=0.05, max_k=48, out_ch=512
 - **Global Feature Hidden**: [128]
 - **Head Hidden Layers**: [512, 512, 256]
 
@@ -107,22 +127,22 @@ pip install torch numpy h5py scikit-learn
 
 ### Training a Model
 
-To train any model, navigate to its directory and run the training script:
+All training scripts support both L-bracket and Hole plate datasets. To train any model, navigate to its directory and run the training script:
 
 ```bash
-# Train SpectralDeepONet
+# Train SpectralDeepONet (default: L-bracket dataset)
 cd SpectralDeepONet
 python Training_script.py
 
-# Train DenseNoFFT
+# Train DenseNoFFT (default: L-bracket dataset)
 cd ../DenseNoFFT
 python Training_script.py
 
-# Train PointNetMLPJoint
+# Train PointNetMLPJoint (default: L-bracket dataset)
 cd ../PointNetMLPJoint
 python Training_script.py
 
-# Train VanillaDeepONet
+# Train VanillaDeepONet (default: L-bracket dataset)
 cd ../VanillaDeepONet
 python Training_script.py
 ```
@@ -130,22 +150,22 @@ python Training_script.py
 ### Output
 
 Each training script will:
-1. Load data from `../L_Bracket/L_bracket_stress.h5`
+1. Load data from the selected dataset (default: `L_Bracket/L_bracket_stress.h5`)
 2. Split into train/validation sets (80/20)
 3. Train for up to 500 epochs with early stopping
 4. Log metrics: train MSE, validation MSE, validation MSE (MPa²), R² score
-5. Save best model checkpoint to `Trained_models/` directory
+5. Save best model checkpoint to `Trained_models/` directory with geometry prefix
 
 Example output:
 ```
-Starting training script with preset 'L_full' and batch size 8
+Starting training script with preset 'L', batch size 8, and dataset 'L_bracket'
 Using device: cuda
 Loading data from: /path/to/L_Bracket/L_bracket_stress.h5
-Found 100 samples. Loading...
-Loaded 100 datasets from the HDF5 file.
+Found 2000 samples. Loading...
+Loaded 2000 datasets from the HDF5 file.
 Coord center=[...], half_range=[...] | stress_mean=..., stress_std=...
 Using 'batched_all' training with batch size 8
-Saving best checkpoint to: Trained_models/pnmlp_abc12345.pt
+Saving best checkpoint to: Trained_models/L-pnmlp_abc12345.pt
 
 Epoch 001 | train MSE: 0.123456 | val MSE: 0.234567 | val MSE(MPa^2): 12.345 | R2(MPa): 0.8912 | lr: 3.00e-05 | epoch: 45.2s
 ...
@@ -153,13 +173,41 @@ Epoch 001 | train MSE: 0.123456 | val MSE: 0.234567 | val MSE(MPa^2): 12.345 | R
 
 ### Customization
 
-To use a different preset or batch size, modify the `main()` call in the training script:
+#### Selecting a Dataset
+
+To train on a different dataset, modify the `main()` call in the training script:
 
 ```python
 if __name__ == "__main__":
     try:
-        # Change preset (L_full, L_full_ln_pos12, etc.) or batch size
-        main("L_full", batch=16)  # Use batch size 16
+        # Train on L-bracket dataset (default)
+        main("L", batch=8, dataset="L_bracket")
+        
+        # Or train on Hole plate dataset
+        # main("L", batch=8, dataset="Plate_hole")
+    except Exception as e:
+        print(f"Error during training: {e}")
+        raise
+```
+
+**Dataset Options:**
+- `"L_bracket"`: Use L-bracket geometry data (prefix: `L-`)
+- `"Plate_hole"`: Use Hole plate geometry data (prefix: `H-`)
+
+The saved model files will be automatically prefixed based on the dataset:
+- L-bracket models: `L-pnmlp_abc12345.pt`
+- Hole plate models: `H-pnmlp_abc12345.pt`
+
+#### Changing Model Size or Batch Size
+
+To use a different preset or batch size:
+
+```python
+if __name__ == "__main__":
+    try:
+        # Available presets: "S", "M", "L", "XL", "XXL"
+        # Larger models need smaller batch sizes
+        main("XL", batch=4, dataset="L_bracket")  # Use XL model with batch size 4
     except Exception as e:
         print(f"Error during training: {e}")
         raise
@@ -173,7 +221,8 @@ Trained models are saved with:
 - Normalization parameters (coord_center, coord_half_range, stress_mean, stress_std)
 - Training metrics (best validation loss, epochs trained)
 
-Checkpoint naming: `{model_name}_{arch_hash}.pt`
+Checkpoint naming: `{geometry_prefix}{model_name}_{arch_hash}.pt`
+- Examples: `L-pnmlp_abc12345.pt`, `H-spectral_l_def67890.pt`
 
 ## Validation
 
