@@ -22,7 +22,7 @@ PRESETS_GPU0 = [
 
 def run_with_fallback(preset: str, initial_batch: int, geometry: str) -> bool:
     """Try training with a sequence of decreasing batch sizes upon OOM."""
-    batch_plan = list(range(initial_batch, 0, -50))
+    batch_plan = list(range(initial_batch, 0, -20))
     batch_plan.append(1)
     for b in batch_plan:
         try:
@@ -56,7 +56,7 @@ def main_gpu0() -> None:
     print(model_name)
     for preset in PRESETS_GPU0:
         # Small presets can start higher
-        run_with_fallback(preset[0], initial_batch=500, geometry=preset[1])
+        run_with_fallback(preset[0], initial_batch=200, geometry=preset[1])
     print("GPU0 run set finished.")
 
 
