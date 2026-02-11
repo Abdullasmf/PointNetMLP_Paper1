@@ -102,7 +102,7 @@ The training scripts use several optimizations for efficient and stable training
 
 2. **Optimized Scheduler Ordering**: The learning rate scheduler is called in the correct order with gradient scaling:
    ```python
-   scaler.step(optimizer)      # Step 1: Update weights
+   scaler.step(optimizer)      # Step 1: Conditionally update weights (if gradients are finite)
    scheduler.step()             # Step 2: Update learning rate
    scaler.update()              # Step 3: Update gradient scaler
    ```
