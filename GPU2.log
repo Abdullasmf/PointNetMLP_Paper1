@@ -1,0 +1,1434 @@
+loading modules
+starting script
+Starting GPU0 preset run set...
+PointNetMLP_Paper1
+
+[GPU0] Preset=L | Trying batch=200 | Geometry=L_bracket
+Starting training script with preset 'L', batch size 200, and dataset 'L_bracket'
+CUDA device: NVIDIA RTX A5500
+Using device: cuda
+Loading data from: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/L_Bracket/L_bracket_stress.h5
+Found 2000 samples. Loading...
+Loaded 2000 datasets from the HDF5 file.
+Coord center=[0.5 0.5], half_range=[0.5 0.5] | stress_mean=73.5312, stress_std=71.5714
+Using 'batched_all' training with batch size 200
+Saving best checkpoint to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+[GPU0] OOM/CUDA at batch 200; reducing and retrying...
+
+[GPU0] Preset=L | Trying batch=180 | Geometry=L_bracket
+Starting training script with preset 'L', batch size 180, and dataset 'L_bracket'
+CUDA device: NVIDIA RTX A5500
+Using device: cuda
+Loading data from: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/L_Bracket/L_bracket_stress.h5
+Found 2000 samples. Loading...
+Loaded 2000 datasets from the HDF5 file.
+Coord center=[0.5 0.5], half_range=[0.5 0.5] | stress_mean=73.5312, stress_std=71.5714
+Using 'batched_all' training with batch size 180
+Saving best checkpoint to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+[GPU0] OOM/CUDA at batch 180; reducing and retrying...
+
+[GPU0] Preset=L | Trying batch=160 | Geometry=L_bracket
+Starting training script with preset 'L', batch size 160, and dataset 'L_bracket'
+CUDA device: NVIDIA RTX A5500
+Using device: cuda
+Loading data from: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/L_Bracket/L_bracket_stress.h5
+Found 2000 samples. Loading...
+Loaded 2000 datasets from the HDF5 file.
+Coord center=[0.5 0.5], half_range=[0.5 0.5] | stress_mean=73.5312, stress_std=71.5714
+Using 'batched_all' training with batch size 160
+Saving best checkpoint to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+[GPU0] OOM/CUDA at batch 160; reducing and retrying...
+
+[GPU0] Preset=L | Trying batch=140 | Geometry=L_bracket
+Starting training script with preset 'L', batch size 140, and dataset 'L_bracket'
+CUDA device: NVIDIA RTX A5500
+Using device: cuda
+Loading data from: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/L_Bracket/L_bracket_stress.h5
+Found 2000 samples. Loading...
+Loaded 2000 datasets from the HDF5 file.
+Coord center=[0.5 0.5], half_range=[0.5 0.5] | stress_mean=73.5312, stress_std=71.5714
+Using 'batched_all' training with batch size 140
+Saving best checkpoint to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+[GPU0] OOM/CUDA at batch 140; reducing and retrying...
+
+[GPU0] Preset=L | Trying batch=120 | Geometry=L_bracket
+Starting training script with preset 'L', batch size 120, and dataset 'L_bracket'
+CUDA device: NVIDIA RTX A5500
+Using device: cuda
+Loading data from: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/L_Bracket/L_bracket_stress.h5
+Found 2000 samples. Loading...
+Loaded 2000 datasets from the HDF5 file.
+Coord center=[0.5 0.5], half_range=[0.5 0.5] | stress_mean=73.5312, stress_std=71.5714
+Using 'batched_all' training with batch size 120
+Saving best checkpoint to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+[GPU0] OOM/CUDA at batch 120; reducing and retrying...
+
+[GPU0] Preset=L | Trying batch=100 | Geometry=L_bracket
+Starting training script with preset 'L', batch size 100, and dataset 'L_bracket'
+CUDA device: NVIDIA RTX A5500
+Using device: cuda
+Loading data from: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/L_Bracket/L_bracket_stress.h5
+Found 2000 samples. Loading...
+Loaded 2000 datasets from the HDF5 file.
+Coord center=[0.5 0.5], half_range=[0.5 0.5] | stress_mean=73.5312, stress_std=71.5714
+Using 'batched_all' training with batch size 100
+Saving best checkpoint to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+/usr1/home/spack/opt/spack/linux-rocky9-cascadelake/gcc-11.4.1/py-torch-2.3.0-j5cepfdql4sp73du5pzcty462ntv7qy2/lib/python3.11/site-packages/torch/optim/lr_scheduler.py:143: UserWarning: Detected call of `lr_scheduler.step()` before `optimizer.step()`. In PyTorch 1.1.0 and later, you should call them in the opposite order: `optimizer.step()` before `lr_scheduler.step()`.  Failure to do this will result in PyTorch skipping the first value of the learning rate schedule. See more details at https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate
+  warnings.warn("Detected call of `lr_scheduler.step()` before `optimizer.step()`. "
+[GPU0] OOM/CUDA at batch 100; reducing and retrying...
+
+[GPU0] Preset=L | Trying batch=80 | Geometry=L_bracket
+Starting training script with preset 'L', batch size 80, and dataset 'L_bracket'
+CUDA device: NVIDIA RTX A5500
+Using device: cuda
+Loading data from: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/L_Bracket/L_bracket_stress.h5
+Found 2000 samples. Loading...
+Loaded 2000 datasets from the HDF5 file.
+Coord center=[0.5 0.5], half_range=[0.5 0.5] | stress_mean=73.5312, stress_std=71.5714
+Using 'batched_all' training with batch size 80
+Saving best checkpoint to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 001 | train MSE: 4.565674 | val MSE: 2.004103 | val MSE(MPa^2): 10265.952 | R2(MPa): -1.1429 | lr: 3.03e-05 | epoch: 7.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 002 | train MSE: 1.460670 | val MSE: 1.013127 | val MSE(MPa^2): 5189.707 | R2(MPa): -0.0833 | lr: 3.11e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 003 | train MSE: 0.976690 | val MSE: 0.818108 | val MSE(MPa^2): 4190.729 | R2(MPa): 0.1252 | lr: 3.24e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 004 | train MSE: 0.820346 | val MSE: 0.733232 | val MSE(MPa^2): 3755.955 | R2(MPa): 0.2160 | lr: 3.42e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 005 | train MSE: 0.737693 | val MSE: 0.684722 | val MSE(MPa^2): 3507.467 | R2(MPa): 0.2679 | lr: 3.66e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 006 | train MSE: 0.696714 | val MSE: 0.670614 | val MSE(MPa^2): 3435.198 | R2(MPa): 0.2830 | lr: 3.95e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 007 | train MSE: 0.653399 | val MSE: 0.630472 | val MSE(MPa^2): 3229.574 | R2(MPa): 0.3259 | lr: 4.29e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 008 | train MSE: 0.609786 | val MSE: 0.585965 | val MSE(MPa^2): 3001.588 | R2(MPa): 0.3735 | lr: 4.67e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 009 | train MSE: 0.552780 | val MSE: 0.476985 | val MSE(MPa^2): 2443.339 | R2(MPa): 0.4900 | lr: 5.11e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 010 | train MSE: 0.475333 | val MSE: 0.433156 | val MSE(MPa^2): 2218.827 | R2(MPa): 0.5369 | lr: 5.58e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 011 | train MSE: 0.424606 | val MSE: 0.390069 | val MSE(MPa^2): 1998.117 | R2(MPa): 0.5829 | lr: 6.10e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 012 | train MSE: 0.380041 | val MSE: 0.355047 | val MSE(MPa^2): 1818.719 | R2(MPa): 0.6204 | lr: 6.67e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 013 | train MSE: 0.345616 | val MSE: 0.323883 | val MSE(MPa^2): 1659.079 | R2(MPa): 0.6537 | lr: 7.27e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 014 | train MSE: 0.326473 | val MSE: 0.302993 | val MSE(MPa^2): 1552.073 | R2(MPa): 0.6760 | lr: 7.90e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 015 | train MSE: 0.293522 | val MSE: 0.290763 | val MSE(MPa^2): 1489.422 | R2(MPa): 0.6891 | lr: 8.58e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 016 | train MSE: 0.268821 | val MSE: 0.255011 | val MSE(MPa^2): 1306.283 | R2(MPa): 0.7273 | lr: 9.28e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 017 | train MSE: 0.256614 | val MSE: 0.241076 | val MSE(MPa^2): 1234.902 | R2(MPa): 0.7422 | lr: 1.00e-04 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 018 | train MSE: 0.240610 | val MSE: 0.234932 | val MSE(MPa^2): 1203.429 | R2(MPa): 0.7488 | lr: 1.08e-04 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 019 | train MSE: 0.227941 | val MSE: 0.223595 | val MSE(MPa^2): 1145.358 | R2(MPa): 0.7609 | lr: 1.15e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 020 | train MSE: 0.220136 | val MSE: 0.223086 | val MSE(MPa^2): 1142.750 | R2(MPa): 0.7615 | lr: 1.23e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 021 | train MSE: 0.212208 | val MSE: 0.217424 | val MSE(MPa^2): 1113.745 | R2(MPa): 0.7675 | lr: 1.32e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 022 | train MSE: 0.203036 | val MSE: 0.200959 | val MSE(MPa^2): 1029.404 | R2(MPa): 0.7851 | lr: 1.40e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 023 | train MSE: 0.200810 | val MSE: 0.193326 | val MSE(MPa^2): 990.307 | R2(MPa): 0.7933 | lr: 1.48e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 024 | train MSE: 0.184823 | val MSE: 0.185136 | val MSE(MPa^2): 948.351 | R2(MPa): 0.8020 | lr: 1.57e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 025 | train MSE: 0.176899 | val MSE: 0.181124 | val MSE(MPa^2): 927.799 | R2(MPa): 0.8063 | lr: 1.65e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 026 | train MSE: 0.172061 | val MSE: 0.178557 | val MSE(MPa^2): 914.653 | R2(MPa): 0.8091 | lr: 1.74e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 027 | train MSE: 0.172590 | val MSE: 0.161920 | val MSE(MPa^2): 829.430 | R2(MPa): 0.8269 | lr: 1.82e-04 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 028 | train MSE: 0.161815 | val MSE: 0.199184 | val MSE(MPa^2): 1020.315 | R2(MPa): 0.7870 | lr: 1.91e-04 | epoch: 7.2s
+Epoch 029 | train MSE: 0.168199 | val MSE: 0.161203 | val MSE(MPa^2): 825.758 | R2(MPa): 0.8276 | lr: 1.99e-04 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 030 | train MSE: 0.156831 | val MSE: 0.168778 | val MSE(MPa^2): 864.559 | R2(MPa): 0.8195 | lr: 2.07e-04 | epoch: 7.3s
+Epoch 031 | train MSE: 0.180331 | val MSE: 0.190097 | val MSE(MPa^2): 973.767 | R2(MPa): 0.7967 | lr: 2.15e-04 | epoch: 7.3s
+Epoch 032 | train MSE: 0.161074 | val MSE: 0.154012 | val MSE(MPa^2): 788.921 | R2(MPa): 0.8353 | lr: 2.23e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 033 | train MSE: 0.166928 | val MSE: 0.159292 | val MSE(MPa^2): 815.970 | R2(MPa): 0.8297 | lr: 2.30e-04 | epoch: 7.3s
+Epoch 034 | train MSE: 0.143854 | val MSE: 0.161920 | val MSE(MPa^2): 829.431 | R2(MPa): 0.8269 | lr: 2.38e-04 | epoch: 7.3s
+Epoch 035 | train MSE: 0.141638 | val MSE: 0.152534 | val MSE(MPa^2): 781.352 | R2(MPa): 0.8369 | lr: 2.45e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 036 | train MSE: 0.142298 | val MSE: 0.164594 | val MSE(MPa^2): 843.127 | R2(MPa): 0.8240 | lr: 2.51e-04 | epoch: 7.2s
+Epoch 037 | train MSE: 0.145868 | val MSE: 0.131459 | val MSE(MPa^2): 673.396 | R2(MPa): 0.8594 | lr: 2.58e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 038 | train MSE: 0.127001 | val MSE: 0.134868 | val MSE(MPa^2): 690.857 | R2(MPa): 0.8558 | lr: 2.64e-04 | epoch: 7.3s
+Epoch 039 | train MSE: 0.123560 | val MSE: 0.129500 | val MSE(MPa^2): 663.359 | R2(MPa): 0.8615 | lr: 2.69e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 040 | train MSE: 0.116502 | val MSE: 0.123183 | val MSE(MPa^2): 630.999 | R2(MPa): 0.8683 | lr: 2.74e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 041 | train MSE: 0.115875 | val MSE: 0.119701 | val MSE(MPa^2): 613.162 | R2(MPa): 0.8720 | lr: 2.79e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 042 | train MSE: 0.145636 | val MSE: 0.133690 | val MSE(MPa^2): 684.824 | R2(MPa): 0.8571 | lr: 2.83e-04 | epoch: 7.2s
+Epoch 043 | train MSE: 0.157765 | val MSE: 0.122780 | val MSE(MPa^2): 628.938 | R2(MPa): 0.8687 | lr: 2.87e-04 | epoch: 7.3s
+Epoch 044 | train MSE: 0.109361 | val MSE: 0.118922 | val MSE(MPa^2): 609.172 | R2(MPa): 0.8728 | lr: 2.91e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 045 | train MSE: 0.105812 | val MSE: 0.122934 | val MSE(MPa^2): 629.727 | R2(MPa): 0.8686 | lr: 2.94e-04 | epoch: 7.3s
+Epoch 046 | train MSE: 0.104345 | val MSE: 0.122526 | val MSE(MPa^2): 627.638 | R2(MPa): 0.8690 | lr: 2.96e-04 | epoch: 7.3s
+Epoch 047 | train MSE: 0.107334 | val MSE: 0.116918 | val MSE(MPa^2): 598.908 | R2(MPa): 0.8750 | lr: 2.98e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 048 | train MSE: 0.107816 | val MSE: 0.116476 | val MSE(MPa^2): 596.646 | R2(MPa): 0.8755 | lr: 2.99e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 049 | train MSE: 0.098134 | val MSE: 0.107279 | val MSE(MPa^2): 549.534 | R2(MPa): 0.8853 | lr: 3.00e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 050 | train MSE: 0.099286 | val MSE: 0.142770 | val MSE(MPa^2): 731.336 | R2(MPa): 0.8473 | lr: 3.00e-04 | epoch: 7.2s
+Epoch 051 | train MSE: 0.114600 | val MSE: 0.101286 | val MSE(MPa^2): 518.832 | R2(MPa): 0.8917 | lr: 3.00e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 052 | train MSE: 0.089523 | val MSE: 0.090593 | val MSE(MPa^2): 464.058 | R2(MPa): 0.9031 | lr: 3.00e-04 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 053 | train MSE: 0.084704 | val MSE: 0.093391 | val MSE(MPa^2): 478.390 | R2(MPa): 0.9001 | lr: 3.00e-04 | epoch: 7.2s
+Epoch 054 | train MSE: 0.076022 | val MSE: 0.095919 | val MSE(MPa^2): 491.339 | R2(MPa): 0.8974 | lr: 3.00e-04 | epoch: 7.3s
+Epoch 055 | train MSE: 0.080599 | val MSE: 0.077648 | val MSE(MPa^2): 397.748 | R2(MPa): 0.9170 | lr: 3.00e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 056 | train MSE: 0.076959 | val MSE: 0.105995 | val MSE(MPa^2): 542.955 | R2(MPa): 0.8867 | lr: 3.00e-04 | epoch: 7.3s
+Epoch 057 | train MSE: 0.087405 | val MSE: 0.127170 | val MSE(MPa^2): 651.424 | R2(MPa): 0.8640 | lr: 3.00e-04 | epoch: 7.3s
+Epoch 058 | train MSE: 0.089698 | val MSE: 0.091799 | val MSE(MPa^2): 470.235 | R2(MPa): 0.9018 | lr: 3.00e-04 | epoch: 7.2s
+Epoch 059 | train MSE: 0.077996 | val MSE: 0.086424 | val MSE(MPa^2): 442.706 | R2(MPa): 0.9076 | lr: 3.00e-04 | epoch: 7.2s
+Epoch 060 | train MSE: 0.069044 | val MSE: 0.078419 | val MSE(MPa^2): 401.696 | R2(MPa): 0.9162 | lr: 3.00e-04 | epoch: 7.3s
+Epoch 061 | train MSE: 0.066844 | val MSE: 0.075701 | val MSE(MPa^2): 387.775 | R2(MPa): 0.9191 | lr: 3.00e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 062 | train MSE: 0.069015 | val MSE: 0.079880 | val MSE(MPa^2): 409.183 | R2(MPa): 0.9146 | lr: 2.99e-04 | epoch: 7.3s
+Epoch 063 | train MSE: 0.070238 | val MSE: 0.090188 | val MSE(MPa^2): 461.984 | R2(MPa): 0.9036 | lr: 2.99e-04 | epoch: 7.2s
+Epoch 064 | train MSE: 0.075716 | val MSE: 0.078789 | val MSE(MPa^2): 403.595 | R2(MPa): 0.9158 | lr: 2.99e-04 | epoch: 7.3s
+Epoch 065 | train MSE: 0.066294 | val MSE: 0.072873 | val MSE(MPa^2): 373.288 | R2(MPa): 0.9221 | lr: 2.99e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 066 | train MSE: 0.057937 | val MSE: 0.074540 | val MSE(MPa^2): 381.830 | R2(MPa): 0.9203 | lr: 2.99e-04 | epoch: 7.3s
+Epoch 067 | train MSE: 0.063757 | val MSE: 0.069697 | val MSE(MPa^2): 357.021 | R2(MPa): 0.9255 | lr: 2.99e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 068 | train MSE: 0.056238 | val MSE: 0.059835 | val MSE(MPa^2): 306.502 | R2(MPa): 0.9360 | lr: 2.99e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 069 | train MSE: 0.057642 | val MSE: 0.067261 | val MSE(MPa^2): 344.542 | R2(MPa): 0.9281 | lr: 2.99e-04 | epoch: 7.3s
+Epoch 070 | train MSE: 0.054886 | val MSE: 0.059970 | val MSE(MPa^2): 307.196 | R2(MPa): 0.9359 | lr: 2.99e-04 | epoch: 7.3s
+Epoch 071 | train MSE: 0.051991 | val MSE: 0.054934 | val MSE(MPa^2): 281.399 | R2(MPa): 0.9413 | lr: 2.98e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 072 | train MSE: 0.056464 | val MSE: 0.065241 | val MSE(MPa^2): 334.192 | R2(MPa): 0.9302 | lr: 2.98e-04 | epoch: 7.2s
+Epoch 073 | train MSE: 0.052422 | val MSE: 0.061685 | val MSE(MPa^2): 315.978 | R2(MPa): 0.9340 | lr: 2.98e-04 | epoch: 7.3s
+Epoch 074 | train MSE: 0.051330 | val MSE: 0.063807 | val MSE(MPa^2): 326.850 | R2(MPa): 0.9318 | lr: 2.98e-04 | epoch: 7.3s
+Epoch 075 | train MSE: 0.051231 | val MSE: 0.058878 | val MSE(MPa^2): 301.600 | R2(MPa): 0.9370 | lr: 2.98e-04 | epoch: 7.3s
+Epoch 076 | train MSE: 0.053603 | val MSE: 0.053232 | val MSE(MPa^2): 272.678 | R2(MPa): 0.9431 | lr: 2.98e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 077 | train MSE: 0.049974 | val MSE: 0.067809 | val MSE(MPa^2): 347.349 | R2(MPa): 0.9275 | lr: 2.97e-04 | epoch: 7.2s
+Epoch 078 | train MSE: 0.045521 | val MSE: 0.049677 | val MSE(MPa^2): 254.470 | R2(MPa): 0.9469 | lr: 2.97e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 079 | train MSE: 0.047015 | val MSE: 0.050693 | val MSE(MPa^2): 259.673 | R2(MPa): 0.9458 | lr: 2.97e-04 | epoch: 7.2s
+Epoch 080 | train MSE: 0.044460 | val MSE: 0.054514 | val MSE(MPa^2): 279.247 | R2(MPa): 0.9417 | lr: 2.97e-04 | epoch: 7.3s
+Epoch 081 | train MSE: 0.042743 | val MSE: 0.049485 | val MSE(MPa^2): 253.488 | R2(MPa): 0.9471 | lr: 2.97e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 082 | train MSE: 0.042404 | val MSE: 0.052866 | val MSE(MPa^2): 270.804 | R2(MPa): 0.9435 | lr: 2.96e-04 | epoch: 7.3s
+Epoch 083 | train MSE: 0.042151 | val MSE: 0.046550 | val MSE(MPa^2): 238.449 | R2(MPa): 0.9502 | lr: 2.96e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 084 | train MSE: 0.043410 | val MSE: 0.053467 | val MSE(MPa^2): 273.881 | R2(MPa): 0.9428 | lr: 2.96e-04 | epoch: 7.3s
+Epoch 085 | train MSE: 0.041782 | val MSE: 0.045294 | val MSE(MPa^2): 232.018 | R2(MPa): 0.9516 | lr: 2.96e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 086 | train MSE: 0.039167 | val MSE: 0.051569 | val MSE(MPa^2): 264.161 | R2(MPa): 0.9449 | lr: 2.95e-04 | epoch: 7.3s
+Epoch 087 | train MSE: 0.042829 | val MSE: 0.042638 | val MSE(MPa^2): 218.413 | R2(MPa): 0.9544 | lr: 2.95e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 088 | train MSE: 0.035789 | val MSE: 0.049926 | val MSE(MPa^2): 255.742 | R2(MPa): 0.9466 | lr: 2.95e-04 | epoch: 7.3s
+Epoch 089 | train MSE: 0.038891 | val MSE: 0.048801 | val MSE(MPa^2): 249.982 | R2(MPa): 0.9478 | lr: 2.95e-04 | epoch: 7.3s
+Epoch 090 | train MSE: 0.043821 | val MSE: 0.049564 | val MSE(MPa^2): 253.890 | R2(MPa): 0.9470 | lr: 2.94e-04 | epoch: 7.3s
+Epoch 091 | train MSE: 0.039298 | val MSE: 0.048516 | val MSE(MPa^2): 248.520 | R2(MPa): 0.9481 | lr: 2.94e-04 | epoch: 7.3s
+Epoch 092 | train MSE: 0.040316 | val MSE: 0.044058 | val MSE(MPa^2): 225.688 | R2(MPa): 0.9529 | lr: 2.94e-04 | epoch: 7.3s
+Epoch 093 | train MSE: 0.037032 | val MSE: 0.045581 | val MSE(MPa^2): 233.487 | R2(MPa): 0.9513 | lr: 2.93e-04 | epoch: 7.3s
+Epoch 094 | train MSE: 0.037593 | val MSE: 0.044108 | val MSE(MPa^2): 225.941 | R2(MPa): 0.9528 | lr: 2.93e-04 | epoch: 7.3s
+Epoch 095 | train MSE: 0.037524 | val MSE: 0.043382 | val MSE(MPa^2): 222.221 | R2(MPa): 0.9536 | lr: 2.93e-04 | epoch: 7.3s
+Epoch 096 | train MSE: 0.036675 | val MSE: 0.051429 | val MSE(MPa^2): 263.442 | R2(MPa): 0.9450 | lr: 2.92e-04 | epoch: 7.3s
+Epoch 097 | train MSE: 0.038359 | val MSE: 0.043830 | val MSE(MPa^2): 224.519 | R2(MPa): 0.9531 | lr: 2.92e-04 | epoch: 7.2s
+Epoch 098 | train MSE: 0.034500 | val MSE: 0.043039 | val MSE(MPa^2): 220.464 | R2(MPa): 0.9540 | lr: 2.92e-04 | epoch: 7.3s
+Epoch 099 | train MSE: 0.034164 | val MSE: 0.039958 | val MSE(MPa^2): 204.685 | R2(MPa): 0.9573 | lr: 2.91e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 100 | train MSE: 0.034563 | val MSE: 0.045246 | val MSE(MPa^2): 231.773 | R2(MPa): 0.9516 | lr: 2.91e-04 | epoch: 7.2s
+Epoch 101 | train MSE: 0.034203 | val MSE: 0.043422 | val MSE(MPa^2): 222.426 | R2(MPa): 0.9536 | lr: 2.91e-04 | epoch: 7.3s
+Epoch 102 | train MSE: 0.032533 | val MSE: 0.039403 | val MSE(MPa^2): 201.843 | R2(MPa): 0.9579 | lr: 2.90e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 103 | train MSE: 0.034360 | val MSE: 0.040755 | val MSE(MPa^2): 208.765 | R2(MPa): 0.9564 | lr: 2.90e-04 | epoch: 7.3s
+Epoch 104 | train MSE: 0.031268 | val MSE: 0.041950 | val MSE(MPa^2): 214.886 | R2(MPa): 0.9551 | lr: 2.90e-04 | epoch: 7.3s
+Epoch 105 | train MSE: 0.031249 | val MSE: 0.039021 | val MSE(MPa^2): 199.882 | R2(MPa): 0.9583 | lr: 2.89e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 106 | train MSE: 0.031138 | val MSE: 0.037287 | val MSE(MPa^2): 191.002 | R2(MPa): 0.9601 | lr: 2.89e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 107 | train MSE: 0.031109 | val MSE: 0.038139 | val MSE(MPa^2): 195.363 | R2(MPa): 0.9592 | lr: 2.88e-04 | epoch: 7.2s
+Epoch 108 | train MSE: 0.029302 | val MSE: 0.036900 | val MSE(MPa^2): 189.020 | R2(MPa): 0.9605 | lr: 2.88e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 109 | train MSE: 0.034577 | val MSE: 0.037914 | val MSE(MPa^2): 194.215 | R2(MPa): 0.9595 | lr: 2.88e-04 | epoch: 7.3s
+Epoch 110 | train MSE: 0.029233 | val MSE: 0.036592 | val MSE(MPa^2): 187.440 | R2(MPa): 0.9609 | lr: 2.87e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 111 | train MSE: 0.029584 | val MSE: 0.039495 | val MSE(MPa^2): 202.312 | R2(MPa): 0.9578 | lr: 2.87e-04 | epoch: 7.3s
+Epoch 112 | train MSE: 0.027098 | val MSE: 0.033495 | val MSE(MPa^2): 171.578 | R2(MPa): 0.9642 | lr: 2.86e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 113 | train MSE: 0.027350 | val MSE: 0.033688 | val MSE(MPa^2): 172.564 | R2(MPa): 0.9640 | lr: 2.86e-04 | epoch: 7.3s
+Epoch 114 | train MSE: 0.029615 | val MSE: 0.037132 | val MSE(MPa^2): 190.207 | R2(MPa): 0.9603 | lr: 2.85e-04 | epoch: 7.3s
+Epoch 115 | train MSE: 0.027419 | val MSE: 0.037465 | val MSE(MPa^2): 191.913 | R2(MPa): 0.9599 | lr: 2.85e-04 | epoch: 7.3s
+Epoch 116 | train MSE: 0.027096 | val MSE: 0.035146 | val MSE(MPa^2): 180.032 | R2(MPa): 0.9624 | lr: 2.84e-04 | epoch: 7.3s
+Epoch 117 | train MSE: 0.029630 | val MSE: 0.035673 | val MSE(MPa^2): 182.733 | R2(MPa): 0.9619 | lr: 2.84e-04 | epoch: 7.3s
+Epoch 118 | train MSE: 0.026408 | val MSE: 0.031196 | val MSE(MPa^2): 159.802 | R2(MPa): 0.9666 | lr: 2.84e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 119 | train MSE: 0.025576 | val MSE: 0.033892 | val MSE(MPa^2): 173.611 | R2(MPa): 0.9638 | lr: 2.83e-04 | epoch: 7.3s
+Epoch 120 | train MSE: 0.027622 | val MSE: 0.034720 | val MSE(MPa^2): 177.850 | R2(MPa): 0.9629 | lr: 2.83e-04 | epoch: 7.3s
+Epoch 121 | train MSE: 0.023738 | val MSE: 0.030135 | val MSE(MPa^2): 154.366 | R2(MPa): 0.9678 | lr: 2.82e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 122 | train MSE: 0.025466 | val MSE: 0.036766 | val MSE(MPa^2): 188.332 | R2(MPa): 0.9607 | lr: 2.82e-04 | epoch: 7.3s
+Epoch 123 | train MSE: 0.024497 | val MSE: 0.030669 | val MSE(MPa^2): 157.101 | R2(MPa): 0.9672 | lr: 2.81e-04 | epoch: 7.3s
+Epoch 124 | train MSE: 0.022496 | val MSE: 0.032440 | val MSE(MPa^2): 166.170 | R2(MPa): 0.9653 | lr: 2.81e-04 | epoch: 7.3s
+Epoch 125 | train MSE: 0.024885 | val MSE: 0.033356 | val MSE(MPa^2): 170.863 | R2(MPa): 0.9643 | lr: 2.80e-04 | epoch: 7.3s
+Epoch 126 | train MSE: 0.024027 | val MSE: 0.029528 | val MSE(MPa^2): 151.254 | R2(MPa): 0.9684 | lr: 2.80e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 127 | train MSE: 0.023223 | val MSE: 0.029734 | val MSE(MPa^2): 152.311 | R2(MPa): 0.9682 | lr: 2.79e-04 | epoch: 7.3s
+Epoch 128 | train MSE: 0.023669 | val MSE: 0.031299 | val MSE(MPa^2): 160.329 | R2(MPa): 0.9665 | lr: 2.78e-04 | epoch: 7.3s
+Epoch 129 | train MSE: 0.025213 | val MSE: 0.033754 | val MSE(MPa^2): 172.901 | R2(MPa): 0.9639 | lr: 2.78e-04 | epoch: 7.3s
+Epoch 130 | train MSE: 0.025223 | val MSE: 0.035726 | val MSE(MPa^2): 183.007 | R2(MPa): 0.9618 | lr: 2.77e-04 | epoch: 7.3s
+Epoch 131 | train MSE: 0.023439 | val MSE: 0.028371 | val MSE(MPa^2): 145.329 | R2(MPa): 0.9697 | lr: 2.77e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 132 | train MSE: 0.020720 | val MSE: 0.027391 | val MSE(MPa^2): 140.311 | R2(MPa): 0.9707 | lr: 2.76e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 133 | train MSE: 0.021030 | val MSE: 0.031359 | val MSE(MPa^2): 160.636 | R2(MPa): 0.9665 | lr: 2.76e-04 | epoch: 7.3s
+Epoch 134 | train MSE: 0.021810 | val MSE: 0.030738 | val MSE(MPa^2): 157.455 | R2(MPa): 0.9671 | lr: 2.75e-04 | epoch: 7.2s
+Epoch 135 | train MSE: 0.025149 | val MSE: 0.029333 | val MSE(MPa^2): 150.256 | R2(MPa): 0.9686 | lr: 2.75e-04 | epoch: 7.3s
+Epoch 136 | train MSE: 0.023399 | val MSE: 0.033092 | val MSE(MPa^2): 169.511 | R2(MPa): 0.9646 | lr: 2.74e-04 | epoch: 7.3s
+Epoch 137 | train MSE: 0.023555 | val MSE: 0.030613 | val MSE(MPa^2): 156.813 | R2(MPa): 0.9673 | lr: 2.73e-04 | epoch: 7.3s
+Epoch 138 | train MSE: 0.025392 | val MSE: 0.030716 | val MSE(MPa^2): 157.340 | R2(MPa): 0.9672 | lr: 2.73e-04 | epoch: 7.3s
+Epoch 139 | train MSE: 0.021330 | val MSE: 0.029913 | val MSE(MPa^2): 153.230 | R2(MPa): 0.9680 | lr: 2.72e-04 | epoch: 7.3s
+Epoch 140 | train MSE: 0.022732 | val MSE: 0.032180 | val MSE(MPa^2): 164.840 | R2(MPa): 0.9656 | lr: 2.72e-04 | epoch: 7.3s
+Epoch 141 | train MSE: 0.023566 | val MSE: 0.034447 | val MSE(MPa^2): 176.455 | R2(MPa): 0.9632 | lr: 2.71e-04 | epoch: 7.3s
+Epoch 142 | train MSE: 0.025145 | val MSE: 0.030764 | val MSE(MPa^2): 157.587 | R2(MPa): 0.9671 | lr: 2.70e-04 | epoch: 7.3s
+Epoch 143 | train MSE: 0.024755 | val MSE: 0.030081 | val MSE(MPa^2): 154.087 | R2(MPa): 0.9678 | lr: 2.70e-04 | epoch: 7.3s
+Epoch 144 | train MSE: 0.019437 | val MSE: 0.027483 | val MSE(MPa^2): 140.780 | R2(MPa): 0.9706 | lr: 2.69e-04 | epoch: 7.3s
+Epoch 145 | train MSE: 0.024936 | val MSE: 0.033458 | val MSE(MPa^2): 171.386 | R2(MPa): 0.9642 | lr: 2.68e-04 | epoch: 7.3s
+Epoch 146 | train MSE: 0.021138 | val MSE: 0.026411 | val MSE(MPa^2): 135.289 | R2(MPa): 0.9718 | lr: 2.68e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 147 | train MSE: 0.018853 | val MSE: 0.029184 | val MSE(MPa^2): 149.493 | R2(MPa): 0.9688 | lr: 2.67e-04 | epoch: 7.2s
+Epoch 148 | train MSE: 0.022894 | val MSE: 0.031011 | val MSE(MPa^2): 158.851 | R2(MPa): 0.9668 | lr: 2.67e-04 | epoch: 7.3s
+Epoch 149 | train MSE: 0.022479 | val MSE: 0.028863 | val MSE(MPa^2): 147.848 | R2(MPa): 0.9691 | lr: 2.66e-04 | epoch: 7.3s
+Epoch 150 | train MSE: 0.021924 | val MSE: 0.031035 | val MSE(MPa^2): 158.976 | R2(MPa): 0.9668 | lr: 2.65e-04 | epoch: 7.3s
+Epoch 151 | train MSE: 0.023801 | val MSE: 0.030282 | val MSE(MPa^2): 155.116 | R2(MPa): 0.9676 | lr: 2.65e-04 | epoch: 7.3s
+Epoch 152 | train MSE: 0.020033 | val MSE: 0.027283 | val MSE(MPa^2): 139.754 | R2(MPa): 0.9708 | lr: 2.64e-04 | epoch: 7.3s
+Epoch 153 | train MSE: 0.018302 | val MSE: 0.027733 | val MSE(MPa^2): 142.063 | R2(MPa): 0.9703 | lr: 2.63e-04 | epoch: 7.3s
+Epoch 154 | train MSE: 0.017707 | val MSE: 0.025771 | val MSE(MPa^2): 132.011 | R2(MPa): 0.9724 | lr: 2.63e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 155 | train MSE: 0.018263 | val MSE: 0.025608 | val MSE(MPa^2): 131.175 | R2(MPa): 0.9726 | lr: 2.62e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 156 | train MSE: 0.019436 | val MSE: 0.028883 | val MSE(MPa^2): 147.952 | R2(MPa): 0.9691 | lr: 2.61e-04 | epoch: 7.3s
+Epoch 157 | train MSE: 0.020709 | val MSE: 0.027946 | val MSE(MPa^2): 143.151 | R2(MPa): 0.9701 | lr: 2.60e-04 | epoch: 7.3s
+Epoch 158 | train MSE: 0.017239 | val MSE: 0.024616 | val MSE(MPa^2): 126.093 | R2(MPa): 0.9737 | lr: 2.60e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 159 | train MSE: 0.018007 | val MSE: 0.027009 | val MSE(MPa^2): 138.354 | R2(MPa): 0.9711 | lr: 2.59e-04 | epoch: 7.3s
+Epoch 160 | train MSE: 0.017939 | val MSE: 0.025730 | val MSE(MPa^2): 131.802 | R2(MPa): 0.9725 | lr: 2.58e-04 | epoch: 7.3s
+Epoch 161 | train MSE: 0.019103 | val MSE: 0.028148 | val MSE(MPa^2): 144.185 | R2(MPa): 0.9699 | lr: 2.58e-04 | epoch: 7.3s
+Epoch 162 | train MSE: 0.019976 | val MSE: 0.025913 | val MSE(MPa^2): 132.739 | R2(MPa): 0.9723 | lr: 2.57e-04 | epoch: 7.3s
+Epoch 163 | train MSE: 0.019242 | val MSE: 0.026255 | val MSE(MPa^2): 134.490 | R2(MPa): 0.9719 | lr: 2.56e-04 | epoch: 7.3s
+Epoch 164 | train MSE: 0.016274 | val MSE: 0.023817 | val MSE(MPa^2): 122.002 | R2(MPa): 0.9745 | lr: 2.55e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 165 | train MSE: 0.015433 | val MSE: 0.023534 | val MSE(MPa^2): 120.550 | R2(MPa): 0.9748 | lr: 2.55e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 166 | train MSE: 0.016327 | val MSE: 0.026039 | val MSE(MPa^2): 133.383 | R2(MPa): 0.9722 | lr: 2.54e-04 | epoch: 7.3s
+Epoch 167 | train MSE: 0.018005 | val MSE: 0.026146 | val MSE(MPa^2): 133.933 | R2(MPa): 0.9720 | lr: 2.53e-04 | epoch: 7.3s
+Epoch 168 | train MSE: 0.017701 | val MSE: 0.026416 | val MSE(MPa^2): 135.314 | R2(MPa): 0.9718 | lr: 2.52e-04 | epoch: 7.3s
+Epoch 169 | train MSE: 0.018493 | val MSE: 0.026740 | val MSE(MPa^2): 136.976 | R2(MPa): 0.9714 | lr: 2.52e-04 | epoch: 7.3s
+Epoch 170 | train MSE: 0.018731 | val MSE: 0.025908 | val MSE(MPa^2): 132.713 | R2(MPa): 0.9723 | lr: 2.51e-04 | epoch: 7.3s
+Epoch 171 | train MSE: 0.017782 | val MSE: 0.024204 | val MSE(MPa^2): 123.982 | R2(MPa): 0.9741 | lr: 2.50e-04 | epoch: 7.3s
+Epoch 172 | train MSE: 0.015970 | val MSE: 0.024603 | val MSE(MPa^2): 126.028 | R2(MPa): 0.9737 | lr: 2.49e-04 | epoch: 7.3s
+Epoch 173 | train MSE: 0.015845 | val MSE: 0.023254 | val MSE(MPa^2): 119.117 | R2(MPa): 0.9751 | lr: 2.48e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 174 | train MSE: 0.015360 | val MSE: 0.021965 | val MSE(MPa^2): 112.517 | R2(MPa): 0.9765 | lr: 2.48e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 175 | train MSE: 0.013871 | val MSE: 0.021873 | val MSE(MPa^2): 112.043 | R2(MPa): 0.9766 | lr: 2.47e-04 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 176 | train MSE: 0.014185 | val MSE: 0.022807 | val MSE(MPa^2): 116.826 | R2(MPa): 0.9756 | lr: 2.46e-04 | epoch: 7.3s
+Epoch 177 | train MSE: 0.015213 | val MSE: 0.023611 | val MSE(MPa^2): 120.946 | R2(MPa): 0.9748 | lr: 2.45e-04 | epoch: 7.3s
+Epoch 178 | train MSE: 0.014801 | val MSE: 0.022627 | val MSE(MPa^2): 115.904 | R2(MPa): 0.9758 | lr: 2.45e-04 | epoch: 7.3s
+Epoch 179 | train MSE: 0.016269 | val MSE: 0.024273 | val MSE(MPa^2): 124.336 | R2(MPa): 0.9740 | lr: 2.44e-04 | epoch: 7.3s
+Epoch 180 | train MSE: 0.016233 | val MSE: 0.023386 | val MSE(MPa^2): 119.797 | R2(MPa): 0.9750 | lr: 2.43e-04 | epoch: 7.3s
+Epoch 181 | train MSE: 0.015160 | val MSE: 0.022020 | val MSE(MPa^2): 112.797 | R2(MPa): 0.9765 | lr: 2.42e-04 | epoch: 7.3s
+Epoch 182 | train MSE: 0.016292 | val MSE: 0.025054 | val MSE(MPa^2): 128.340 | R2(MPa): 0.9732 | lr: 2.41e-04 | epoch: 7.3s
+Epoch 183 | train MSE: 0.017388 | val MSE: 0.026465 | val MSE(MPa^2): 135.567 | R2(MPa): 0.9717 | lr: 2.40e-04 | epoch: 7.3s
+Epoch 184 | train MSE: 0.016966 | val MSE: 0.024461 | val MSE(MPa^2): 125.301 | R2(MPa): 0.9738 | lr: 2.40e-04 | epoch: 7.3s
+Epoch 185 | train MSE: 0.015167 | val MSE: 0.022902 | val MSE(MPa^2): 117.312 | R2(MPa): 0.9755 | lr: 2.39e-04 | epoch: 7.3s
+Epoch 186 | train MSE: 0.014985 | val MSE: 0.021764 | val MSE(MPa^2): 111.486 | R2(MPa): 0.9767 | lr: 2.38e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 187 | train MSE: 0.014159 | val MSE: 0.022916 | val MSE(MPa^2): 117.387 | R2(MPa): 0.9755 | lr: 2.37e-04 | epoch: 7.3s
+Epoch 188 | train MSE: 0.014044 | val MSE: 0.022643 | val MSE(MPa^2): 115.991 | R2(MPa): 0.9758 | lr: 2.36e-04 | epoch: 7.3s
+Epoch 189 | train MSE: 0.014156 | val MSE: 0.022386 | val MSE(MPa^2): 114.674 | R2(MPa): 0.9761 | lr: 2.35e-04 | epoch: 7.3s
+Epoch 190 | train MSE: 0.013268 | val MSE: 0.021031 | val MSE(MPa^2): 107.729 | R2(MPa): 0.9775 | lr: 2.34e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 191 | train MSE: 0.012525 | val MSE: 0.020359 | val MSE(MPa^2): 104.286 | R2(MPa): 0.9782 | lr: 2.34e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 192 | train MSE: 0.012028 | val MSE: 0.020929 | val MSE(MPa^2): 107.206 | R2(MPa): 0.9776 | lr: 2.33e-04 | epoch: 7.3s
+Epoch 193 | train MSE: 0.012091 | val MSE: 0.021150 | val MSE(MPa^2): 108.339 | R2(MPa): 0.9774 | lr: 2.32e-04 | epoch: 7.4s
+Epoch 194 | train MSE: 0.012215 | val MSE: 0.020640 | val MSE(MPa^2): 105.726 | R2(MPa): 0.9779 | lr: 2.31e-04 | epoch: 7.3s
+Epoch 195 | train MSE: 0.012927 | val MSE: 0.021622 | val MSE(MPa^2): 110.759 | R2(MPa): 0.9769 | lr: 2.30e-04 | epoch: 7.3s
+Epoch 196 | train MSE: 0.013541 | val MSE: 0.021144 | val MSE(MPa^2): 108.310 | R2(MPa): 0.9774 | lr: 2.29e-04 | epoch: 7.3s
+Epoch 197 | train MSE: 0.012803 | val MSE: 0.021633 | val MSE(MPa^2): 110.816 | R2(MPa): 0.9769 | lr: 2.28e-04 | epoch: 7.3s
+Epoch 198 | train MSE: 0.012841 | val MSE: 0.020941 | val MSE(MPa^2): 107.272 | R2(MPa): 0.9776 | lr: 2.27e-04 | epoch: 7.3s
+Epoch 199 | train MSE: 0.012045 | val MSE: 0.021022 | val MSE(MPa^2): 107.682 | R2(MPa): 0.9775 | lr: 2.27e-04 | epoch: 7.3s
+Epoch 200 | train MSE: 0.012975 | val MSE: 0.022797 | val MSE(MPa^2): 116.779 | R2(MPa): 0.9756 | lr: 2.26e-04 | epoch: 7.3s
+Epoch 201 | train MSE: 0.014337 | val MSE: 0.023640 | val MSE(MPa^2): 121.095 | R2(MPa): 0.9747 | lr: 2.25e-04 | epoch: 7.3s
+Epoch 202 | train MSE: 0.014633 | val MSE: 0.020894 | val MSE(MPa^2): 107.031 | R2(MPa): 0.9777 | lr: 2.24e-04 | epoch: 7.3s
+Epoch 203 | train MSE: 0.012978 | val MSE: 0.022382 | val MSE(MPa^2): 114.652 | R2(MPa): 0.9761 | lr: 2.23e-04 | epoch: 7.3s
+Epoch 204 | train MSE: 0.012818 | val MSE: 0.021407 | val MSE(MPa^2): 109.656 | R2(MPa): 0.9771 | lr: 2.22e-04 | epoch: 7.3s
+Epoch 205 | train MSE: 0.012091 | val MSE: 0.021300 | val MSE(MPa^2): 109.111 | R2(MPa): 0.9772 | lr: 2.21e-04 | epoch: 7.3s
+Epoch 206 | train MSE: 0.012309 | val MSE: 0.020922 | val MSE(MPa^2): 107.174 | R2(MPa): 0.9776 | lr: 2.20e-04 | epoch: 7.3s
+Epoch 207 | train MSE: 0.012855 | val MSE: 0.023463 | val MSE(MPa^2): 120.188 | R2(MPa): 0.9749 | lr: 2.19e-04 | epoch: 7.3s
+Epoch 208 | train MSE: 0.014204 | val MSE: 0.022299 | val MSE(MPa^2): 114.224 | R2(MPa): 0.9762 | lr: 2.18e-04 | epoch: 7.3s
+Epoch 209 | train MSE: 0.013480 | val MSE: 0.024136 | val MSE(MPa^2): 123.638 | R2(MPa): 0.9742 | lr: 2.17e-04 | epoch: 7.3s
+Epoch 210 | train MSE: 0.017586 | val MSE: 0.024996 | val MSE(MPa^2): 128.041 | R2(MPa): 0.9733 | lr: 2.17e-04 | epoch: 7.3s
+Epoch 211 | train MSE: 0.015747 | val MSE: 0.023800 | val MSE(MPa^2): 121.914 | R2(MPa): 0.9746 | lr: 2.16e-04 | epoch: 7.3s
+Epoch 212 | train MSE: 0.014750 | val MSE: 0.023679 | val MSE(MPa^2): 121.293 | R2(MPa): 0.9747 | lr: 2.15e-04 | epoch: 7.3s
+Epoch 213 | train MSE: 0.015226 | val MSE: 0.027424 | val MSE(MPa^2): 140.478 | R2(MPa): 0.9707 | lr: 2.14e-04 | epoch: 7.3s
+Epoch 214 | train MSE: 0.018267 | val MSE: 0.025441 | val MSE(MPa^2): 130.323 | R2(MPa): 0.9728 | lr: 2.13e-04 | epoch: 7.3s
+Epoch 215 | train MSE: 0.015575 | val MSE: 0.023376 | val MSE(MPa^2): 119.742 | R2(MPa): 0.9750 | lr: 2.12e-04 | epoch: 7.3s
+Epoch 216 | train MSE: 0.014710 | val MSE: 0.024565 | val MSE(MPa^2): 125.832 | R2(MPa): 0.9737 | lr: 2.11e-04 | epoch: 7.3s
+Epoch 217 | train MSE: 0.013712 | val MSE: 0.020884 | val MSE(MPa^2): 106.979 | R2(MPa): 0.9777 | lr: 2.10e-04 | epoch: 7.3s
+Epoch 218 | train MSE: 0.012976 | val MSE: 0.019970 | val MSE(MPa^2): 102.295 | R2(MPa): 0.9786 | lr: 2.09e-04 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 219 | train MSE: 0.011712 | val MSE: 0.019737 | val MSE(MPa^2): 101.101 | R2(MPa): 0.9789 | lr: 2.08e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 220 | train MSE: 0.010455 | val MSE: 0.018925 | val MSE(MPa^2): 96.944 | R2(MPa): 0.9798 | lr: 2.07e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 221 | train MSE: 0.010096 | val MSE: 0.018615 | val MSE(MPa^2): 95.356 | R2(MPa): 0.9801 | lr: 2.06e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 222 | train MSE: 0.009986 | val MSE: 0.019291 | val MSE(MPa^2): 98.819 | R2(MPa): 0.9794 | lr: 2.05e-04 | epoch: 7.2s
+Epoch 223 | train MSE: 0.010232 | val MSE: 0.019504 | val MSE(MPa^2): 99.908 | R2(MPa): 0.9791 | lr: 2.04e-04 | epoch: 7.3s
+Epoch 224 | train MSE: 0.010749 | val MSE: 0.020055 | val MSE(MPa^2): 102.731 | R2(MPa): 0.9786 | lr: 2.03e-04 | epoch: 7.3s
+Epoch 225 | train MSE: 0.012151 | val MSE: 0.021259 | val MSE(MPa^2): 108.896 | R2(MPa): 0.9773 | lr: 2.02e-04 | epoch: 7.3s
+Epoch 226 | train MSE: 0.011904 | val MSE: 0.021544 | val MSE(MPa^2): 110.359 | R2(MPa): 0.9770 | lr: 2.01e-04 | epoch: 7.3s
+Epoch 227 | train MSE: 0.012555 | val MSE: 0.020588 | val MSE(MPa^2): 105.459 | R2(MPa): 0.9780 | lr: 2.00e-04 | epoch: 7.3s
+Epoch 228 | train MSE: 0.012876 | val MSE: 0.023712 | val MSE(MPa^2): 121.463 | R2(MPa): 0.9746 | lr: 1.99e-04 | epoch: 7.3s
+Epoch 229 | train MSE: 0.015993 | val MSE: 0.024096 | val MSE(MPa^2): 123.433 | R2(MPa): 0.9742 | lr: 1.98e-04 | epoch: 7.3s
+Epoch 230 | train MSE: 0.014370 | val MSE: 0.020541 | val MSE(MPa^2): 105.221 | R2(MPa): 0.9780 | lr: 1.97e-04 | epoch: 7.3s
+Epoch 231 | train MSE: 0.011810 | val MSE: 0.020792 | val MSE(MPa^2): 106.509 | R2(MPa): 0.9778 | lr: 1.96e-04 | epoch: 7.3s
+Epoch 232 | train MSE: 0.011816 | val MSE: 0.020162 | val MSE(MPa^2): 103.279 | R2(MPa): 0.9784 | lr: 1.95e-04 | epoch: 7.3s
+Epoch 233 | train MSE: 0.011779 | val MSE: 0.020412 | val MSE(MPa^2): 104.559 | R2(MPa): 0.9782 | lr: 1.94e-04 | epoch: 7.3s
+Epoch 234 | train MSE: 0.011218 | val MSE: 0.019575 | val MSE(MPa^2): 100.271 | R2(MPa): 0.9791 | lr: 1.93e-04 | epoch: 7.3s
+Epoch 235 | train MSE: 0.010264 | val MSE: 0.018961 | val MSE(MPa^2): 97.128 | R2(MPa): 0.9797 | lr: 1.92e-04 | epoch: 7.3s
+Epoch 236 | train MSE: 0.009943 | val MSE: 0.019119 | val MSE(MPa^2): 97.939 | R2(MPa): 0.9796 | lr: 1.91e-04 | epoch: 7.3s
+Epoch 237 | train MSE: 0.009740 | val MSE: 0.019348 | val MSE(MPa^2): 99.108 | R2(MPa): 0.9793 | lr: 1.90e-04 | epoch: 7.3s
+Epoch 238 | train MSE: 0.009748 | val MSE: 0.018196 | val MSE(MPa^2): 93.209 | R2(MPa): 0.9805 | lr: 1.89e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 239 | train MSE: 0.009338 | val MSE: 0.018038 | val MSE(MPa^2): 92.399 | R2(MPa): 0.9807 | lr: 1.88e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 240 | train MSE: 0.009359 | val MSE: 0.018968 | val MSE(MPa^2): 97.164 | R2(MPa): 0.9797 | lr: 1.87e-04 | epoch: 7.2s
+Epoch 241 | train MSE: 0.009517 | val MSE: 0.018340 | val MSE(MPa^2): 93.944 | R2(MPa): 0.9804 | lr: 1.86e-04 | epoch: 7.2s
+Epoch 242 | train MSE: 0.009578 | val MSE: 0.018362 | val MSE(MPa^2): 94.057 | R2(MPa): 0.9804 | lr: 1.85e-04 | epoch: 7.2s
+Epoch 243 | train MSE: 0.009353 | val MSE: 0.018111 | val MSE(MPa^2): 92.774 | R2(MPa): 0.9806 | lr: 1.84e-04 | epoch: 7.2s
+Epoch 244 | train MSE: 0.009695 | val MSE: 0.018451 | val MSE(MPa^2): 94.517 | R2(MPa): 0.9803 | lr: 1.83e-04 | epoch: 7.3s
+Epoch 245 | train MSE: 0.010273 | val MSE: 0.019175 | val MSE(MPa^2): 98.221 | R2(MPa): 0.9795 | lr: 1.82e-04 | epoch: 7.2s
+Epoch 246 | train MSE: 0.009788 | val MSE: 0.018057 | val MSE(MPa^2): 92.497 | R2(MPa): 0.9807 | lr: 1.81e-04 | epoch: 7.2s
+Epoch 247 | train MSE: 0.009206 | val MSE: 0.017987 | val MSE(MPa^2): 92.139 | R2(MPa): 0.9808 | lr: 1.80e-04 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 248 | train MSE: 0.009293 | val MSE: 0.018870 | val MSE(MPa^2): 96.663 | R2(MPa): 0.9798 | lr: 1.79e-04 | epoch: 7.2s
+Epoch 249 | train MSE: 0.009968 | val MSE: 0.019071 | val MSE(MPa^2): 97.693 | R2(MPa): 0.9796 | lr: 1.78e-04 | epoch: 7.3s
+Epoch 250 | train MSE: 0.010687 | val MSE: 0.020295 | val MSE(MPa^2): 103.960 | R2(MPa): 0.9783 | lr: 1.77e-04 | epoch: 7.2s
+Epoch 251 | train MSE: 0.011348 | val MSE: 0.019170 | val MSE(MPa^2): 98.196 | R2(MPa): 0.9795 | lr: 1.76e-04 | epoch: 7.2s
+Epoch 252 | train MSE: 0.010942 | val MSE: 0.019165 | val MSE(MPa^2): 98.173 | R2(MPa): 0.9795 | lr: 1.75e-04 | epoch: 7.3s
+Epoch 253 | train MSE: 0.011409 | val MSE: 0.020892 | val MSE(MPa^2): 107.021 | R2(MPa): 0.9777 | lr: 1.74e-04 | epoch: 7.3s
+Epoch 254 | train MSE: 0.011615 | val MSE: 0.019784 | val MSE(MPa^2): 101.344 | R2(MPa): 0.9788 | lr: 1.73e-04 | epoch: 7.3s
+Epoch 255 | train MSE: 0.010388 | val MSE: 0.019688 | val MSE(MPa^2): 100.849 | R2(MPa): 0.9789 | lr: 1.72e-04 | epoch: 7.3s
+Epoch 256 | train MSE: 0.009869 | val MSE: 0.018307 | val MSE(MPa^2): 93.775 | R2(MPa): 0.9804 | lr: 1.71e-04 | epoch: 7.3s
+Epoch 257 | train MSE: 0.009238 | val MSE: 0.017755 | val MSE(MPa^2): 90.948 | R2(MPa): 0.9810 | lr: 1.70e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 258 | train MSE: 0.008662 | val MSE: 0.017487 | val MSE(MPa^2): 89.578 | R2(MPa): 0.9813 | lr: 1.69e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 259 | train MSE: 0.008927 | val MSE: 0.018017 | val MSE(MPa^2): 92.292 | R2(MPa): 0.9807 | lr: 1.68e-04 | epoch: 7.3s
+Epoch 260 | train MSE: 0.008717 | val MSE: 0.017841 | val MSE(MPa^2): 91.388 | R2(MPa): 0.9809 | lr: 1.67e-04 | epoch: 7.3s
+Epoch 261 | train MSE: 0.008701 | val MSE: 0.017773 | val MSE(MPa^2): 91.042 | R2(MPa): 0.9810 | lr: 1.66e-04 | epoch: 7.2s
+Epoch 262 | train MSE: 0.008620 | val MSE: 0.017426 | val MSE(MPa^2): 89.263 | R2(MPa): 0.9814 | lr: 1.65e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 263 | train MSE: 0.008650 | val MSE: 0.017748 | val MSE(MPa^2): 90.912 | R2(MPa): 0.9810 | lr: 1.64e-04 | epoch: 7.2s
+Epoch 264 | train MSE: 0.008564 | val MSE: 0.017447 | val MSE(MPa^2): 89.373 | R2(MPa): 0.9813 | lr: 1.63e-04 | epoch: 7.3s
+Epoch 265 | train MSE: 0.008595 | val MSE: 0.017740 | val MSE(MPa^2): 90.871 | R2(MPa): 0.9810 | lr: 1.62e-04 | epoch: 7.3s
+Epoch 266 | train MSE: 0.008857 | val MSE: 0.018089 | val MSE(MPa^2): 92.660 | R2(MPa): 0.9807 | lr: 1.61e-04 | epoch: 7.2s
+Epoch 267 | train MSE: 0.008721 | val MSE: 0.017705 | val MSE(MPa^2): 90.693 | R2(MPa): 0.9811 | lr: 1.60e-04 | epoch: 7.2s
+Epoch 268 | train MSE: 0.008520 | val MSE: 0.017457 | val MSE(MPa^2): 89.423 | R2(MPa): 0.9813 | lr: 1.59e-04 | epoch: 7.2s
+Epoch 269 | train MSE: 0.008213 | val MSE: 0.017478 | val MSE(MPa^2): 89.530 | R2(MPa): 0.9813 | lr: 1.58e-04 | epoch: 7.3s
+Epoch 270 | train MSE: 0.008060 | val MSE: 0.017084 | val MSE(MPa^2): 87.511 | R2(MPa): 0.9817 | lr: 1.57e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 271 | train MSE: 0.008056 | val MSE: 0.017422 | val MSE(MPa^2): 89.242 | R2(MPa): 0.9814 | lr: 1.56e-04 | epoch: 7.3s
+Epoch 272 | train MSE: 0.008337 | val MSE: 0.017280 | val MSE(MPa^2): 88.515 | R2(MPa): 0.9815 | lr: 1.55e-04 | epoch: 7.2s
+Epoch 273 | train MSE: 0.008216 | val MSE: 0.017181 | val MSE(MPa^2): 88.012 | R2(MPa): 0.9816 | lr: 1.54e-04 | epoch: 7.3s
+Epoch 274 | train MSE: 0.007929 | val MSE: 0.017220 | val MSE(MPa^2): 88.211 | R2(MPa): 0.9816 | lr: 1.52e-04 | epoch: 7.2s
+Epoch 275 | train MSE: 0.007792 | val MSE: 0.017112 | val MSE(MPa^2): 87.656 | R2(MPa): 0.9817 | lr: 1.51e-04 | epoch: 7.3s
+Epoch 276 | train MSE: 0.007608 | val MSE: 0.017080 | val MSE(MPa^2): 87.490 | R2(MPa): 0.9817 | lr: 1.50e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 277 | train MSE: 0.007579 | val MSE: 0.016820 | val MSE(MPa^2): 86.162 | R2(MPa): 0.9820 | lr: 1.49e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 278 | train MSE: 0.007356 | val MSE: 0.016814 | val MSE(MPa^2): 86.129 | R2(MPa): 0.9820 | lr: 1.48e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 279 | train MSE: 0.007308 | val MSE: 0.016682 | val MSE(MPa^2): 85.453 | R2(MPa): 0.9822 | lr: 1.47e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 280 | train MSE: 0.007296 | val MSE: 0.016881 | val MSE(MPa^2): 86.471 | R2(MPa): 0.9820 | lr: 1.46e-04 | epoch: 7.3s
+Epoch 281 | train MSE: 0.007411 | val MSE: 0.016716 | val MSE(MPa^2): 85.626 | R2(MPa): 0.9821 | lr: 1.45e-04 | epoch: 7.3s
+Epoch 282 | train MSE: 0.007380 | val MSE: 0.016762 | val MSE(MPa^2): 85.861 | R2(MPa): 0.9821 | lr: 1.44e-04 | epoch: 7.3s
+Epoch 283 | train MSE: 0.007308 | val MSE: 0.016851 | val MSE(MPa^2): 86.320 | R2(MPa): 0.9820 | lr: 1.43e-04 | epoch: 7.3s
+Epoch 284 | train MSE: 0.007737 | val MSE: 0.017888 | val MSE(MPa^2): 91.629 | R2(MPa): 0.9809 | lr: 1.42e-04 | epoch: 7.3s
+Epoch 285 | train MSE: 0.008738 | val MSE: 0.018935 | val MSE(MPa^2): 96.992 | R2(MPa): 0.9798 | lr: 1.41e-04 | epoch: 7.2s
+Epoch 286 | train MSE: 0.010666 | val MSE: 0.019858 | val MSE(MPa^2): 101.720 | R2(MPa): 0.9788 | lr: 1.40e-04 | epoch: 7.3s
+Epoch 287 | train MSE: 0.011272 | val MSE: 0.020505 | val MSE(MPa^2): 105.038 | R2(MPa): 0.9781 | lr: 1.39e-04 | epoch: 7.3s
+Epoch 288 | train MSE: 0.010920 | val MSE: 0.019617 | val MSE(MPa^2): 100.488 | R2(MPa): 0.9790 | lr: 1.38e-04 | epoch: 7.3s
+Epoch 289 | train MSE: 0.010235 | val MSE: 0.018662 | val MSE(MPa^2): 95.595 | R2(MPa): 0.9800 | lr: 1.37e-04 | epoch: 7.3s
+Epoch 290 | train MSE: 0.009447 | val MSE: 0.018302 | val MSE(MPa^2): 93.753 | R2(MPa): 0.9804 | lr: 1.36e-04 | epoch: 7.2s
+Epoch 291 | train MSE: 0.009003 | val MSE: 0.017978 | val MSE(MPa^2): 92.091 | R2(MPa): 0.9808 | lr: 1.35e-04 | epoch: 7.3s
+Epoch 292 | train MSE: 0.008744 | val MSE: 0.018060 | val MSE(MPa^2): 92.513 | R2(MPa): 0.9807 | lr: 1.34e-04 | epoch: 7.3s
+Epoch 293 | train MSE: 0.008645 | val MSE: 0.017533 | val MSE(MPa^2): 89.810 | R2(MPa): 0.9813 | lr: 1.33e-04 | epoch: 7.3s
+Epoch 294 | train MSE: 0.008334 | val MSE: 0.017341 | val MSE(MPa^2): 88.828 | R2(MPa): 0.9815 | lr: 1.32e-04 | epoch: 7.3s
+Epoch 295 | train MSE: 0.007720 | val MSE: 0.016576 | val MSE(MPa^2): 84.909 | R2(MPa): 0.9823 | lr: 1.31e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 296 | train MSE: 0.007649 | val MSE: 0.017535 | val MSE(MPa^2): 89.821 | R2(MPa): 0.9813 | lr: 1.30e-04 | epoch: 7.3s
+Epoch 297 | train MSE: 0.008065 | val MSE: 0.017177 | val MSE(MPa^2): 87.989 | R2(MPa): 0.9816 | lr: 1.29e-04 | epoch: 7.3s
+Epoch 298 | train MSE: 0.007965 | val MSE: 0.017736 | val MSE(MPa^2): 90.854 | R2(MPa): 0.9810 | lr: 1.28e-04 | epoch: 7.3s
+Epoch 299 | train MSE: 0.008195 | val MSE: 0.017289 | val MSE(MPa^2): 88.561 | R2(MPa): 0.9815 | lr: 1.27e-04 | epoch: 7.3s
+Epoch 300 | train MSE: 0.007764 | val MSE: 0.017187 | val MSE(MPa^2): 88.040 | R2(MPa): 0.9816 | lr: 1.26e-04 | epoch: 7.3s
+Epoch 301 | train MSE: 0.007753 | val MSE: 0.017600 | val MSE(MPa^2): 90.155 | R2(MPa): 0.9812 | lr: 1.25e-04 | epoch: 7.3s
+Epoch 302 | train MSE: 0.007971 | val MSE: 0.017009 | val MSE(MPa^2): 87.127 | R2(MPa): 0.9818 | lr: 1.24e-04 | epoch: 7.3s
+Epoch 303 | train MSE: 0.007603 | val MSE: 0.016509 | val MSE(MPa^2): 84.567 | R2(MPa): 0.9823 | lr: 1.23e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 304 | train MSE: 0.007496 | val MSE: 0.017214 | val MSE(MPa^2): 88.177 | R2(MPa): 0.9816 | lr: 1.22e-04 | epoch: 7.3s
+Epoch 305 | train MSE: 0.007427 | val MSE: 0.016654 | val MSE(MPa^2): 85.311 | R2(MPa): 0.9822 | lr: 1.21e-04 | epoch: 7.3s
+Epoch 306 | train MSE: 0.007143 | val MSE: 0.016549 | val MSE(MPa^2): 84.771 | R2(MPa): 0.9823 | lr: 1.20e-04 | epoch: 7.3s
+Epoch 307 | train MSE: 0.006924 | val MSE: 0.016261 | val MSE(MPa^2): 83.297 | R2(MPa): 0.9826 | lr: 1.19e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 308 | train MSE: 0.006882 | val MSE: 0.016134 | val MSE(MPa^2): 82.644 | R2(MPa): 0.9827 | lr: 1.18e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 309 | train MSE: 0.006779 | val MSE: 0.016257 | val MSE(MPa^2): 83.277 | R2(MPa): 0.9826 | lr: 1.17e-04 | epoch: 7.2s
+Epoch 310 | train MSE: 0.006826 | val MSE: 0.016174 | val MSE(MPa^2): 82.848 | R2(MPa): 0.9827 | lr: 1.16e-04 | epoch: 7.3s
+Epoch 311 | train MSE: 0.006810 | val MSE: 0.016202 | val MSE(MPa^2): 82.995 | R2(MPa): 0.9827 | lr: 1.15e-04 | epoch: 7.3s
+Epoch 312 | train MSE: 0.006888 | val MSE: 0.016182 | val MSE(MPa^2): 82.894 | R2(MPa): 0.9827 | lr: 1.14e-04 | epoch: 7.3s
+Epoch 313 | train MSE: 0.006888 | val MSE: 0.016266 | val MSE(MPa^2): 83.324 | R2(MPa): 0.9826 | lr: 1.13e-04 | epoch: 7.3s
+Epoch 314 | train MSE: 0.006754 | val MSE: 0.016165 | val MSE(MPa^2): 82.803 | R2(MPa): 0.9827 | lr: 1.12e-04 | epoch: 7.3s
+Epoch 315 | train MSE: 0.007053 | val MSE: 0.016457 | val MSE(MPa^2): 84.301 | R2(MPa): 0.9824 | lr: 1.11e-04 | epoch: 7.3s
+Epoch 316 | train MSE: 0.007302 | val MSE: 0.016802 | val MSE(MPa^2): 86.069 | R2(MPa): 0.9820 | lr: 1.10e-04 | epoch: 7.2s
+Epoch 317 | train MSE: 0.007028 | val MSE: 0.016527 | val MSE(MPa^2): 84.661 | R2(MPa): 0.9823 | lr: 1.09e-04 | epoch: 7.3s
+Epoch 318 | train MSE: 0.006962 | val MSE: 0.016396 | val MSE(MPa^2): 83.990 | R2(MPa): 0.9825 | lr: 1.08e-04 | epoch: 7.3s
+Epoch 319 | train MSE: 0.006720 | val MSE: 0.016059 | val MSE(MPa^2): 82.260 | R2(MPa): 0.9828 | lr: 1.07e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 320 | train MSE: 0.006476 | val MSE: 0.015997 | val MSE(MPa^2): 81.943 | R2(MPa): 0.9829 | lr: 1.06e-04 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 321 | train MSE: 0.006272 | val MSE: 0.015884 | val MSE(MPa^2): 81.366 | R2(MPa): 0.9830 | lr: 1.05e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 322 | train MSE: 0.006177 | val MSE: 0.015707 | val MSE(MPa^2): 80.458 | R2(MPa): 0.9832 | lr: 1.04e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 323 | train MSE: 0.006122 | val MSE: 0.015738 | val MSE(MPa^2): 80.618 | R2(MPa): 0.9832 | lr: 1.03e-04 | epoch: 7.3s
+Epoch 324 | train MSE: 0.006047 | val MSE: 0.015635 | val MSE(MPa^2): 80.089 | R2(MPa): 0.9833 | lr: 1.02e-04 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 325 | train MSE: 0.005988 | val MSE: 0.015752 | val MSE(MPa^2): 80.687 | R2(MPa): 0.9832 | lr: 1.01e-04 | epoch: 7.3s
+Epoch 326 | train MSE: 0.005968 | val MSE: 0.015560 | val MSE(MPa^2): 79.705 | R2(MPa): 0.9834 | lr: 9.97e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 327 | train MSE: 0.005951 | val MSE: 0.015693 | val MSE(MPa^2): 80.386 | R2(MPa): 0.9832 | lr: 9.87e-05 | epoch: 7.3s
+Epoch 328 | train MSE: 0.005977 | val MSE: 0.015553 | val MSE(MPa^2): 79.671 | R2(MPa): 0.9834 | lr: 9.78e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 329 | train MSE: 0.005944 | val MSE: 0.015539 | val MSE(MPa^2): 79.597 | R2(MPa): 0.9834 | lr: 9.68e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 330 | train MSE: 0.005926 | val MSE: 0.015749 | val MSE(MPa^2): 80.674 | R2(MPa): 0.9832 | lr: 9.58e-05 | epoch: 7.3s
+Epoch 331 | train MSE: 0.005911 | val MSE: 0.015580 | val MSE(MPa^2): 79.807 | R2(MPa): 0.9833 | lr: 9.49e-05 | epoch: 7.3s
+Epoch 332 | train MSE: 0.005913 | val MSE: 0.015501 | val MSE(MPa^2): 79.402 | R2(MPa): 0.9834 | lr: 9.39e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 333 | train MSE: 0.005959 | val MSE: 0.015654 | val MSE(MPa^2): 80.186 | R2(MPa): 0.9833 | lr: 9.30e-05 | epoch: 7.3s
+Epoch 334 | train MSE: 0.005970 | val MSE: 0.015670 | val MSE(MPa^2): 80.268 | R2(MPa): 0.9832 | lr: 9.20e-05 | epoch: 7.3s
+Epoch 335 | train MSE: 0.006021 | val MSE: 0.015614 | val MSE(MPa^2): 79.985 | R2(MPa): 0.9833 | lr: 9.11e-05 | epoch: 7.3s
+Epoch 336 | train MSE: 0.005843 | val MSE: 0.015620 | val MSE(MPa^2): 80.014 | R2(MPa): 0.9833 | lr: 9.01e-05 | epoch: 7.3s
+Epoch 337 | train MSE: 0.005859 | val MSE: 0.015732 | val MSE(MPa^2): 80.588 | R2(MPa): 0.9832 | lr: 8.92e-05 | epoch: 7.3s
+Epoch 338 | train MSE: 0.005899 | val MSE: 0.015735 | val MSE(MPa^2): 80.603 | R2(MPa): 0.9832 | lr: 8.82e-05 | epoch: 7.3s
+Epoch 339 | train MSE: 0.005913 | val MSE: 0.015545 | val MSE(MPa^2): 79.631 | R2(MPa): 0.9834 | lr: 8.73e-05 | epoch: 7.3s
+Epoch 340 | train MSE: 0.005859 | val MSE: 0.015529 | val MSE(MPa^2): 79.548 | R2(MPa): 0.9834 | lr: 8.64e-05 | epoch: 7.3s
+Epoch 341 | train MSE: 0.005787 | val MSE: 0.015554 | val MSE(MPa^2): 79.675 | R2(MPa): 0.9834 | lr: 8.54e-05 | epoch: 7.3s
+Epoch 342 | train MSE: 0.005752 | val MSE: 0.015382 | val MSE(MPa^2): 78.792 | R2(MPa): 0.9836 | lr: 8.45e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 343 | train MSE: 0.005789 | val MSE: 0.015610 | val MSE(MPa^2): 79.960 | R2(MPa): 0.9833 | lr: 8.36e-05 | epoch: 7.3s
+Epoch 344 | train MSE: 0.005778 | val MSE: 0.015443 | val MSE(MPa^2): 79.108 | R2(MPa): 0.9835 | lr: 8.27e-05 | epoch: 7.3s
+Epoch 345 | train MSE: 0.005760 | val MSE: 0.015544 | val MSE(MPa^2): 79.626 | R2(MPa): 0.9834 | lr: 8.17e-05 | epoch: 7.3s
+Epoch 346 | train MSE: 0.005838 | val MSE: 0.015585 | val MSE(MPa^2): 79.835 | R2(MPa): 0.9833 | lr: 8.08e-05 | epoch: 7.3s
+Epoch 347 | train MSE: 0.005846 | val MSE: 0.015762 | val MSE(MPa^2): 80.739 | R2(MPa): 0.9831 | lr: 7.99e-05 | epoch: 7.3s
+Epoch 348 | train MSE: 0.005944 | val MSE: 0.015659 | val MSE(MPa^2): 80.212 | R2(MPa): 0.9833 | lr: 7.90e-05 | epoch: 7.3s
+Epoch 349 | train MSE: 0.006258 | val MSE: 0.015943 | val MSE(MPa^2): 81.667 | R2(MPa): 0.9830 | lr: 7.81e-05 | epoch: 7.3s
+Epoch 350 | train MSE: 0.006255 | val MSE: 0.015864 | val MSE(MPa^2): 81.263 | R2(MPa): 0.9830 | lr: 7.72e-05 | epoch: 7.3s
+Epoch 351 | train MSE: 0.006072 | val MSE: 0.015684 | val MSE(MPa^2): 80.340 | R2(MPa): 0.9832 | lr: 7.63e-05 | epoch: 7.3s
+Epoch 352 | train MSE: 0.005972 | val MSE: 0.015515 | val MSE(MPa^2): 79.474 | R2(MPa): 0.9834 | lr: 7.54e-05 | epoch: 7.3s
+Epoch 353 | train MSE: 0.005868 | val MSE: 0.015599 | val MSE(MPa^2): 79.906 | R2(MPa): 0.9833 | lr: 7.45e-05 | epoch: 7.2s
+Epoch 354 | train MSE: 0.005771 | val MSE: 0.015534 | val MSE(MPa^2): 79.573 | R2(MPa): 0.9834 | lr: 7.36e-05 | epoch: 7.2s
+Epoch 355 | train MSE: 0.005662 | val MSE: 0.015466 | val MSE(MPa^2): 79.224 | R2(MPa): 0.9835 | lr: 7.28e-05 | epoch: 7.2s
+Epoch 356 | train MSE: 0.005578 | val MSE: 0.015410 | val MSE(MPa^2): 78.938 | R2(MPa): 0.9835 | lr: 7.19e-05 | epoch: 7.2s
+Epoch 357 | train MSE: 0.005579 | val MSE: 0.015385 | val MSE(MPa^2): 78.811 | R2(MPa): 0.9835 | lr: 7.10e-05 | epoch: 7.2s
+Epoch 358 | train MSE: 0.005579 | val MSE: 0.015422 | val MSE(MPa^2): 78.999 | R2(MPa): 0.9835 | lr: 7.01e-05 | epoch: 7.2s
+Epoch 359 | train MSE: 0.005577 | val MSE: 0.015503 | val MSE(MPa^2): 79.414 | R2(MPa): 0.9834 | lr: 6.93e-05 | epoch: 7.3s
+Epoch 360 | train MSE: 0.005504 | val MSE: 0.015266 | val MSE(MPa^2): 78.201 | R2(MPa): 0.9837 | lr: 6.84e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 361 | train MSE: 0.005474 | val MSE: 0.015255 | val MSE(MPa^2): 78.144 | R2(MPa): 0.9837 | lr: 6.76e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 362 | train MSE: 0.005461 | val MSE: 0.015253 | val MSE(MPa^2): 78.133 | R2(MPa): 0.9837 | lr: 6.67e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 363 | train MSE: 0.005395 | val MSE: 0.015211 | val MSE(MPa^2): 77.917 | R2(MPa): 0.9837 | lr: 6.59e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 364 | train MSE: 0.005373 | val MSE: 0.015235 | val MSE(MPa^2): 78.040 | R2(MPa): 0.9837 | lr: 6.50e-05 | epoch: 7.2s
+Epoch 365 | train MSE: 0.005364 | val MSE: 0.015186 | val MSE(MPa^2): 77.791 | R2(MPa): 0.9838 | lr: 6.42e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 366 | train MSE: 0.005323 | val MSE: 0.015221 | val MSE(MPa^2): 77.971 | R2(MPa): 0.9837 | lr: 6.33e-05 | epoch: 7.2s
+Epoch 367 | train MSE: 0.005314 | val MSE: 0.015137 | val MSE(MPa^2): 77.539 | R2(MPa): 0.9838 | lr: 6.25e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 368 | train MSE: 0.005362 | val MSE: 0.015182 | val MSE(MPa^2): 77.767 | R2(MPa): 0.9838 | lr: 6.17e-05 | epoch: 7.2s
+Epoch 369 | train MSE: 0.005316 | val MSE: 0.015182 | val MSE(MPa^2): 77.772 | R2(MPa): 0.9838 | lr: 6.09e-05 | epoch: 7.2s
+Epoch 370 | train MSE: 0.005308 | val MSE: 0.015192 | val MSE(MPa^2): 77.821 | R2(MPa): 0.9838 | lr: 6.00e-05 | epoch: 7.3s
+Epoch 371 | train MSE: 0.005286 | val MSE: 0.015119 | val MSE(MPa^2): 77.448 | R2(MPa): 0.9838 | lr: 5.92e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 372 | train MSE: 0.005258 | val MSE: 0.015115 | val MSE(MPa^2): 77.428 | R2(MPa): 0.9838 | lr: 5.84e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 373 | train MSE: 0.005214 | val MSE: 0.015113 | val MSE(MPa^2): 77.414 | R2(MPa): 0.9838 | lr: 5.76e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 374 | train MSE: 0.005190 | val MSE: 0.015123 | val MSE(MPa^2): 77.469 | R2(MPa): 0.9838 | lr: 5.68e-05 | epoch: 7.3s
+Epoch 375 | train MSE: 0.005169 | val MSE: 0.015095 | val MSE(MPa^2): 77.326 | R2(MPa): 0.9839 | lr: 5.60e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 376 | train MSE: 0.005187 | val MSE: 0.014995 | val MSE(MPa^2): 76.811 | R2(MPa): 0.9840 | lr: 5.52e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 377 | train MSE: 0.005160 | val MSE: 0.014999 | val MSE(MPa^2): 76.830 | R2(MPa): 0.9840 | lr: 5.44e-05 | epoch: 7.2s
+Epoch 378 | train MSE: 0.005120 | val MSE: 0.014986 | val MSE(MPa^2): 76.768 | R2(MPa): 0.9840 | lr: 5.36e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 379 | train MSE: 0.005127 | val MSE: 0.014989 | val MSE(MPa^2): 76.780 | R2(MPa): 0.9840 | lr: 5.29e-05 | epoch: 7.2s
+Epoch 380 | train MSE: 0.005090 | val MSE: 0.014983 | val MSE(MPa^2): 76.747 | R2(MPa): 0.9840 | lr: 5.21e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 381 | train MSE: 0.005074 | val MSE: 0.014987 | val MSE(MPa^2): 76.770 | R2(MPa): 0.9840 | lr: 5.13e-05 | epoch: 7.3s
+Epoch 382 | train MSE: 0.005087 | val MSE: 0.015064 | val MSE(MPa^2): 77.166 | R2(MPa): 0.9839 | lr: 5.06e-05 | epoch: 7.3s
+Epoch 383 | train MSE: 0.005071 | val MSE: 0.015006 | val MSE(MPa^2): 76.870 | R2(MPa): 0.9840 | lr: 4.98e-05 | epoch: 7.3s
+Epoch 384 | train MSE: 0.005063 | val MSE: 0.014945 | val MSE(MPa^2): 76.556 | R2(MPa): 0.9840 | lr: 4.91e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 385 | train MSE: 0.005056 | val MSE: 0.014943 | val MSE(MPa^2): 76.544 | R2(MPa): 0.9840 | lr: 4.83e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 386 | train MSE: 0.005028 | val MSE: 0.014969 | val MSE(MPa^2): 76.680 | R2(MPa): 0.9840 | lr: 4.76e-05 | epoch: 7.3s
+Epoch 387 | train MSE: 0.004990 | val MSE: 0.014971 | val MSE(MPa^2): 76.689 | R2(MPa): 0.9840 | lr: 4.68e-05 | epoch: 7.2s
+Epoch 388 | train MSE: 0.005005 | val MSE: 0.014947 | val MSE(MPa^2): 76.565 | R2(MPa): 0.9840 | lr: 4.61e-05 | epoch: 7.2s
+Epoch 389 | train MSE: 0.005001 | val MSE: 0.014961 | val MSE(MPa^2): 76.640 | R2(MPa): 0.9840 | lr: 4.54e-05 | epoch: 7.2s
+Epoch 390 | train MSE: 0.004995 | val MSE: 0.014947 | val MSE(MPa^2): 76.563 | R2(MPa): 0.9840 | lr: 4.46e-05 | epoch: 7.3s
+Epoch 391 | train MSE: 0.004973 | val MSE: 0.014918 | val MSE(MPa^2): 76.417 | R2(MPa): 0.9840 | lr: 4.39e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 392 | train MSE: 0.004967 | val MSE: 0.014936 | val MSE(MPa^2): 76.511 | R2(MPa): 0.9840 | lr: 4.32e-05 | epoch: 7.2s
+Epoch 393 | train MSE: 0.004941 | val MSE: 0.014871 | val MSE(MPa^2): 76.176 | R2(MPa): 0.9841 | lr: 4.25e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 394 | train MSE: 0.004931 | val MSE: 0.014934 | val MSE(MPa^2): 76.498 | R2(MPa): 0.9840 | lr: 4.18e-05 | epoch: 7.2s
+Epoch 395 | train MSE: 0.004923 | val MSE: 0.014929 | val MSE(MPa^2): 76.472 | R2(MPa): 0.9840 | lr: 4.11e-05 | epoch: 7.2s
+Epoch 396 | train MSE: 0.004905 | val MSE: 0.014867 | val MSE(MPa^2): 76.155 | R2(MPa): 0.9841 | lr: 4.04e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 397 | train MSE: 0.004908 | val MSE: 0.014871 | val MSE(MPa^2): 76.178 | R2(MPa): 0.9841 | lr: 3.97e-05 | epoch: 7.3s
+Epoch 398 | train MSE: 0.004897 | val MSE: 0.014892 | val MSE(MPa^2): 76.282 | R2(MPa): 0.9841 | lr: 3.91e-05 | epoch: 7.3s
+Epoch 399 | train MSE: 0.004880 | val MSE: 0.014812 | val MSE(MPa^2): 75.874 | R2(MPa): 0.9842 | lr: 3.84e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 400 | train MSE: 0.004868 | val MSE: 0.014891 | val MSE(MPa^2): 76.277 | R2(MPa): 0.9841 | lr: 3.77e-05 | epoch: 7.3s
+Epoch 401 | train MSE: 0.004860 | val MSE: 0.014862 | val MSE(MPa^2): 76.130 | R2(MPa): 0.9841 | lr: 3.70e-05 | epoch: 7.2s
+Epoch 402 | train MSE: 0.004864 | val MSE: 0.014849 | val MSE(MPa^2): 76.062 | R2(MPa): 0.9841 | lr: 3.64e-05 | epoch: 7.3s
+Epoch 403 | train MSE: 0.004849 | val MSE: 0.014829 | val MSE(MPa^2): 75.959 | R2(MPa): 0.9841 | lr: 3.57e-05 | epoch: 7.3s
+Epoch 404 | train MSE: 0.004840 | val MSE: 0.014904 | val MSE(MPa^2): 76.347 | R2(MPa): 0.9841 | lr: 3.51e-05 | epoch: 7.3s
+Epoch 405 | train MSE: 0.004833 | val MSE: 0.014823 | val MSE(MPa^2): 75.928 | R2(MPa): 0.9842 | lr: 3.44e-05 | epoch: 7.2s
+Epoch 406 | train MSE: 0.004817 | val MSE: 0.014834 | val MSE(MPa^2): 75.988 | R2(MPa): 0.9841 | lr: 3.38e-05 | epoch: 7.3s
+Epoch 407 | train MSE: 0.004815 | val MSE: 0.014855 | val MSE(MPa^2): 76.094 | R2(MPa): 0.9841 | lr: 3.32e-05 | epoch: 7.2s
+Epoch 408 | train MSE: 0.004806 | val MSE: 0.014824 | val MSE(MPa^2): 75.936 | R2(MPa): 0.9841 | lr: 3.26e-05 | epoch: 7.3s
+Epoch 409 | train MSE: 0.004792 | val MSE: 0.014802 | val MSE(MPa^2): 75.822 | R2(MPa): 0.9842 | lr: 3.19e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 410 | train MSE: 0.004783 | val MSE: 0.014798 | val MSE(MPa^2): 75.804 | R2(MPa): 0.9842 | lr: 3.13e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 411 | train MSE: 0.004770 | val MSE: 0.014830 | val MSE(MPa^2): 75.968 | R2(MPa): 0.9841 | lr: 3.07e-05 | epoch: 7.2s
+Epoch 412 | train MSE: 0.004756 | val MSE: 0.014795 | val MSE(MPa^2): 75.788 | R2(MPa): 0.9842 | lr: 3.01e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 413 | train MSE: 0.004751 | val MSE: 0.014807 | val MSE(MPa^2): 75.850 | R2(MPa): 0.9842 | lr: 2.95e-05 | epoch: 7.2s
+Epoch 414 | train MSE: 0.004748 | val MSE: 0.014776 | val MSE(MPa^2): 75.689 | R2(MPa): 0.9842 | lr: 2.89e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 415 | train MSE: 0.004756 | val MSE: 0.014781 | val MSE(MPa^2): 75.717 | R2(MPa): 0.9842 | lr: 2.84e-05 | epoch: 7.3s
+Epoch 416 | train MSE: 0.004736 | val MSE: 0.014773 | val MSE(MPa^2): 75.674 | R2(MPa): 0.9842 | lr: 2.78e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 417 | train MSE: 0.004722 | val MSE: 0.014802 | val MSE(MPa^2): 75.821 | R2(MPa): 0.9842 | lr: 2.72e-05 | epoch: 7.2s
+Epoch 418 | train MSE: 0.004708 | val MSE: 0.014763 | val MSE(MPa^2): 75.624 | R2(MPa): 0.9842 | lr: 2.66e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 419 | train MSE: 0.004713 | val MSE: 0.014766 | val MSE(MPa^2): 75.637 | R2(MPa): 0.9842 | lr: 2.61e-05 | epoch: 7.2s
+Epoch 420 | train MSE: 0.004726 | val MSE: 0.014750 | val MSE(MPa^2): 75.555 | R2(MPa): 0.9842 | lr: 2.55e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 421 | train MSE: 0.004696 | val MSE: 0.014767 | val MSE(MPa^2): 75.641 | R2(MPa): 0.9842 | lr: 2.50e-05 | epoch: 7.2s
+Epoch 422 | train MSE: 0.004690 | val MSE: 0.014733 | val MSE(MPa^2): 75.470 | R2(MPa): 0.9842 | lr: 2.45e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 423 | train MSE: 0.004689 | val MSE: 0.014774 | val MSE(MPa^2): 75.682 | R2(MPa): 0.9842 | lr: 2.39e-05 | epoch: 7.3s
+Epoch 424 | train MSE: 0.004674 | val MSE: 0.014731 | val MSE(MPa^2): 75.460 | R2(MPa): 0.9842 | lr: 2.34e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 425 | train MSE: 0.004659 | val MSE: 0.014724 | val MSE(MPa^2): 75.424 | R2(MPa): 0.9843 | lr: 2.29e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 426 | train MSE: 0.004650 | val MSE: 0.014729 | val MSE(MPa^2): 75.447 | R2(MPa): 0.9843 | lr: 2.24e-05 | epoch: 7.3s
+Epoch 427 | train MSE: 0.004659 | val MSE: 0.014706 | val MSE(MPa^2): 75.329 | R2(MPa): 0.9843 | lr: 2.18e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 428 | train MSE: 0.004646 | val MSE: 0.014692 | val MSE(MPa^2): 75.257 | R2(MPa): 0.9843 | lr: 2.13e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 429 | train MSE: 0.004654 | val MSE: 0.014730 | val MSE(MPa^2): 75.452 | R2(MPa): 0.9843 | lr: 2.08e-05 | epoch: 7.3s
+Epoch 430 | train MSE: 0.004633 | val MSE: 0.014732 | val MSE(MPa^2): 75.463 | R2(MPa): 0.9842 | lr: 2.04e-05 | epoch: 7.2s
+Epoch 431 | train MSE: 0.004636 | val MSE: 0.014713 | val MSE(MPa^2): 75.366 | R2(MPa): 0.9843 | lr: 1.99e-05 | epoch: 7.2s
+Epoch 432 | train MSE: 0.004632 | val MSE: 0.014705 | val MSE(MPa^2): 75.326 | R2(MPa): 0.9843 | lr: 1.94e-05 | epoch: 7.3s
+Epoch 433 | train MSE: 0.004622 | val MSE: 0.014704 | val MSE(MPa^2): 75.321 | R2(MPa): 0.9843 | lr: 1.89e-05 | epoch: 7.2s
+Epoch 434 | train MSE: 0.004615 | val MSE: 0.014696 | val MSE(MPa^2): 75.277 | R2(MPa): 0.9843 | lr: 1.85e-05 | epoch: 7.2s
+Epoch 435 | train MSE: 0.004605 | val MSE: 0.014691 | val MSE(MPa^2): 75.257 | R2(MPa): 0.9843 | lr: 1.80e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 436 | train MSE: 0.004606 | val MSE: 0.014696 | val MSE(MPa^2): 75.281 | R2(MPa): 0.9843 | lr: 1.76e-05 | epoch: 7.2s
+Epoch 437 | train MSE: 0.004589 | val MSE: 0.014688 | val MSE(MPa^2): 75.236 | R2(MPa): 0.9843 | lr: 1.71e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 438 | train MSE: 0.004611 | val MSE: 0.014685 | val MSE(MPa^2): 75.223 | R2(MPa): 0.9843 | lr: 1.67e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 439 | train MSE: 0.004584 | val MSE: 0.014689 | val MSE(MPa^2): 75.243 | R2(MPa): 0.9843 | lr: 1.62e-05 | epoch: 7.2s
+Epoch 440 | train MSE: 0.004580 | val MSE: 0.014688 | val MSE(MPa^2): 75.239 | R2(MPa): 0.9843 | lr: 1.58e-05 | epoch: 7.2s
+Epoch 441 | train MSE: 0.004590 | val MSE: 0.014695 | val MSE(MPa^2): 75.274 | R2(MPa): 0.9843 | lr: 1.54e-05 | epoch: 7.2s
+Epoch 442 | train MSE: 0.004574 | val MSE: 0.014680 | val MSE(MPa^2): 75.196 | R2(MPa): 0.9843 | lr: 1.50e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 443 | train MSE: 0.004582 | val MSE: 0.014662 | val MSE(MPa^2): 75.104 | R2(MPa): 0.9843 | lr: 1.46e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 444 | train MSE: 0.004564 | val MSE: 0.014700 | val MSE(MPa^2): 75.299 | R2(MPa): 0.9843 | lr: 1.42e-05 | epoch: 7.2s
+Epoch 445 | train MSE: 0.004580 | val MSE: 0.014675 | val MSE(MPa^2): 75.170 | R2(MPa): 0.9843 | lr: 1.38e-05 | epoch: 7.2s
+Epoch 446 | train MSE: 0.004540 | val MSE: 0.014666 | val MSE(MPa^2): 75.126 | R2(MPa): 0.9843 | lr: 1.34e-05 | epoch: 7.2s
+Epoch 447 | train MSE: 0.004547 | val MSE: 0.014661 | val MSE(MPa^2): 75.101 | R2(MPa): 0.9843 | lr: 1.30e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 448 | train MSE: 0.004551 | val MSE: 0.014659 | val MSE(MPa^2): 75.090 | R2(MPa): 0.9843 | lr: 1.27e-05 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 449 | train MSE: 0.004539 | val MSE: 0.014658 | val MSE(MPa^2): 75.086 | R2(MPa): 0.9843 | lr: 1.23e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 450 | train MSE: 0.004534 | val MSE: 0.014637 | val MSE(MPa^2): 74.979 | R2(MPa): 0.9843 | lr: 1.19e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 451 | train MSE: 0.004515 | val MSE: 0.014660 | val MSE(MPa^2): 75.096 | R2(MPa): 0.9843 | lr: 1.16e-05 | epoch: 7.2s
+Epoch 452 | train MSE: 0.004526 | val MSE: 0.014664 | val MSE(MPa^2): 75.117 | R2(MPa): 0.9843 | lr: 1.12e-05 | epoch: 7.2s
+Epoch 453 | train MSE: 0.004510 | val MSE: 0.014643 | val MSE(MPa^2): 75.010 | R2(MPa): 0.9843 | lr: 1.09e-05 | epoch: 7.2s
+Epoch 454 | train MSE: 0.004510 | val MSE: 0.014632 | val MSE(MPa^2): 74.951 | R2(MPa): 0.9844 | lr: 1.06e-05 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 455 | train MSE: 0.004516 | val MSE: 0.014632 | val MSE(MPa^2): 74.953 | R2(MPa): 0.9844 | lr: 1.03e-05 | epoch: 7.2s
+Epoch 456 | train MSE: 0.004522 | val MSE: 0.014648 | val MSE(MPa^2): 75.035 | R2(MPa): 0.9843 | lr: 9.94e-06 | epoch: 7.2s
+Epoch 457 | train MSE: 0.004511 | val MSE: 0.014653 | val MSE(MPa^2): 75.062 | R2(MPa): 0.9843 | lr: 9.63e-06 | epoch: 7.2s
+Epoch 458 | train MSE: 0.004514 | val MSE: 0.014645 | val MSE(MPa^2): 75.018 | R2(MPa): 0.9843 | lr: 9.32e-06 | epoch: 7.2s
+Epoch 459 | train MSE: 0.004497 | val MSE: 0.014639 | val MSE(MPa^2): 74.987 | R2(MPa): 0.9843 | lr: 9.03e-06 | epoch: 7.2s
+Epoch 460 | train MSE: 0.004501 | val MSE: 0.014639 | val MSE(MPa^2): 74.986 | R2(MPa): 0.9843 | lr: 8.74e-06 | epoch: 7.3s
+Epoch 461 | train MSE: 0.004490 | val MSE: 0.014635 | val MSE(MPa^2): 74.968 | R2(MPa): 0.9844 | lr: 8.46e-06 | epoch: 7.2s
+Epoch 462 | train MSE: 0.004485 | val MSE: 0.014643 | val MSE(MPa^2): 75.009 | R2(MPa): 0.9843 | lr: 8.18e-06 | epoch: 7.2s
+Epoch 463 | train MSE: 0.004484 | val MSE: 0.014640 | val MSE(MPa^2): 74.992 | R2(MPa): 0.9843 | lr: 7.91e-06 | epoch: 7.2s
+Epoch 464 | train MSE: 0.004483 | val MSE: 0.014623 | val MSE(MPa^2): 74.908 | R2(MPa): 0.9844 | lr: 7.65e-06 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 465 | train MSE: 0.004508 | val MSE: 0.014645 | val MSE(MPa^2): 75.018 | R2(MPa): 0.9843 | lr: 7.40e-06 | epoch: 7.2s
+Epoch 466 | train MSE: 0.004483 | val MSE: 0.014641 | val MSE(MPa^2): 75.000 | R2(MPa): 0.9843 | lr: 7.15e-06 | epoch: 7.2s
+Epoch 467 | train MSE: 0.004496 | val MSE: 0.014622 | val MSE(MPa^2): 74.898 | R2(MPa): 0.9844 | lr: 6.91e-06 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 468 | train MSE: 0.004470 | val MSE: 0.014623 | val MSE(MPa^2): 74.904 | R2(MPa): 0.9844 | lr: 6.68e-06 | epoch: 7.2s
+Epoch 469 | train MSE: 0.004482 | val MSE: 0.014614 | val MSE(MPa^2): 74.858 | R2(MPa): 0.9844 | lr: 6.45e-06 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 470 | train MSE: 0.004460 | val MSE: 0.014616 | val MSE(MPa^2): 74.868 | R2(MPa): 0.9844 | lr: 6.23e-06 | epoch: 7.2s
+Epoch 471 | train MSE: 0.004471 | val MSE: 0.014625 | val MSE(MPa^2): 74.918 | R2(MPa): 0.9844 | lr: 6.02e-06 | epoch: 7.2s
+Epoch 472 | train MSE: 0.004462 | val MSE: 0.014623 | val MSE(MPa^2): 74.904 | R2(MPa): 0.9844 | lr: 5.82e-06 | epoch: 7.3s
+Epoch 473 | train MSE: 0.004480 | val MSE: 0.014608 | val MSE(MPa^2): 74.830 | R2(MPa): 0.9844 | lr: 5.62e-06 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 474 | train MSE: 0.004458 | val MSE: 0.014608 | val MSE(MPa^2): 74.828 | R2(MPa): 0.9844 | lr: 5.43e-06 | epoch: 7.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 475 | train MSE: 0.004477 | val MSE: 0.014626 | val MSE(MPa^2): 74.923 | R2(MPa): 0.9844 | lr: 5.25e-06 | epoch: 7.2s
+Epoch 476 | train MSE: 0.004452 | val MSE: 0.014618 | val MSE(MPa^2): 74.879 | R2(MPa): 0.9844 | lr: 5.07e-06 | epoch: 7.2s
+Epoch 477 | train MSE: 0.004466 | val MSE: 0.014616 | val MSE(MPa^2): 74.867 | R2(MPa): 0.9844 | lr: 4.90e-06 | epoch: 7.2s
+Epoch 478 | train MSE: 0.004455 | val MSE: 0.014618 | val MSE(MPa^2): 74.880 | R2(MPa): 0.9844 | lr: 4.74e-06 | epoch: 7.2s
+Epoch 479 | train MSE: 0.004461 | val MSE: 0.014592 | val MSE(MPa^2): 74.749 | R2(MPa): 0.9844 | lr: 4.59e-06 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 480 | train MSE: 0.004438 | val MSE: 0.014604 | val MSE(MPa^2): 74.808 | R2(MPa): 0.9844 | lr: 4.44e-06 | epoch: 7.2s
+Epoch 481 | train MSE: 0.004463 | val MSE: 0.014603 | val MSE(MPa^2): 74.806 | R2(MPa): 0.9844 | lr: 4.30e-06 | epoch: 7.2s
+Epoch 482 | train MSE: 0.004450 | val MSE: 0.014610 | val MSE(MPa^2): 74.841 | R2(MPa): 0.9844 | lr: 4.16e-06 | epoch: 7.2s
+Epoch 483 | train MSE: 0.004441 | val MSE: 0.014598 | val MSE(MPa^2): 74.778 | R2(MPa): 0.9844 | lr: 4.04e-06 | epoch: 7.2s
+Epoch 484 | train MSE: 0.004437 | val MSE: 0.014612 | val MSE(MPa^2): 74.848 | R2(MPa): 0.9844 | lr: 3.92e-06 | epoch: 7.2s
+Epoch 485 | train MSE: 0.004430 | val MSE: 0.014606 | val MSE(MPa^2): 74.817 | R2(MPa): 0.9844 | lr: 3.81e-06 | epoch: 7.2s
+Epoch 486 | train MSE: 0.004442 | val MSE: 0.014601 | val MSE(MPa^2): 74.791 | R2(MPa): 0.9844 | lr: 3.70e-06 | epoch: 7.2s
+Epoch 487 | train MSE: 0.004449 | val MSE: 0.014612 | val MSE(MPa^2): 74.848 | R2(MPa): 0.9844 | lr: 3.61e-06 | epoch: 7.2s
+Epoch 488 | train MSE: 0.004446 | val MSE: 0.014614 | val MSE(MPa^2): 74.860 | R2(MPa): 0.9844 | lr: 3.52e-06 | epoch: 7.2s
+Epoch 489 | train MSE: 0.004445 | val MSE: 0.014602 | val MSE(MPa^2): 74.796 | R2(MPa): 0.9844 | lr: 3.43e-06 | epoch: 7.2s
+Epoch 490 | train MSE: 0.004460 | val MSE: 0.014612 | val MSE(MPa^2): 74.852 | R2(MPa): 0.9844 | lr: 3.36e-06 | epoch: 7.2s
+Epoch 491 | train MSE: 0.004443 | val MSE: 0.014606 | val MSE(MPa^2): 74.819 | R2(MPa): 0.9844 | lr: 3.29e-06 | epoch: 7.2s
+Epoch 492 | train MSE: 0.004444 | val MSE: 0.014607 | val MSE(MPa^2): 74.825 | R2(MPa): 0.9844 | lr: 3.23e-06 | epoch: 7.2s
+Epoch 493 | train MSE: 0.004455 | val MSE: 0.014593 | val MSE(MPa^2): 74.754 | R2(MPa): 0.9844 | lr: 3.17e-06 | epoch: 7.2s
+Epoch 494 | train MSE: 0.004419 | val MSE: 0.014598 | val MSE(MPa^2): 74.776 | R2(MPa): 0.9844 | lr: 3.13e-06 | epoch: 7.2s
+Epoch 495 | train MSE: 0.004424 | val MSE: 0.014603 | val MSE(MPa^2): 74.805 | R2(MPa): 0.9844 | lr: 3.09e-06 | epoch: 7.2s
+Epoch 496 | train MSE: 0.004437 | val MSE: 0.014604 | val MSE(MPa^2): 74.810 | R2(MPa): 0.9844 | lr: 3.06e-06 | epoch: 7.3s
+Epoch 497 | train MSE: 0.004430 | val MSE: 0.014592 | val MSE(MPa^2): 74.748 | R2(MPa): 0.9844 | lr: 3.03e-06 | epoch: 7.2s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/L-pnmlp_412fd4ca.pt
+Epoch 498 | train MSE: 0.004436 | val MSE: 0.014598 | val MSE(MPa^2): 74.776 | R2(MPa): 0.9844 | lr: 3.01e-06 | epoch: 7.3s
+Epoch 499 | train MSE: 0.004433 | val MSE: 0.014603 | val MSE(MPa^2): 74.806 | R2(MPa): 0.9844 | lr: 3.00e-06 | epoch: 7.2s
+Epoch 500 | train MSE: 0.004445 | val MSE: 0.014601 | val MSE(MPa^2): 74.796 | R2(MPa): 0.9844 | lr: 3.00e-06 | epoch: 7.2s
+Training finished in 60.5 min. Best val MSE: 0.014592
+[GPU0] Preset=L | Completed with batch=80 | Geometry=L_bracket
+
+[GPU0] Preset=L | Trying batch=200 | Geometry=Plate_hole
+Starting training script with preset 'L', batch size 200, and dataset 'Plate_hole'
+CUDA device: NVIDIA RTX A5500
+Using device: cuda
+Loading data from: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/Plate_Hole/Plate_hole_stress.h5
+Found 2000 samples. Loading...
+Loaded 2000 datasets from the HDF5 file.
+Coord center=[0.5 0.5], half_range=[0.5 0.5] | stress_mean=12.8430, stress_std=6.9033
+Using 'batched_all' training with batch size 200
+Saving best checkpoint to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+[GPU0] OOM/CUDA at batch 200; reducing and retrying...
+
+[GPU0] Preset=L | Trying batch=180 | Geometry=Plate_hole
+Starting training script with preset 'L', batch size 180, and dataset 'Plate_hole'
+CUDA device: NVIDIA RTX A5500
+Using device: cuda
+Loading data from: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/Plate_Hole/Plate_hole_stress.h5
+Found 2000 samples. Loading...
+Loaded 2000 datasets from the HDF5 file.
+Coord center=[0.5 0.5], half_range=[0.5 0.5] | stress_mean=12.8430, stress_std=6.9033
+Using 'batched_all' training with batch size 180
+Saving best checkpoint to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+[GPU0] OOM/CUDA at batch 180; reducing and retrying...
+
+[GPU0] Preset=L | Trying batch=160 | Geometry=Plate_hole
+Starting training script with preset 'L', batch size 160, and dataset 'Plate_hole'
+CUDA device: NVIDIA RTX A5500
+Using device: cuda
+Loading data from: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/Plate_Hole/Plate_hole_stress.h5
+Found 2000 samples. Loading...
+Loaded 2000 datasets from the HDF5 file.
+Coord center=[0.5 0.5], half_range=[0.5 0.5] | stress_mean=12.8430, stress_std=6.9033
+Using 'batched_all' training with batch size 160
+Saving best checkpoint to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+[GPU0] OOM/CUDA at batch 160; reducing and retrying...
+
+[GPU0] Preset=L | Trying batch=140 | Geometry=Plate_hole
+Starting training script with preset 'L', batch size 140, and dataset 'Plate_hole'
+CUDA device: NVIDIA RTX A5500
+Using device: cuda
+Loading data from: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/Plate_Hole/Plate_hole_stress.h5
+Found 2000 samples. Loading...
+Loaded 2000 datasets from the HDF5 file.
+Coord center=[0.5 0.5], half_range=[0.5 0.5] | stress_mean=12.8430, stress_std=6.9033
+Using 'batched_all' training with batch size 140
+Saving best checkpoint to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+[GPU0] OOM/CUDA at batch 140; reducing and retrying...
+
+[GPU0] Preset=L | Trying batch=120 | Geometry=Plate_hole
+Starting training script with preset 'L', batch size 120, and dataset 'Plate_hole'
+CUDA device: NVIDIA RTX A5500
+Using device: cuda
+Loading data from: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/Plate_Hole/Plate_hole_stress.h5
+Found 2000 samples. Loading...
+Loaded 2000 datasets from the HDF5 file.
+Coord center=[0.5 0.5], half_range=[0.5 0.5] | stress_mean=12.8430, stress_std=6.9033
+Using 'batched_all' training with batch size 120
+Saving best checkpoint to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+[GPU0] OOM/CUDA at batch 120; reducing and retrying...
+
+[GPU0] Preset=L | Trying batch=100 | Geometry=Plate_hole
+Starting training script with preset 'L', batch size 100, and dataset 'Plate_hole'
+CUDA device: NVIDIA RTX A5500
+Using device: cuda
+Loading data from: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/Plate_Hole/Plate_hole_stress.h5
+Found 2000 samples. Loading...
+Loaded 2000 datasets from the HDF5 file.
+Coord center=[0.5 0.5], half_range=[0.5 0.5] | stress_mean=12.8430, stress_std=6.9033
+Using 'batched_all' training with batch size 100
+Saving best checkpoint to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+[GPU0] OOM/CUDA at batch 100; reducing and retrying...
+
+[GPU0] Preset=L | Trying batch=80 | Geometry=Plate_hole
+Starting training script with preset 'L', batch size 80, and dataset 'Plate_hole'
+CUDA device: NVIDIA RTX A5500
+Using device: cuda
+Loading data from: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/Plate_Hole/Plate_hole_stress.h5
+Found 2000 samples. Loading...
+Loaded 2000 datasets from the HDF5 file.
+Coord center=[0.5 0.5], half_range=[0.5 0.5] | stress_mean=12.8430, stress_std=6.9033
+Using 'batched_all' training with batch size 80
+Saving best checkpoint to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+[GPU0] OOM/CUDA at batch 80; reducing and retrying...
+
+[GPU0] Preset=L | Trying batch=60 | Geometry=Plate_hole
+Starting training script with preset 'L', batch size 60, and dataset 'Plate_hole'
+CUDA device: NVIDIA RTX A5500
+Using device: cuda
+Loading data from: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/Plate_Hole/Plate_hole_stress.h5
+Found 2000 samples. Loading...
+Loaded 2000 datasets from the HDF5 file.
+Coord center=[0.5 0.5], half_range=[0.5 0.5] | stress_mean=12.8430, stress_std=6.9033
+Using 'batched_all' training with batch size 60
+Saving best checkpoint to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 001 | train MSE: 3.679369 | val MSE: 1.299272 | val MSE(MPa^2): 61.917 | R2(MPa): -0.2991 | lr: 3.03e-05 | epoch: 9.5s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 002 | train MSE: 1.073466 | val MSE: 0.973999 | val MSE(MPa^2): 46.416 | R2(MPa): 0.0261 | lr: 3.11e-05 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 003 | train MSE: 0.949313 | val MSE: 1.081903 | val MSE(MPa^2): 51.558 | R2(MPa): -0.0818 | lr: 3.24e-05 | epoch: 9.4s
+Epoch 004 | train MSE: 1.043094 | val MSE: 0.891976 | val MSE(MPa^2): 42.507 | R2(MPa): 0.1081 | lr: 3.42e-05 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 005 | train MSE: 0.904224 | val MSE: 0.881863 | val MSE(MPa^2): 42.025 | R2(MPa): 0.1183 | lr: 3.66e-05 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 006 | train MSE: 0.849553 | val MSE: 0.860537 | val MSE(MPa^2): 41.009 | R2(MPa): 0.1396 | lr: 3.95e-05 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 007 | train MSE: 0.813237 | val MSE: 0.821764 | val MSE(MPa^2): 39.161 | R2(MPa): 0.1783 | lr: 4.29e-05 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 008 | train MSE: 0.747277 | val MSE: 0.737394 | val MSE(MPa^2): 35.141 | R2(MPa): 0.2627 | lr: 4.67e-05 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 009 | train MSE: 0.672705 | val MSE: 0.657782 | val MSE(MPa^2): 31.347 | R2(MPa): 0.3423 | lr: 5.10e-05 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 010 | train MSE: 0.629354 | val MSE: 0.651588 | val MSE(MPa^2): 31.051 | R2(MPa): 0.3485 | lr: 5.58e-05 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 011 | train MSE: 0.598941 | val MSE: 0.595966 | val MSE(MPa^2): 28.401 | R2(MPa): 0.4041 | lr: 6.10e-05 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 012 | train MSE: 0.556119 | val MSE: 0.570675 | val MSE(MPa^2): 27.196 | R2(MPa): 0.4294 | lr: 6.66e-05 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 013 | train MSE: 0.522384 | val MSE: 0.541506 | val MSE(MPa^2): 25.806 | R2(MPa): 0.4586 | lr: 7.26e-05 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 014 | train MSE: 0.503054 | val MSE: 0.512138 | val MSE(MPa^2): 24.406 | R2(MPa): 0.4879 | lr: 7.90e-05 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 015 | train MSE: 0.474523 | val MSE: 0.502911 | val MSE(MPa^2): 23.966 | R2(MPa): 0.4972 | lr: 8.57e-05 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 016 | train MSE: 0.450466 | val MSE: 0.465550 | val MSE(MPa^2): 22.186 | R2(MPa): 0.5345 | lr: 9.27e-05 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 017 | train MSE: 0.430973 | val MSE: 0.459825 | val MSE(MPa^2): 21.913 | R2(MPa): 0.5402 | lr: 1.00e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 018 | train MSE: 0.409554 | val MSE: 0.437778 | val MSE(MPa^2): 20.862 | R2(MPa): 0.5623 | lr: 1.08e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 019 | train MSE: 0.393788 | val MSE: 0.430149 | val MSE(MPa^2): 20.499 | R2(MPa): 0.5699 | lr: 1.15e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 020 | train MSE: 0.382491 | val MSE: 0.407371 | val MSE(MPa^2): 19.413 | R2(MPa): 0.5927 | lr: 1.23e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 021 | train MSE: 0.362183 | val MSE: 0.402491 | val MSE(MPa^2): 19.181 | R2(MPa): 0.5976 | lr: 1.32e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 022 | train MSE: 0.349356 | val MSE: 0.404895 | val MSE(MPa^2): 19.295 | R2(MPa): 0.5952 | lr: 1.40e-04 | epoch: 9.4s
+Epoch 023 | train MSE: 0.344328 | val MSE: 0.384619 | val MSE(MPa^2): 18.329 | R2(MPa): 0.6154 | lr: 1.48e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 024 | train MSE: 0.336683 | val MSE: 0.377890 | val MSE(MPa^2): 18.008 | R2(MPa): 0.6222 | lr: 1.57e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 025 | train MSE: 0.330578 | val MSE: 0.375568 | val MSE(MPa^2): 17.898 | R2(MPa): 0.6245 | lr: 1.65e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 026 | train MSE: 0.314172 | val MSE: 0.356842 | val MSE(MPa^2): 17.005 | R2(MPa): 0.6432 | lr: 1.74e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 027 | train MSE: 0.309087 | val MSE: 0.396677 | val MSE(MPa^2): 18.904 | R2(MPa): 0.6034 | lr: 1.82e-04 | epoch: 9.4s
+Epoch 028 | train MSE: 0.319945 | val MSE: 0.322567 | val MSE(MPa^2): 15.372 | R2(MPa): 0.6775 | lr: 1.90e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 029 | train MSE: 0.281863 | val MSE: 0.324901 | val MSE(MPa^2): 15.483 | R2(MPa): 0.6751 | lr: 1.99e-04 | epoch: 9.4s
+Epoch 030 | train MSE: 0.284149 | val MSE: 0.334738 | val MSE(MPa^2): 15.952 | R2(MPa): 0.6653 | lr: 2.07e-04 | epoch: 9.4s
+Epoch 031 | train MSE: 0.297886 | val MSE: 0.339854 | val MSE(MPa^2): 16.196 | R2(MPa): 0.6602 | lr: 2.15e-04 | epoch: 9.4s
+Epoch 032 | train MSE: 0.278017 | val MSE: 0.330496 | val MSE(MPa^2): 15.750 | R2(MPa): 0.6695 | lr: 2.23e-04 | epoch: 9.4s
+Epoch 033 | train MSE: 0.264257 | val MSE: 0.281053 | val MSE(MPa^2): 13.394 | R2(MPa): 0.7190 | lr: 2.30e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 034 | train MSE: 0.240860 | val MSE: 0.266402 | val MSE(MPa^2): 12.695 | R2(MPa): 0.7336 | lr: 2.38e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 035 | train MSE: 0.246530 | val MSE: 0.265224 | val MSE(MPa^2): 12.639 | R2(MPa): 0.7348 | lr: 2.45e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 036 | train MSE: 0.227614 | val MSE: 0.262769 | val MSE(MPa^2): 12.522 | R2(MPa): 0.7373 | lr: 2.51e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 037 | train MSE: 0.224545 | val MSE: 0.265269 | val MSE(MPa^2): 12.641 | R2(MPa): 0.7348 | lr: 2.58e-04 | epoch: 9.4s
+Epoch 038 | train MSE: 0.206035 | val MSE: 0.251212 | val MSE(MPa^2): 11.972 | R2(MPa): 0.7488 | lr: 2.64e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 039 | train MSE: 0.219341 | val MSE: 0.261617 | val MSE(MPa^2): 12.467 | R2(MPa): 0.7384 | lr: 2.69e-04 | epoch: 9.4s
+Epoch 040 | train MSE: 0.213216 | val MSE: 0.216509 | val MSE(MPa^2): 10.318 | R2(MPa): 0.7835 | lr: 2.74e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 041 | train MSE: 0.192578 | val MSE: 0.223204 | val MSE(MPa^2): 10.637 | R2(MPa): 0.7768 | lr: 2.79e-04 | epoch: 9.4s
+Epoch 042 | train MSE: 0.185701 | val MSE: 0.232333 | val MSE(MPa^2): 11.072 | R2(MPa): 0.7677 | lr: 2.83e-04 | epoch: 9.4s
+Epoch 043 | train MSE: 0.184970 | val MSE: 0.202644 | val MSE(MPa^2): 9.657 | R2(MPa): 0.7974 | lr: 2.87e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 044 | train MSE: 0.182391 | val MSE: 0.189978 | val MSE(MPa^2): 9.053 | R2(MPa): 0.8100 | lr: 2.91e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 045 | train MSE: 0.170209 | val MSE: 0.179519 | val MSE(MPa^2): 8.555 | R2(MPa): 0.8205 | lr: 2.93e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 046 | train MSE: 0.165434 | val MSE: 0.224750 | val MSE(MPa^2): 10.710 | R2(MPa): 0.7753 | lr: 2.96e-04 | epoch: 9.4s
+Epoch 047 | train MSE: 0.168445 | val MSE: 0.210245 | val MSE(MPa^2): 10.019 | R2(MPa): 0.7898 | lr: 2.98e-04 | epoch: 9.4s
+Epoch 048 | train MSE: 0.164355 | val MSE: 0.227196 | val MSE(MPa^2): 10.827 | R2(MPa): 0.7728 | lr: 2.99e-04 | epoch: 9.4s
+Epoch 049 | train MSE: 0.172885 | val MSE: 0.180831 | val MSE(MPa^2): 8.618 | R2(MPa): 0.8192 | lr: 3.00e-04 | epoch: 9.4s
+Epoch 050 | train MSE: 0.151246 | val MSE: 0.198886 | val MSE(MPa^2): 9.478 | R2(MPa): 0.8011 | lr: 3.00e-04 | epoch: 9.4s
+Epoch 051 | train MSE: 0.154886 | val MSE: 0.169054 | val MSE(MPa^2): 8.056 | R2(MPa): 0.8310 | lr: 3.00e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 052 | train MSE: 0.149439 | val MSE: 0.179392 | val MSE(MPa^2): 8.549 | R2(MPa): 0.8206 | lr: 3.00e-04 | epoch: 9.4s
+Epoch 053 | train MSE: 0.155902 | val MSE: 0.163752 | val MSE(MPa^2): 7.804 | R2(MPa): 0.8363 | lr: 3.00e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 054 | train MSE: 0.135249 | val MSE: 0.150677 | val MSE(MPa^2): 7.181 | R2(MPa): 0.8493 | lr: 3.00e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 055 | train MSE: 0.137192 | val MSE: 0.179099 | val MSE(MPa^2): 8.535 | R2(MPa): 0.8209 | lr: 3.00e-04 | epoch: 9.4s
+Epoch 056 | train MSE: 0.127330 | val MSE: 0.144672 | val MSE(MPa^2): 6.894 | R2(MPa): 0.8553 | lr: 3.00e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 057 | train MSE: 0.114493 | val MSE: 0.141333 | val MSE(MPa^2): 6.735 | R2(MPa): 0.8587 | lr: 3.00e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 058 | train MSE: 0.119242 | val MSE: 0.136623 | val MSE(MPa^2): 6.511 | R2(MPa): 0.8634 | lr: 3.00e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 059 | train MSE: 0.118135 | val MSE: 0.149546 | val MSE(MPa^2): 7.127 | R2(MPa): 0.8505 | lr: 3.00e-04 | epoch: 9.4s
+Epoch 060 | train MSE: 0.118092 | val MSE: 0.135630 | val MSE(MPa^2): 6.463 | R2(MPa): 0.8644 | lr: 3.00e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 061 | train MSE: 0.112466 | val MSE: 0.130737 | val MSE(MPa^2): 6.230 | R2(MPa): 0.8693 | lr: 3.00e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 062 | train MSE: 0.101449 | val MSE: 0.138451 | val MSE(MPa^2): 6.598 | R2(MPa): 0.8616 | lr: 2.99e-04 | epoch: 9.4s
+Epoch 063 | train MSE: 0.113637 | val MSE: 0.130227 | val MSE(MPa^2): 6.206 | R2(MPa): 0.8698 | lr: 2.99e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 064 | train MSE: 0.101173 | val MSE: 0.131816 | val MSE(MPa^2): 6.282 | R2(MPa): 0.8682 | lr: 2.99e-04 | epoch: 9.4s
+Epoch 065 | train MSE: 0.099157 | val MSE: 0.130507 | val MSE(MPa^2): 6.219 | R2(MPa): 0.8695 | lr: 2.99e-04 | epoch: 9.4s
+Epoch 066 | train MSE: 0.093608 | val MSE: 0.113041 | val MSE(MPa^2): 5.387 | R2(MPa): 0.8870 | lr: 2.99e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 067 | train MSE: 0.093097 | val MSE: 0.119498 | val MSE(MPa^2): 5.695 | R2(MPa): 0.8805 | lr: 2.99e-04 | epoch: 9.4s
+Epoch 068 | train MSE: 0.093600 | val MSE: 0.132122 | val MSE(MPa^2): 6.296 | R2(MPa): 0.8679 | lr: 2.99e-04 | epoch: 9.4s
+Epoch 069 | train MSE: 0.094755 | val MSE: 0.109340 | val MSE(MPa^2): 5.211 | R2(MPa): 0.8907 | lr: 2.99e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 070 | train MSE: 0.087490 | val MSE: 0.109679 | val MSE(MPa^2): 5.227 | R2(MPa): 0.8903 | lr: 2.99e-04 | epoch: 9.4s
+Epoch 071 | train MSE: 0.085727 | val MSE: 0.108961 | val MSE(MPa^2): 5.193 | R2(MPa): 0.8911 | lr: 2.98e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 072 | train MSE: 0.090876 | val MSE: 0.116516 | val MSE(MPa^2): 5.553 | R2(MPa): 0.8835 | lr: 2.98e-04 | epoch: 9.4s
+Epoch 073 | train MSE: 0.090823 | val MSE: 0.123165 | val MSE(MPa^2): 5.869 | R2(MPa): 0.8769 | lr: 2.98e-04 | epoch: 9.4s
+Epoch 074 | train MSE: 0.090271 | val MSE: 0.111856 | val MSE(MPa^2): 5.331 | R2(MPa): 0.8882 | lr: 2.98e-04 | epoch: 9.4s
+Epoch 075 | train MSE: 0.081004 | val MSE: 0.100394 | val MSE(MPa^2): 4.784 | R2(MPa): 0.8996 | lr: 2.98e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 076 | train MSE: 0.078800 | val MSE: 0.111868 | val MSE(MPa^2): 5.331 | R2(MPa): 0.8881 | lr: 2.98e-04 | epoch: 9.4s
+Epoch 077 | train MSE: 0.081809 | val MSE: 0.094851 | val MSE(MPa^2): 4.520 | R2(MPa): 0.9052 | lr: 2.97e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 078 | train MSE: 0.078130 | val MSE: 0.112209 | val MSE(MPa^2): 5.347 | R2(MPa): 0.8878 | lr: 2.97e-04 | epoch: 9.4s
+Epoch 079 | train MSE: 0.080666 | val MSE: 0.094991 | val MSE(MPa^2): 4.527 | R2(MPa): 0.9050 | lr: 2.97e-04 | epoch: 9.4s
+Epoch 080 | train MSE: 0.077556 | val MSE: 0.094198 | val MSE(MPa^2): 4.489 | R2(MPa): 0.9058 | lr: 2.97e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 081 | train MSE: 0.074189 | val MSE: 0.097653 | val MSE(MPa^2): 4.654 | R2(MPa): 0.9024 | lr: 2.97e-04 | epoch: 9.4s
+Epoch 082 | train MSE: 0.075695 | val MSE: 0.089435 | val MSE(MPa^2): 4.262 | R2(MPa): 0.9106 | lr: 2.96e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 083 | train MSE: 0.072609 | val MSE: 0.104160 | val MSE(MPa^2): 4.964 | R2(MPa): 0.8959 | lr: 2.96e-04 | epoch: 9.4s
+Epoch 084 | train MSE: 0.071005 | val MSE: 0.094973 | val MSE(MPa^2): 4.526 | R2(MPa): 0.9050 | lr: 2.96e-04 | epoch: 9.4s
+Epoch 085 | train MSE: 0.069673 | val MSE: 0.094632 | val MSE(MPa^2): 4.510 | R2(MPa): 0.9054 | lr: 2.96e-04 | epoch: 9.4s
+Epoch 086 | train MSE: 0.069447 | val MSE: 0.087222 | val MSE(MPa^2): 4.157 | R2(MPa): 0.9128 | lr: 2.95e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 087 | train MSE: 0.068129 | val MSE: 0.095978 | val MSE(MPa^2): 4.574 | R2(MPa): 0.9040 | lr: 2.95e-04 | epoch: 9.4s
+Epoch 088 | train MSE: 0.067053 | val MSE: 0.084434 | val MSE(MPa^2): 4.024 | R2(MPa): 0.9156 | lr: 2.95e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 089 | train MSE: 0.064706 | val MSE: 0.093632 | val MSE(MPa^2): 4.462 | R2(MPa): 0.9064 | lr: 2.95e-04 | epoch: 9.4s
+Epoch 090 | train MSE: 0.066640 | val MSE: 0.094500 | val MSE(MPa^2): 4.503 | R2(MPa): 0.9055 | lr: 2.94e-04 | epoch: 9.4s
+Epoch 091 | train MSE: 0.070371 | val MSE: 0.089674 | val MSE(MPa^2): 4.273 | R2(MPa): 0.9103 | lr: 2.94e-04 | epoch: 9.4s
+Epoch 092 | train MSE: 0.065825 | val MSE: 0.085383 | val MSE(MPa^2): 4.069 | R2(MPa): 0.9146 | lr: 2.94e-04 | epoch: 9.4s
+Epoch 093 | train MSE: 0.060629 | val MSE: 0.085937 | val MSE(MPa^2): 4.095 | R2(MPa): 0.9141 | lr: 2.93e-04 | epoch: 9.4s
+Epoch 094 | train MSE: 0.062142 | val MSE: 0.083291 | val MSE(MPa^2): 3.969 | R2(MPa): 0.9167 | lr: 2.93e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 095 | train MSE: 0.061494 | val MSE: 0.079476 | val MSE(MPa^2): 3.787 | R2(MPa): 0.9205 | lr: 2.93e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 096 | train MSE: 0.057108 | val MSE: 0.080618 | val MSE(MPa^2): 3.842 | R2(MPa): 0.9194 | lr: 2.92e-04 | epoch: 9.4s
+Epoch 097 | train MSE: 0.055625 | val MSE: 0.078077 | val MSE(MPa^2): 3.721 | R2(MPa): 0.9219 | lr: 2.92e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 098 | train MSE: 0.059939 | val MSE: 0.078366 | val MSE(MPa^2): 3.735 | R2(MPa): 0.9216 | lr: 2.92e-04 | epoch: 9.4s
+Epoch 099 | train MSE: 0.057743 | val MSE: 0.082987 | val MSE(MPa^2): 3.955 | R2(MPa): 0.9170 | lr: 2.91e-04 | epoch: 9.4s
+Epoch 100 | train MSE: 0.057982 | val MSE: 0.076611 | val MSE(MPa^2): 3.651 | R2(MPa): 0.9234 | lr: 2.91e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 101 | train MSE: 0.057333 | val MSE: 0.088120 | val MSE(MPa^2): 4.199 | R2(MPa): 0.9119 | lr: 2.91e-04 | epoch: 9.4s
+Epoch 102 | train MSE: 0.056049 | val MSE: 0.080199 | val MSE(MPa^2): 3.822 | R2(MPa): 0.9198 | lr: 2.90e-04 | epoch: 9.4s
+Epoch 103 | train MSE: 0.056930 | val MSE: 0.076168 | val MSE(MPa^2): 3.630 | R2(MPa): 0.9238 | lr: 2.90e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 104 | train MSE: 0.055447 | val MSE: 0.073533 | val MSE(MPa^2): 3.504 | R2(MPa): 0.9265 | lr: 2.90e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 105 | train MSE: 0.054651 | val MSE: 0.081425 | val MSE(MPa^2): 3.880 | R2(MPa): 0.9186 | lr: 2.89e-04 | epoch: 9.4s
+Epoch 106 | train MSE: 0.056295 | val MSE: 0.079178 | val MSE(MPa^2): 3.773 | R2(MPa): 0.9208 | lr: 2.89e-04 | epoch: 9.4s
+Epoch 107 | train MSE: 0.054798 | val MSE: 0.072296 | val MSE(MPa^2): 3.445 | R2(MPa): 0.9277 | lr: 2.88e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 108 | train MSE: 0.054899 | val MSE: 0.073607 | val MSE(MPa^2): 3.508 | R2(MPa): 0.9264 | lr: 2.88e-04 | epoch: 9.4s
+Epoch 109 | train MSE: 0.052566 | val MSE: 0.069111 | val MSE(MPa^2): 3.293 | R2(MPa): 0.9309 | lr: 2.88e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 110 | train MSE: 0.050185 | val MSE: 0.068653 | val MSE(MPa^2): 3.272 | R2(MPa): 0.9314 | lr: 2.87e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 111 | train MSE: 0.050934 | val MSE: 0.068295 | val MSE(MPa^2): 3.255 | R2(MPa): 0.9317 | lr: 2.87e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 112 | train MSE: 0.049287 | val MSE: 0.069975 | val MSE(MPa^2): 3.335 | R2(MPa): 0.9300 | lr: 2.86e-04 | epoch: 9.4s
+Epoch 113 | train MSE: 0.050113 | val MSE: 0.068827 | val MSE(MPa^2): 3.280 | R2(MPa): 0.9312 | lr: 2.86e-04 | epoch: 9.4s
+Epoch 114 | train MSE: 0.051733 | val MSE: 0.068919 | val MSE(MPa^2): 3.284 | R2(MPa): 0.9311 | lr: 2.85e-04 | epoch: 9.4s
+Epoch 115 | train MSE: 0.047435 | val MSE: 0.071169 | val MSE(MPa^2): 3.392 | R2(MPa): 0.9288 | lr: 2.85e-04 | epoch: 9.4s
+Epoch 116 | train MSE: 0.046578 | val MSE: 0.066778 | val MSE(MPa^2): 3.182 | R2(MPa): 0.9332 | lr: 2.84e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 117 | train MSE: 0.047050 | val MSE: 0.066523 | val MSE(MPa^2): 3.170 | R2(MPa): 0.9335 | lr: 2.84e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 118 | train MSE: 0.045008 | val MSE: 0.066257 | val MSE(MPa^2): 3.158 | R2(MPa): 0.9338 | lr: 2.84e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 119 | train MSE: 0.046831 | val MSE: 0.065370 | val MSE(MPa^2): 3.115 | R2(MPa): 0.9346 | lr: 2.83e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 120 | train MSE: 0.047153 | val MSE: 0.067544 | val MSE(MPa^2): 3.219 | R2(MPa): 0.9325 | lr: 2.83e-04 | epoch: 9.4s
+Epoch 121 | train MSE: 0.045765 | val MSE: 0.065610 | val MSE(MPa^2): 3.127 | R2(MPa): 0.9344 | lr: 2.82e-04 | epoch: 9.4s
+Epoch 122 | train MSE: 0.046097 | val MSE: 0.066664 | val MSE(MPa^2): 3.177 | R2(MPa): 0.9333 | lr: 2.82e-04 | epoch: 9.4s
+Epoch 123 | train MSE: 0.043941 | val MSE: 0.065392 | val MSE(MPa^2): 3.116 | R2(MPa): 0.9346 | lr: 2.81e-04 | epoch: 9.4s
+Epoch 124 | train MSE: 0.043509 | val MSE: 0.072885 | val MSE(MPa^2): 3.473 | R2(MPa): 0.9271 | lr: 2.81e-04 | epoch: 9.4s
+Epoch 125 | train MSE: 0.045845 | val MSE: 0.070705 | val MSE(MPa^2): 3.369 | R2(MPa): 0.9293 | lr: 2.80e-04 | epoch: 9.4s
+Epoch 126 | train MSE: 0.045072 | val MSE: 0.071349 | val MSE(MPa^2): 3.400 | R2(MPa): 0.9287 | lr: 2.80e-04 | epoch: 9.4s
+Epoch 127 | train MSE: 0.045585 | val MSE: 0.061275 | val MSE(MPa^2): 2.920 | R2(MPa): 0.9387 | lr: 2.79e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 128 | train MSE: 0.041019 | val MSE: 0.061000 | val MSE(MPa^2): 2.907 | R2(MPa): 0.9390 | lr: 2.79e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 129 | train MSE: 0.040704 | val MSE: 0.064997 | val MSE(MPa^2): 3.097 | R2(MPa): 0.9350 | lr: 2.78e-04 | epoch: 9.4s
+Epoch 130 | train MSE: 0.041940 | val MSE: 0.060692 | val MSE(MPa^2): 2.892 | R2(MPa): 0.9393 | lr: 2.77e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 131 | train MSE: 0.039082 | val MSE: 0.058435 | val MSE(MPa^2): 2.785 | R2(MPa): 0.9416 | lr: 2.77e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 132 | train MSE: 0.036939 | val MSE: 0.063167 | val MSE(MPa^2): 3.010 | R2(MPa): 0.9368 | lr: 2.76e-04 | epoch: 9.4s
+Epoch 133 | train MSE: 0.041754 | val MSE: 0.072088 | val MSE(MPa^2): 3.435 | R2(MPa): 0.9279 | lr: 2.76e-04 | epoch: 9.4s
+Epoch 134 | train MSE: 0.042563 | val MSE: 0.060839 | val MSE(MPa^2): 2.899 | R2(MPa): 0.9392 | lr: 2.75e-04 | epoch: 9.4s
+Epoch 135 | train MSE: 0.039988 | val MSE: 0.064468 | val MSE(MPa^2): 3.072 | R2(MPa): 0.9355 | lr: 2.75e-04 | epoch: 9.4s
+Epoch 136 | train MSE: 0.040088 | val MSE: 0.058753 | val MSE(MPa^2): 2.800 | R2(MPa): 0.9413 | lr: 2.74e-04 | epoch: 9.4s
+Epoch 137 | train MSE: 0.039743 | val MSE: 0.067167 | val MSE(MPa^2): 3.201 | R2(MPa): 0.9328 | lr: 2.73e-04 | epoch: 9.4s
+Epoch 138 | train MSE: 0.042228 | val MSE: 0.058019 | val MSE(MPa^2): 2.765 | R2(MPa): 0.9420 | lr: 2.73e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 139 | train MSE: 0.036833 | val MSE: 0.057732 | val MSE(MPa^2): 2.751 | R2(MPa): 0.9423 | lr: 2.72e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 140 | train MSE: 0.040300 | val MSE: 0.059990 | val MSE(MPa^2): 2.859 | R2(MPa): 0.9400 | lr: 2.72e-04 | epoch: 9.4s
+Epoch 141 | train MSE: 0.037308 | val MSE: 0.055608 | val MSE(MPa^2): 2.650 | R2(MPa): 0.9444 | lr: 2.71e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 142 | train MSE: 0.034186 | val MSE: 0.056806 | val MSE(MPa^2): 2.707 | R2(MPa): 0.9432 | lr: 2.70e-04 | epoch: 9.4s
+Epoch 143 | train MSE: 0.037650 | val MSE: 0.057182 | val MSE(MPa^2): 2.725 | R2(MPa): 0.9428 | lr: 2.70e-04 | epoch: 9.4s
+Epoch 144 | train MSE: 0.035454 | val MSE: 0.059134 | val MSE(MPa^2): 2.818 | R2(MPa): 0.9409 | lr: 2.69e-04 | epoch: 9.4s
+Epoch 145 | train MSE: 0.035286 | val MSE: 0.054616 | val MSE(MPa^2): 2.603 | R2(MPa): 0.9454 | lr: 2.68e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 146 | train MSE: 0.035898 | val MSE: 0.057614 | val MSE(MPa^2): 2.746 | R2(MPa): 0.9424 | lr: 2.68e-04 | epoch: 9.4s
+Epoch 147 | train MSE: 0.036778 | val MSE: 0.055902 | val MSE(MPa^2): 2.664 | R2(MPa): 0.9441 | lr: 2.67e-04 | epoch: 9.4s
+Epoch 148 | train MSE: 0.033076 | val MSE: 0.051868 | val MSE(MPa^2): 2.472 | R2(MPa): 0.9481 | lr: 2.67e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 149 | train MSE: 0.033434 | val MSE: 0.053413 | val MSE(MPa^2): 2.545 | R2(MPa): 0.9466 | lr: 2.66e-04 | epoch: 9.4s
+Epoch 150 | train MSE: 0.033055 | val MSE: 0.053448 | val MSE(MPa^2): 2.547 | R2(MPa): 0.9466 | lr: 2.65e-04 | epoch: 9.4s
+Epoch 151 | train MSE: 0.032541 | val MSE: 0.050117 | val MSE(MPa^2): 2.388 | R2(MPa): 0.9499 | lr: 2.65e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 152 | train MSE: 0.029904 | val MSE: 0.049980 | val MSE(MPa^2): 2.382 | R2(MPa): 0.9500 | lr: 2.64e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 153 | train MSE: 0.030851 | val MSE: 0.053578 | val MSE(MPa^2): 2.553 | R2(MPa): 0.9464 | lr: 2.63e-04 | epoch: 9.4s
+Epoch 154 | train MSE: 0.031841 | val MSE: 0.053926 | val MSE(MPa^2): 2.570 | R2(MPa): 0.9461 | lr: 2.63e-04 | epoch: 9.4s
+Epoch 155 | train MSE: 0.033728 | val MSE: 0.054280 | val MSE(MPa^2): 2.587 | R2(MPa): 0.9457 | lr: 2.62e-04 | epoch: 9.4s
+Epoch 156 | train MSE: 0.031800 | val MSE: 0.052897 | val MSE(MPa^2): 2.521 | R2(MPa): 0.9471 | lr: 2.61e-04 | epoch: 9.4s
+Epoch 157 | train MSE: 0.034701 | val MSE: 0.056880 | val MSE(MPa^2): 2.711 | R2(MPa): 0.9431 | lr: 2.60e-04 | epoch: 9.4s
+Epoch 158 | train MSE: 0.032098 | val MSE: 0.051694 | val MSE(MPa^2): 2.463 | R2(MPa): 0.9483 | lr: 2.60e-04 | epoch: 9.4s
+Epoch 159 | train MSE: 0.031169 | val MSE: 0.052244 | val MSE(MPa^2): 2.490 | R2(MPa): 0.9478 | lr: 2.59e-04 | epoch: 9.4s
+Epoch 160 | train MSE: 0.032041 | val MSE: 0.051247 | val MSE(MPa^2): 2.442 | R2(MPa): 0.9488 | lr: 2.58e-04 | epoch: 9.4s
+Epoch 161 | train MSE: 0.030659 | val MSE: 0.053796 | val MSE(MPa^2): 2.564 | R2(MPa): 0.9462 | lr: 2.58e-04 | epoch: 9.4s
+Epoch 162 | train MSE: 0.034067 | val MSE: 0.056630 | val MSE(MPa^2): 2.699 | R2(MPa): 0.9434 | lr: 2.57e-04 | epoch: 9.4s
+Epoch 163 | train MSE: 0.032506 | val MSE: 0.051343 | val MSE(MPa^2): 2.447 | R2(MPa): 0.9487 | lr: 2.56e-04 | epoch: 9.4s
+Epoch 164 | train MSE: 0.030725 | val MSE: 0.049142 | val MSE(MPa^2): 2.342 | R2(MPa): 0.9509 | lr: 2.55e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 165 | train MSE: 0.035198 | val MSE: 0.058692 | val MSE(MPa^2): 2.797 | R2(MPa): 0.9413 | lr: 2.55e-04 | epoch: 9.4s
+Epoch 166 | train MSE: 0.035047 | val MSE: 0.052612 | val MSE(MPa^2): 2.507 | R2(MPa): 0.9474 | lr: 2.54e-04 | epoch: 9.4s
+Epoch 167 | train MSE: 0.031404 | val MSE: 0.049079 | val MSE(MPa^2): 2.339 | R2(MPa): 0.9509 | lr: 2.53e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 168 | train MSE: 0.026590 | val MSE: 0.045325 | val MSE(MPa^2): 2.160 | R2(MPa): 0.9547 | lr: 2.52e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 169 | train MSE: 0.026337 | val MSE: 0.046204 | val MSE(MPa^2): 2.202 | R2(MPa): 0.9538 | lr: 2.52e-04 | epoch: 9.4s
+Epoch 170 | train MSE: 0.026029 | val MSE: 0.046666 | val MSE(MPa^2): 2.224 | R2(MPa): 0.9533 | lr: 2.51e-04 | epoch: 9.4s
+Epoch 171 | train MSE: 0.025734 | val MSE: 0.046824 | val MSE(MPa^2): 2.231 | R2(MPa): 0.9532 | lr: 2.50e-04 | epoch: 9.4s
+Epoch 172 | train MSE: 0.026904 | val MSE: 0.050847 | val MSE(MPa^2): 2.423 | R2(MPa): 0.9492 | lr: 2.49e-04 | epoch: 9.4s
+Epoch 173 | train MSE: 0.029325 | val MSE: 0.049120 | val MSE(MPa^2): 2.341 | R2(MPa): 0.9509 | lr: 2.49e-04 | epoch: 9.4s
+Epoch 174 | train MSE: 0.029865 | val MSE: 0.049484 | val MSE(MPa^2): 2.358 | R2(MPa): 0.9505 | lr: 2.48e-04 | epoch: 9.4s
+Epoch 175 | train MSE: 0.027960 | val MSE: 0.046003 | val MSE(MPa^2): 2.192 | R2(MPa): 0.9540 | lr: 2.47e-04 | epoch: 9.4s
+Epoch 176 | train MSE: 0.025816 | val MSE: 0.046267 | val MSE(MPa^2): 2.205 | R2(MPa): 0.9537 | lr: 2.46e-04 | epoch: 9.4s
+Epoch 177 | train MSE: 0.027618 | val MSE: 0.047604 | val MSE(MPa^2): 2.269 | R2(MPa): 0.9524 | lr: 2.45e-04 | epoch: 9.4s
+Epoch 178 | train MSE: 0.027241 | val MSE: 0.049844 | val MSE(MPa^2): 2.375 | R2(MPa): 0.9502 | lr: 2.45e-04 | epoch: 9.4s
+Epoch 179 | train MSE: 0.027204 | val MSE: 0.046445 | val MSE(MPa^2): 2.213 | R2(MPa): 0.9536 | lr: 2.44e-04 | epoch: 9.4s
+Epoch 180 | train MSE: 0.025204 | val MSE: 0.047139 | val MSE(MPa^2): 2.246 | R2(MPa): 0.9529 | lr: 2.43e-04 | epoch: 9.4s
+Epoch 181 | train MSE: 0.025643 | val MSE: 0.045958 | val MSE(MPa^2): 2.190 | R2(MPa): 0.9540 | lr: 2.42e-04 | epoch: 9.4s
+Epoch 182 | train MSE: 0.028747 | val MSE: 0.050655 | val MSE(MPa^2): 2.414 | R2(MPa): 0.9494 | lr: 2.41e-04 | epoch: 9.4s
+Epoch 183 | train MSE: 0.029553 | val MSE: 0.048204 | val MSE(MPa^2): 2.297 | R2(MPa): 0.9518 | lr: 2.40e-04 | epoch: 9.4s
+Epoch 184 | train MSE: 0.030311 | val MSE: 0.048709 | val MSE(MPa^2): 2.321 | R2(MPa): 0.9513 | lr: 2.40e-04 | epoch: 9.4s
+Epoch 185 | train MSE: 0.025816 | val MSE: 0.044466 | val MSE(MPa^2): 2.119 | R2(MPa): 0.9555 | lr: 2.39e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 186 | train MSE: 0.024061 | val MSE: 0.045305 | val MSE(MPa^2): 2.159 | R2(MPa): 0.9547 | lr: 2.38e-04 | epoch: 9.4s
+Epoch 187 | train MSE: 0.024324 | val MSE: 0.044591 | val MSE(MPa^2): 2.125 | R2(MPa): 0.9554 | lr: 2.37e-04 | epoch: 9.4s
+Epoch 188 | train MSE: 0.025464 | val MSE: 0.047465 | val MSE(MPa^2): 2.262 | R2(MPa): 0.9525 | lr: 2.36e-04 | epoch: 9.5s
+Epoch 189 | train MSE: 0.024766 | val MSE: 0.045005 | val MSE(MPa^2): 2.145 | R2(MPa): 0.9550 | lr: 2.35e-04 | epoch: 9.4s
+Epoch 190 | train MSE: 0.025037 | val MSE: 0.045797 | val MSE(MPa^2): 2.182 | R2(MPa): 0.9542 | lr: 2.35e-04 | epoch: 9.4s
+Epoch 191 | train MSE: 0.025399 | val MSE: 0.047470 | val MSE(MPa^2): 2.262 | R2(MPa): 0.9525 | lr: 2.34e-04 | epoch: 9.4s
+Epoch 192 | train MSE: 0.028508 | val MSE: 0.047688 | val MSE(MPa^2): 2.273 | R2(MPa): 0.9523 | lr: 2.33e-04 | epoch: 9.4s
+Epoch 193 | train MSE: 0.025910 | val MSE: 0.044804 | val MSE(MPa^2): 2.135 | R2(MPa): 0.9552 | lr: 2.32e-04 | epoch: 9.4s
+Epoch 194 | train MSE: 0.025808 | val MSE: 0.049292 | val MSE(MPa^2): 2.349 | R2(MPa): 0.9507 | lr: 2.31e-04 | epoch: 9.4s
+Epoch 195 | train MSE: 0.026257 | val MSE: 0.044770 | val MSE(MPa^2): 2.134 | R2(MPa): 0.9552 | lr: 2.30e-04 | epoch: 9.4s
+Epoch 196 | train MSE: 0.023799 | val MSE: 0.045287 | val MSE(MPa^2): 2.158 | R2(MPa): 0.9547 | lr: 2.29e-04 | epoch: 9.4s
+Epoch 197 | train MSE: 0.024782 | val MSE: 0.045603 | val MSE(MPa^2): 2.173 | R2(MPa): 0.9544 | lr: 2.28e-04 | epoch: 9.4s
+Epoch 198 | train MSE: 0.024969 | val MSE: 0.046790 | val MSE(MPa^2): 2.230 | R2(MPa): 0.9532 | lr: 2.28e-04 | epoch: 9.4s
+Epoch 199 | train MSE: 0.025112 | val MSE: 0.045046 | val MSE(MPa^2): 2.147 | R2(MPa): 0.9550 | lr: 2.27e-04 | epoch: 9.4s
+Epoch 200 | train MSE: 0.023862 | val MSE: 0.044149 | val MSE(MPa^2): 2.104 | R2(MPa): 0.9559 | lr: 2.26e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 201 | train MSE: 0.024904 | val MSE: 0.044852 | val MSE(MPa^2): 2.137 | R2(MPa): 0.9552 | lr: 2.25e-04 | epoch: 9.4s
+Epoch 202 | train MSE: 0.022924 | val MSE: 0.042301 | val MSE(MPa^2): 2.016 | R2(MPa): 0.9577 | lr: 2.24e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 203 | train MSE: 0.021188 | val MSE: 0.041508 | val MSE(MPa^2): 1.978 | R2(MPa): 0.9585 | lr: 2.23e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 204 | train MSE: 0.020723 | val MSE: 0.042091 | val MSE(MPa^2): 2.006 | R2(MPa): 0.9579 | lr: 2.22e-04 | epoch: 9.4s
+Epoch 205 | train MSE: 0.022252 | val MSE: 0.046439 | val MSE(MPa^2): 2.213 | R2(MPa): 0.9536 | lr: 2.21e-04 | epoch: 9.4s
+Epoch 206 | train MSE: 0.022522 | val MSE: 0.042040 | val MSE(MPa^2): 2.003 | R2(MPa): 0.9580 | lr: 2.20e-04 | epoch: 9.4s
+Epoch 207 | train MSE: 0.021430 | val MSE: 0.043498 | val MSE(MPa^2): 2.073 | R2(MPa): 0.9565 | lr: 2.19e-04 | epoch: 9.4s
+Epoch 208 | train MSE: 0.023307 | val MSE: 0.042427 | val MSE(MPa^2): 2.022 | R2(MPa): 0.9576 | lr: 2.18e-04 | epoch: 9.4s
+Epoch 209 | train MSE: 0.022493 | val MSE: 0.044765 | val MSE(MPa^2): 2.133 | R2(MPa): 0.9552 | lr: 2.17e-04 | epoch: 9.4s
+Epoch 210 | train MSE: 0.023976 | val MSE: 0.045587 | val MSE(MPa^2): 2.172 | R2(MPa): 0.9544 | lr: 2.17e-04 | epoch: 9.4s
+Epoch 211 | train MSE: 0.022642 | val MSE: 0.044745 | val MSE(MPa^2): 2.132 | R2(MPa): 0.9553 | lr: 2.16e-04 | epoch: 9.4s
+Epoch 212 | train MSE: 0.023637 | val MSE: 0.045032 | val MSE(MPa^2): 2.146 | R2(MPa): 0.9550 | lr: 2.15e-04 | epoch: 9.4s
+Epoch 213 | train MSE: 0.021518 | val MSE: 0.040897 | val MSE(MPa^2): 1.949 | R2(MPa): 0.9591 | lr: 2.14e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 214 | train MSE: 0.019945 | val MSE: 0.040764 | val MSE(MPa^2): 1.943 | R2(MPa): 0.9592 | lr: 2.13e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 215 | train MSE: 0.019955 | val MSE: 0.041637 | val MSE(MPa^2): 1.984 | R2(MPa): 0.9584 | lr: 2.12e-04 | epoch: 9.4s
+Epoch 216 | train MSE: 0.020571 | val MSE: 0.041150 | val MSE(MPa^2): 1.961 | R2(MPa): 0.9589 | lr: 2.11e-04 | epoch: 9.4s
+Epoch 217 | train MSE: 0.020500 | val MSE: 0.042614 | val MSE(MPa^2): 2.031 | R2(MPa): 0.9574 | lr: 2.10e-04 | epoch: 9.4s
+Epoch 218 | train MSE: 0.020776 | val MSE: 0.040634 | val MSE(MPa^2): 1.936 | R2(MPa): 0.9594 | lr: 2.09e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 219 | train MSE: 0.020325 | val MSE: 0.044287 | val MSE(MPa^2): 2.111 | R2(MPa): 0.9557 | lr: 2.08e-04 | epoch: 9.4s
+Epoch 220 | train MSE: 0.020398 | val MSE: 0.041035 | val MSE(MPa^2): 1.956 | R2(MPa): 0.9590 | lr: 2.07e-04 | epoch: 9.4s
+Epoch 221 | train MSE: 0.020245 | val MSE: 0.042044 | val MSE(MPa^2): 2.004 | R2(MPa): 0.9580 | lr: 2.06e-04 | epoch: 9.4s
+Epoch 222 | train MSE: 0.019746 | val MSE: 0.040529 | val MSE(MPa^2): 1.931 | R2(MPa): 0.9595 | lr: 2.05e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 223 | train MSE: 0.020055 | val MSE: 0.042303 | val MSE(MPa^2): 2.016 | R2(MPa): 0.9577 | lr: 2.04e-04 | epoch: 9.4s
+Epoch 224 | train MSE: 0.020733 | val MSE: 0.043719 | val MSE(MPa^2): 2.083 | R2(MPa): 0.9563 | lr: 2.03e-04 | epoch: 9.4s
+Epoch 225 | train MSE: 0.022123 | val MSE: 0.043825 | val MSE(MPa^2): 2.088 | R2(MPa): 0.9562 | lr: 2.02e-04 | epoch: 9.4s
+Epoch 226 | train MSE: 0.021959 | val MSE: 0.045613 | val MSE(MPa^2): 2.174 | R2(MPa): 0.9544 | lr: 2.01e-04 | epoch: 9.4s
+Epoch 227 | train MSE: 0.022661 | val MSE: 0.047822 | val MSE(MPa^2): 2.279 | R2(MPa): 0.9522 | lr: 2.00e-04 | epoch: 9.4s
+Epoch 228 | train MSE: 0.024775 | val MSE: 0.044562 | val MSE(MPa^2): 2.124 | R2(MPa): 0.9554 | lr: 1.99e-04 | epoch: 9.4s
+Epoch 229 | train MSE: 0.022413 | val MSE: 0.042726 | val MSE(MPa^2): 2.036 | R2(MPa): 0.9573 | lr: 1.98e-04 | epoch: 9.4s
+Epoch 230 | train MSE: 0.020827 | val MSE: 0.044279 | val MSE(MPa^2): 2.110 | R2(MPa): 0.9557 | lr: 1.97e-04 | epoch: 9.4s
+Epoch 231 | train MSE: 0.021471 | val MSE: 0.041021 | val MSE(MPa^2): 1.955 | R2(MPa): 0.9590 | lr: 1.96e-04 | epoch: 9.4s
+Epoch 232 | train MSE: 0.020147 | val MSE: 0.040499 | val MSE(MPa^2): 1.930 | R2(MPa): 0.9595 | lr: 1.95e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 233 | train MSE: 0.020976 | val MSE: 0.043385 | val MSE(MPa^2): 2.067 | R2(MPa): 0.9566 | lr: 1.94e-04 | epoch: 9.4s
+Epoch 234 | train MSE: 0.020435 | val MSE: 0.040256 | val MSE(MPa^2): 1.918 | R2(MPa): 0.9597 | lr: 1.93e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 235 | train MSE: 0.018354 | val MSE: 0.038863 | val MSE(MPa^2): 1.852 | R2(MPa): 0.9611 | lr: 1.92e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 236 | train MSE: 0.017573 | val MSE: 0.039226 | val MSE(MPa^2): 1.869 | R2(MPa): 0.9608 | lr: 1.91e-04 | epoch: 9.4s
+Epoch 237 | train MSE: 0.018374 | val MSE: 0.040107 | val MSE(MPa^2): 1.911 | R2(MPa): 0.9599 | lr: 1.90e-04 | epoch: 9.4s
+Epoch 238 | train MSE: 0.019055 | val MSE: 0.040286 | val MSE(MPa^2): 1.920 | R2(MPa): 0.9597 | lr: 1.89e-04 | epoch: 9.4s
+Epoch 239 | train MSE: 0.018707 | val MSE: 0.039387 | val MSE(MPa^2): 1.877 | R2(MPa): 0.9606 | lr: 1.88e-04 | epoch: 9.4s
+Epoch 240 | train MSE: 0.017558 | val MSE: 0.039069 | val MSE(MPa^2): 1.862 | R2(MPa): 0.9609 | lr: 1.87e-04 | epoch: 9.4s
+Epoch 241 | train MSE: 0.017532 | val MSE: 0.038783 | val MSE(MPa^2): 1.848 | R2(MPa): 0.9612 | lr: 1.86e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 242 | train MSE: 0.017972 | val MSE: 0.039839 | val MSE(MPa^2): 1.899 | R2(MPa): 0.9602 | lr: 1.85e-04 | epoch: 9.4s
+Epoch 243 | train MSE: 0.018769 | val MSE: 0.040237 | val MSE(MPa^2): 1.917 | R2(MPa): 0.9598 | lr: 1.84e-04 | epoch: 9.4s
+Epoch 244 | train MSE: 0.017204 | val MSE: 0.038555 | val MSE(MPa^2): 1.837 | R2(MPa): 0.9615 | lr: 1.83e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 245 | train MSE: 0.016920 | val MSE: 0.038190 | val MSE(MPa^2): 1.820 | R2(MPa): 0.9618 | lr: 1.82e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 246 | train MSE: 0.017268 | val MSE: 0.039505 | val MSE(MPa^2): 1.883 | R2(MPa): 0.9605 | lr: 1.81e-04 | epoch: 9.4s
+Epoch 247 | train MSE: 0.017302 | val MSE: 0.038990 | val MSE(MPa^2): 1.858 | R2(MPa): 0.9610 | lr: 1.80e-04 | epoch: 9.4s
+Epoch 248 | train MSE: 0.016801 | val MSE: 0.039196 | val MSE(MPa^2): 1.868 | R2(MPa): 0.9608 | lr: 1.79e-04 | epoch: 9.4s
+Epoch 249 | train MSE: 0.017252 | val MSE: 0.039576 | val MSE(MPa^2): 1.886 | R2(MPa): 0.9604 | lr: 1.78e-04 | epoch: 9.4s
+Epoch 250 | train MSE: 0.016843 | val MSE: 0.037954 | val MSE(MPa^2): 1.809 | R2(MPa): 0.9621 | lr: 1.77e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 251 | train MSE: 0.017255 | val MSE: 0.040305 | val MSE(MPa^2): 1.921 | R2(MPa): 0.9597 | lr: 1.76e-04 | epoch: 9.4s
+Epoch 252 | train MSE: 0.018603 | val MSE: 0.039478 | val MSE(MPa^2): 1.881 | R2(MPa): 0.9605 | lr: 1.75e-04 | epoch: 9.4s
+Epoch 253 | train MSE: 0.018483 | val MSE: 0.039679 | val MSE(MPa^2): 1.891 | R2(MPa): 0.9603 | lr: 1.74e-04 | epoch: 9.4s
+Epoch 254 | train MSE: 0.018495 | val MSE: 0.041205 | val MSE(MPa^2): 1.964 | R2(MPa): 0.9588 | lr: 1.73e-04 | epoch: 9.4s
+Epoch 255 | train MSE: 0.018204 | val MSE: 0.039451 | val MSE(MPa^2): 1.880 | R2(MPa): 0.9606 | lr: 1.72e-04 | epoch: 9.4s
+Epoch 256 | train MSE: 0.017292 | val MSE: 0.038486 | val MSE(MPa^2): 1.834 | R2(MPa): 0.9615 | lr: 1.71e-04 | epoch: 9.4s
+Epoch 257 | train MSE: 0.016470 | val MSE: 0.038501 | val MSE(MPa^2): 1.835 | R2(MPa): 0.9615 | lr: 1.70e-04 | epoch: 9.4s
+Epoch 258 | train MSE: 0.016748 | val MSE: 0.038986 | val MSE(MPa^2): 1.858 | R2(MPa): 0.9610 | lr: 1.69e-04 | epoch: 9.4s
+Epoch 259 | train MSE: 0.017286 | val MSE: 0.039774 | val MSE(MPa^2): 1.895 | R2(MPa): 0.9602 | lr: 1.68e-04 | epoch: 9.4s
+Epoch 260 | train MSE: 0.016726 | val MSE: 0.038289 | val MSE(MPa^2): 1.825 | R2(MPa): 0.9617 | lr: 1.67e-04 | epoch: 9.4s
+Epoch 261 | train MSE: 0.016462 | val MSE: 0.038060 | val MSE(MPa^2): 1.814 | R2(MPa): 0.9619 | lr: 1.66e-04 | epoch: 9.4s
+Epoch 262 | train MSE: 0.016553 | val MSE: 0.038592 | val MSE(MPa^2): 1.839 | R2(MPa): 0.9614 | lr: 1.65e-04 | epoch: 9.4s
+Epoch 263 | train MSE: 0.016821 | val MSE: 0.039267 | val MSE(MPa^2): 1.871 | R2(MPa): 0.9607 | lr: 1.64e-04 | epoch: 9.4s
+Epoch 264 | train MSE: 0.017687 | val MSE: 0.040614 | val MSE(MPa^2): 1.935 | R2(MPa): 0.9594 | lr: 1.63e-04 | epoch: 9.4s
+Epoch 265 | train MSE: 0.018387 | val MSE: 0.038941 | val MSE(MPa^2): 1.856 | R2(MPa): 0.9611 | lr: 1.62e-04 | epoch: 9.4s
+Epoch 266 | train MSE: 0.018056 | val MSE: 0.038623 | val MSE(MPa^2): 1.841 | R2(MPa): 0.9614 | lr: 1.61e-04 | epoch: 9.4s
+Epoch 267 | train MSE: 0.017579 | val MSE: 0.037878 | val MSE(MPa^2): 1.805 | R2(MPa): 0.9621 | lr: 1.60e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 268 | train MSE: 0.017010 | val MSE: 0.038043 | val MSE(MPa^2): 1.813 | R2(MPa): 0.9620 | lr: 1.59e-04 | epoch: 9.4s
+Epoch 269 | train MSE: 0.016041 | val MSE: 0.037959 | val MSE(MPa^2): 1.809 | R2(MPa): 0.9620 | lr: 1.58e-04 | epoch: 9.4s
+Epoch 270 | train MSE: 0.015893 | val MSE: 0.037410 | val MSE(MPa^2): 1.783 | R2(MPa): 0.9626 | lr: 1.57e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 271 | train MSE: 0.015639 | val MSE: 0.037982 | val MSE(MPa^2): 1.810 | R2(MPa): 0.9620 | lr: 1.56e-04 | epoch: 9.4s
+Epoch 272 | train MSE: 0.015315 | val MSE: 0.037069 | val MSE(MPa^2): 1.767 | R2(MPa): 0.9629 | lr: 1.55e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 273 | train MSE: 0.015858 | val MSE: 0.037789 | val MSE(MPa^2): 1.801 | R2(MPa): 0.9622 | lr: 1.54e-04 | epoch: 9.4s
+Epoch 274 | train MSE: 0.015811 | val MSE: 0.037704 | val MSE(MPa^2): 1.797 | R2(MPa): 0.9623 | lr: 1.52e-04 | epoch: 9.4s
+Epoch 275 | train MSE: 0.014944 | val MSE: 0.037167 | val MSE(MPa^2): 1.771 | R2(MPa): 0.9628 | lr: 1.51e-04 | epoch: 9.4s
+Epoch 276 | train MSE: 0.014962 | val MSE: 0.037269 | val MSE(MPa^2): 1.776 | R2(MPa): 0.9627 | lr: 1.50e-04 | epoch: 9.4s
+Epoch 277 | train MSE: 0.014878 | val MSE: 0.036822 | val MSE(MPa^2): 1.755 | R2(MPa): 0.9632 | lr: 1.49e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 278 | train MSE: 0.014862 | val MSE: 0.037119 | val MSE(MPa^2): 1.769 | R2(MPa): 0.9629 | lr: 1.48e-04 | epoch: 9.4s
+Epoch 279 | train MSE: 0.014909 | val MSE: 0.037311 | val MSE(MPa^2): 1.778 | R2(MPa): 0.9627 | lr: 1.47e-04 | epoch: 9.4s
+Epoch 280 | train MSE: 0.015449 | val MSE: 0.038004 | val MSE(MPa^2): 1.811 | R2(MPa): 0.9620 | lr: 1.46e-04 | epoch: 9.4s
+Epoch 281 | train MSE: 0.015592 | val MSE: 0.037747 | val MSE(MPa^2): 1.799 | R2(MPa): 0.9623 | lr: 1.45e-04 | epoch: 9.4s
+Epoch 282 | train MSE: 0.015262 | val MSE: 0.037747 | val MSE(MPa^2): 1.799 | R2(MPa): 0.9623 | lr: 1.44e-04 | epoch: 9.4s
+Epoch 283 | train MSE: 0.014801 | val MSE: 0.037729 | val MSE(MPa^2): 1.798 | R2(MPa): 0.9623 | lr: 1.43e-04 | epoch: 9.4s
+Epoch 284 | train MSE: 0.014612 | val MSE: 0.037086 | val MSE(MPa^2): 1.767 | R2(MPa): 0.9629 | lr: 1.42e-04 | epoch: 9.4s
+Epoch 285 | train MSE: 0.014410 | val MSE: 0.036875 | val MSE(MPa^2): 1.757 | R2(MPa): 0.9631 | lr: 1.41e-04 | epoch: 9.4s
+Epoch 286 | train MSE: 0.014103 | val MSE: 0.036678 | val MSE(MPa^2): 1.748 | R2(MPa): 0.9633 | lr: 1.40e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 287 | train MSE: 0.014222 | val MSE: 0.036726 | val MSE(MPa^2): 1.750 | R2(MPa): 0.9633 | lr: 1.39e-04 | epoch: 9.4s
+Epoch 288 | train MSE: 0.014642 | val MSE: 0.038082 | val MSE(MPa^2): 1.815 | R2(MPa): 0.9619 | lr: 1.38e-04 | epoch: 9.4s
+Epoch 289 | train MSE: 0.015770 | val MSE: 0.037726 | val MSE(MPa^2): 1.798 | R2(MPa): 0.9623 | lr: 1.37e-04 | epoch: 9.4s
+Epoch 290 | train MSE: 0.014852 | val MSE: 0.036986 | val MSE(MPa^2): 1.763 | R2(MPa): 0.9630 | lr: 1.36e-04 | epoch: 9.4s
+Epoch 291 | train MSE: 0.013876 | val MSE: 0.036470 | val MSE(MPa^2): 1.738 | R2(MPa): 0.9635 | lr: 1.35e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 292 | train MSE: 0.013516 | val MSE: 0.035830 | val MSE(MPa^2): 1.707 | R2(MPa): 0.9642 | lr: 1.34e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 293 | train MSE: 0.013678 | val MSE: 0.036421 | val MSE(MPa^2): 1.736 | R2(MPa): 0.9636 | lr: 1.33e-04 | epoch: 9.4s
+Epoch 294 | train MSE: 0.014036 | val MSE: 0.036894 | val MSE(MPa^2): 1.758 | R2(MPa): 0.9631 | lr: 1.32e-04 | epoch: 9.4s
+Epoch 295 | train MSE: 0.014936 | val MSE: 0.037655 | val MSE(MPa^2): 1.794 | R2(MPa): 0.9624 | lr: 1.31e-04 | epoch: 9.4s
+Epoch 296 | train MSE: 0.014456 | val MSE: 0.038186 | val MSE(MPa^2): 1.820 | R2(MPa): 0.9618 | lr: 1.30e-04 | epoch: 9.4s
+Epoch 297 | train MSE: 0.014399 | val MSE: 0.036894 | val MSE(MPa^2): 1.758 | R2(MPa): 0.9631 | lr: 1.29e-04 | epoch: 9.4s
+Epoch 298 | train MSE: 0.013799 | val MSE: 0.035822 | val MSE(MPa^2): 1.707 | R2(MPa): 0.9642 | lr: 1.28e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 299 | train MSE: 0.013154 | val MSE: 0.035345 | val MSE(MPa^2): 1.684 | R2(MPa): 0.9647 | lr: 1.27e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 300 | train MSE: 0.013004 | val MSE: 0.036455 | val MSE(MPa^2): 1.737 | R2(MPa): 0.9636 | lr: 1.26e-04 | epoch: 9.4s
+Epoch 301 | train MSE: 0.012910 | val MSE: 0.036011 | val MSE(MPa^2): 1.716 | R2(MPa): 0.9640 | lr: 1.25e-04 | epoch: 9.4s
+Epoch 302 | train MSE: 0.012660 | val MSE: 0.035543 | val MSE(MPa^2): 1.694 | R2(MPa): 0.9645 | lr: 1.24e-04 | epoch: 9.4s
+Epoch 303 | train MSE: 0.012484 | val MSE: 0.035583 | val MSE(MPa^2): 1.696 | R2(MPa): 0.9644 | lr: 1.23e-04 | epoch: 9.4s
+Epoch 304 | train MSE: 0.012404 | val MSE: 0.035513 | val MSE(MPa^2): 1.692 | R2(MPa): 0.9645 | lr: 1.22e-04 | epoch: 9.4s
+Epoch 305 | train MSE: 0.012500 | val MSE: 0.035414 | val MSE(MPa^2): 1.688 | R2(MPa): 0.9646 | lr: 1.21e-04 | epoch: 9.4s
+Epoch 306 | train MSE: 0.012679 | val MSE: 0.035694 | val MSE(MPa^2): 1.701 | R2(MPa): 0.9643 | lr: 1.20e-04 | epoch: 9.4s
+Epoch 307 | train MSE: 0.012414 | val MSE: 0.035585 | val MSE(MPa^2): 1.696 | R2(MPa): 0.9644 | lr: 1.19e-04 | epoch: 9.4s
+Epoch 308 | train MSE: 0.012329 | val MSE: 0.035566 | val MSE(MPa^2): 1.695 | R2(MPa): 0.9644 | lr: 1.18e-04 | epoch: 9.4s
+Epoch 309 | train MSE: 0.013036 | val MSE: 0.036232 | val MSE(MPa^2): 1.727 | R2(MPa): 0.9638 | lr: 1.17e-04 | epoch: 9.4s
+Epoch 310 | train MSE: 0.012990 | val MSE: 0.036396 | val MSE(MPa^2): 1.734 | R2(MPa): 0.9636 | lr: 1.16e-04 | epoch: 9.4s
+Epoch 311 | train MSE: 0.013224 | val MSE: 0.035628 | val MSE(MPa^2): 1.698 | R2(MPa): 0.9644 | lr: 1.15e-04 | epoch: 9.4s
+Epoch 312 | train MSE: 0.013329 | val MSE: 0.036351 | val MSE(MPa^2): 1.732 | R2(MPa): 0.9637 | lr: 1.14e-04 | epoch: 9.4s
+Epoch 313 | train MSE: 0.013087 | val MSE: 0.035780 | val MSE(MPa^2): 1.705 | R2(MPa): 0.9642 | lr: 1.13e-04 | epoch: 9.4s
+Epoch 314 | train MSE: 0.012940 | val MSE: 0.035955 | val MSE(MPa^2): 1.713 | R2(MPa): 0.9640 | lr: 1.12e-04 | epoch: 9.4s
+Epoch 315 | train MSE: 0.012732 | val MSE: 0.036107 | val MSE(MPa^2): 1.721 | R2(MPa): 0.9639 | lr: 1.11e-04 | epoch: 9.4s
+Epoch 316 | train MSE: 0.012738 | val MSE: 0.035793 | val MSE(MPa^2): 1.706 | R2(MPa): 0.9642 | lr: 1.10e-04 | epoch: 9.4s
+Epoch 317 | train MSE: 0.012809 | val MSE: 0.036154 | val MSE(MPa^2): 1.723 | R2(MPa): 0.9639 | lr: 1.09e-04 | epoch: 9.4s
+Epoch 318 | train MSE: 0.012846 | val MSE: 0.036267 | val MSE(MPa^2): 1.728 | R2(MPa): 0.9637 | lr: 1.08e-04 | epoch: 9.4s
+Epoch 319 | train MSE: 0.013094 | val MSE: 0.035729 | val MSE(MPa^2): 1.703 | R2(MPa): 0.9643 | lr: 1.07e-04 | epoch: 9.4s
+Epoch 320 | train MSE: 0.012990 | val MSE: 0.036176 | val MSE(MPa^2): 1.724 | R2(MPa): 0.9638 | lr: 1.06e-04 | epoch: 9.4s
+Epoch 321 | train MSE: 0.013683 | val MSE: 0.038429 | val MSE(MPa^2): 1.831 | R2(MPa): 0.9616 | lr: 1.05e-04 | epoch: 9.4s
+Epoch 322 | train MSE: 0.013885 | val MSE: 0.036835 | val MSE(MPa^2): 1.755 | R2(MPa): 0.9632 | lr: 1.04e-04 | epoch: 9.4s
+Epoch 323 | train MSE: 0.012683 | val MSE: 0.035559 | val MSE(MPa^2): 1.695 | R2(MPa): 0.9644 | lr: 1.03e-04 | epoch: 9.4s
+Epoch 324 | train MSE: 0.012022 | val MSE: 0.035053 | val MSE(MPa^2): 1.670 | R2(MPa): 0.9650 | lr: 1.02e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 325 | train MSE: 0.011671 | val MSE: 0.034978 | val MSE(MPa^2): 1.667 | R2(MPa): 0.9650 | lr: 1.01e-04 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 326 | train MSE: 0.011518 | val MSE: 0.035183 | val MSE(MPa^2): 1.677 | R2(MPa): 0.9648 | lr: 9.97e-05 | epoch: 9.4s
+Epoch 327 | train MSE: 0.011544 | val MSE: 0.035215 | val MSE(MPa^2): 1.678 | R2(MPa): 0.9648 | lr: 9.87e-05 | epoch: 9.4s
+Epoch 328 | train MSE: 0.011485 | val MSE: 0.034859 | val MSE(MPa^2): 1.661 | R2(MPa): 0.9651 | lr: 9.78e-05 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 329 | train MSE: 0.011316 | val MSE: 0.035147 | val MSE(MPa^2): 1.675 | R2(MPa): 0.9649 | lr: 9.68e-05 | epoch: 9.4s
+Epoch 330 | train MSE: 0.011314 | val MSE: 0.035081 | val MSE(MPa^2): 1.672 | R2(MPa): 0.9649 | lr: 9.58e-05 | epoch: 9.4s
+Epoch 331 | train MSE: 0.011336 | val MSE: 0.035213 | val MSE(MPa^2): 1.678 | R2(MPa): 0.9648 | lr: 9.49e-05 | epoch: 9.4s
+Epoch 332 | train MSE: 0.011304 | val MSE: 0.034760 | val MSE(MPa^2): 1.657 | R2(MPa): 0.9652 | lr: 9.39e-05 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 333 | train MSE: 0.011217 | val MSE: 0.034995 | val MSE(MPa^2): 1.668 | R2(MPa): 0.9650 | lr: 9.30e-05 | epoch: 9.4s
+Epoch 334 | train MSE: 0.011086 | val MSE: 0.034773 | val MSE(MPa^2): 1.657 | R2(MPa): 0.9652 | lr: 9.20e-05 | epoch: 9.4s
+Epoch 335 | train MSE: 0.011178 | val MSE: 0.035250 | val MSE(MPa^2): 1.680 | R2(MPa): 0.9648 | lr: 9.11e-05 | epoch: 9.4s
+Epoch 336 | train MSE: 0.011209 | val MSE: 0.035834 | val MSE(MPa^2): 1.708 | R2(MPa): 0.9642 | lr: 9.01e-05 | epoch: 9.4s
+Epoch 337 | train MSE: 0.011248 | val MSE: 0.034692 | val MSE(MPa^2): 1.653 | R2(MPa): 0.9653 | lr: 8.92e-05 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 338 | train MSE: 0.012180 | val MSE: 0.036181 | val MSE(MPa^2): 1.724 | R2(MPa): 0.9638 | lr: 8.82e-05 | epoch: 9.4s
+Epoch 339 | train MSE: 0.013380 | val MSE: 0.037032 | val MSE(MPa^2): 1.765 | R2(MPa): 0.9630 | lr: 8.73e-05 | epoch: 9.4s
+Epoch 340 | train MSE: 0.013737 | val MSE: 0.036842 | val MSE(MPa^2): 1.756 | R2(MPa): 0.9632 | lr: 8.64e-05 | epoch: 9.4s
+Epoch 341 | train MSE: 0.012794 | val MSE: 0.035995 | val MSE(MPa^2): 1.715 | R2(MPa): 0.9640 | lr: 8.54e-05 | epoch: 9.4s
+Epoch 342 | train MSE: 0.013386 | val MSE: 0.037364 | val MSE(MPa^2): 1.781 | R2(MPa): 0.9626 | lr: 8.45e-05 | epoch: 9.4s
+Epoch 343 | train MSE: 0.012779 | val MSE: 0.035922 | val MSE(MPa^2): 1.712 | R2(MPa): 0.9641 | lr: 8.36e-05 | epoch: 9.4s
+Epoch 344 | train MSE: 0.011858 | val MSE: 0.034941 | val MSE(MPa^2): 1.665 | R2(MPa): 0.9651 | lr: 8.27e-05 | epoch: 9.4s
+Epoch 345 | train MSE: 0.011578 | val MSE: 0.035555 | val MSE(MPa^2): 1.694 | R2(MPa): 0.9644 | lr: 8.17e-05 | epoch: 9.4s
+Epoch 346 | train MSE: 0.011315 | val MSE: 0.034813 | val MSE(MPa^2): 1.659 | R2(MPa): 0.9652 | lr: 8.08e-05 | epoch: 9.4s
+Epoch 347 | train MSE: 0.010995 | val MSE: 0.035213 | val MSE(MPa^2): 1.678 | R2(MPa): 0.9648 | lr: 7.99e-05 | epoch: 9.4s
+Epoch 348 | train MSE: 0.011486 | val MSE: 0.035494 | val MSE(MPa^2): 1.691 | R2(MPa): 0.9645 | lr: 7.90e-05 | epoch: 9.4s
+Epoch 349 | train MSE: 0.011636 | val MSE: 0.035094 | val MSE(MPa^2): 1.672 | R2(MPa): 0.9649 | lr: 7.81e-05 | epoch: 9.4s
+Epoch 350 | train MSE: 0.011203 | val MSE: 0.034828 | val MSE(MPa^2): 1.660 | R2(MPa): 0.9652 | lr: 7.72e-05 | epoch: 9.4s
+Epoch 351 | train MSE: 0.010799 | val MSE: 0.034514 | val MSE(MPa^2): 1.645 | R2(MPa): 0.9655 | lr: 7.63e-05 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 352 | train MSE: 0.010643 | val MSE: 0.034368 | val MSE(MPa^2): 1.638 | R2(MPa): 0.9656 | lr: 7.54e-05 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 353 | train MSE: 0.010576 | val MSE: 0.034554 | val MSE(MPa^2): 1.647 | R2(MPa): 0.9655 | lr: 7.45e-05 | epoch: 9.4s
+Epoch 354 | train MSE: 0.010503 | val MSE: 0.034451 | val MSE(MPa^2): 1.642 | R2(MPa): 0.9656 | lr: 7.37e-05 | epoch: 9.4s
+Epoch 355 | train MSE: 0.010542 | val MSE: 0.034821 | val MSE(MPa^2): 1.659 | R2(MPa): 0.9652 | lr: 7.28e-05 | epoch: 9.4s
+Epoch 356 | train MSE: 0.010506 | val MSE: 0.034595 | val MSE(MPa^2): 1.649 | R2(MPa): 0.9654 | lr: 7.19e-05 | epoch: 9.4s
+Epoch 357 | train MSE: 0.010494 | val MSE: 0.034586 | val MSE(MPa^2): 1.648 | R2(MPa): 0.9654 | lr: 7.10e-05 | epoch: 9.4s
+Epoch 358 | train MSE: 0.010444 | val MSE: 0.034581 | val MSE(MPa^2): 1.648 | R2(MPa): 0.9654 | lr: 7.02e-05 | epoch: 9.4s
+Epoch 359 | train MSE: 0.010335 | val MSE: 0.034568 | val MSE(MPa^2): 1.647 | R2(MPa): 0.9654 | lr: 6.93e-05 | epoch: 9.4s
+Epoch 360 | train MSE: 0.010234 | val MSE: 0.034529 | val MSE(MPa^2): 1.645 | R2(MPa): 0.9655 | lr: 6.84e-05 | epoch: 9.4s
+Epoch 361 | train MSE: 0.010193 | val MSE: 0.034313 | val MSE(MPa^2): 1.635 | R2(MPa): 0.9657 | lr: 6.76e-05 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 362 | train MSE: 0.010135 | val MSE: 0.034431 | val MSE(MPa^2): 1.641 | R2(MPa): 0.9656 | lr: 6.67e-05 | epoch: 9.4s
+Epoch 363 | train MSE: 0.010112 | val MSE: 0.034270 | val MSE(MPa^2): 1.633 | R2(MPa): 0.9657 | lr: 6.59e-05 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 364 | train MSE: 0.010052 | val MSE: 0.034400 | val MSE(MPa^2): 1.639 | R2(MPa): 0.9656 | lr: 6.50e-05 | epoch: 9.4s
+Epoch 365 | train MSE: 0.010040 | val MSE: 0.034613 | val MSE(MPa^2): 1.649 | R2(MPa): 0.9654 | lr: 6.42e-05 | epoch: 9.4s
+Epoch 366 | train MSE: 0.010044 | val MSE: 0.034388 | val MSE(MPa^2): 1.639 | R2(MPa): 0.9656 | lr: 6.33e-05 | epoch: 9.4s
+Epoch 367 | train MSE: 0.010019 | val MSE: 0.034573 | val MSE(MPa^2): 1.648 | R2(MPa): 0.9654 | lr: 6.25e-05 | epoch: 9.4s
+Epoch 368 | train MSE: 0.010015 | val MSE: 0.034515 | val MSE(MPa^2): 1.645 | R2(MPa): 0.9655 | lr: 6.17e-05 | epoch: 9.4s
+Epoch 369 | train MSE: 0.009995 | val MSE: 0.034390 | val MSE(MPa^2): 1.639 | R2(MPa): 0.9656 | lr: 6.09e-05 | epoch: 9.4s
+Epoch 370 | train MSE: 0.009969 | val MSE: 0.034478 | val MSE(MPa^2): 1.643 | R2(MPa): 0.9655 | lr: 6.00e-05 | epoch: 9.4s
+Epoch 371 | train MSE: 0.009927 | val MSE: 0.034369 | val MSE(MPa^2): 1.638 | R2(MPa): 0.9656 | lr: 5.92e-05 | epoch: 9.3s
+Epoch 372 | train MSE: 0.009968 | val MSE: 0.034162 | val MSE(MPa^2): 1.628 | R2(MPa): 0.9658 | lr: 5.84e-05 | epoch: 9.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 373 | train MSE: 0.009958 | val MSE: 0.034287 | val MSE(MPa^2): 1.634 | R2(MPa): 0.9657 | lr: 5.76e-05 | epoch: 9.4s
+Epoch 374 | train MSE: 0.009973 | val MSE: 0.034489 | val MSE(MPa^2): 1.644 | R2(MPa): 0.9655 | lr: 5.68e-05 | epoch: 9.3s
+Epoch 375 | train MSE: 0.009993 | val MSE: 0.034663 | val MSE(MPa^2): 1.652 | R2(MPa): 0.9653 | lr: 5.60e-05 | epoch: 9.3s
+Epoch 376 | train MSE: 0.009947 | val MSE: 0.034312 | val MSE(MPa^2): 1.635 | R2(MPa): 0.9657 | lr: 5.52e-05 | epoch: 9.4s
+Epoch 377 | train MSE: 0.009914 | val MSE: 0.034217 | val MSE(MPa^2): 1.631 | R2(MPa): 0.9658 | lr: 5.44e-05 | epoch: 9.4s
+Epoch 378 | train MSE: 0.009911 | val MSE: 0.034317 | val MSE(MPa^2): 1.635 | R2(MPa): 0.9657 | lr: 5.37e-05 | epoch: 9.4s
+Epoch 379 | train MSE: 0.009835 | val MSE: 0.034373 | val MSE(MPa^2): 1.638 | R2(MPa): 0.9656 | lr: 5.29e-05 | epoch: 9.4s
+Epoch 380 | train MSE: 0.009783 | val MSE: 0.034334 | val MSE(MPa^2): 1.636 | R2(MPa): 0.9657 | lr: 5.21e-05 | epoch: 9.4s
+Epoch 381 | train MSE: 0.009737 | val MSE: 0.034219 | val MSE(MPa^2): 1.631 | R2(MPa): 0.9658 | lr: 5.13e-05 | epoch: 9.4s
+Epoch 382 | train MSE: 0.009746 | val MSE: 0.034499 | val MSE(MPa^2): 1.644 | R2(MPa): 0.9655 | lr: 5.06e-05 | epoch: 9.3s
+Epoch 383 | train MSE: 0.009760 | val MSE: 0.034465 | val MSE(MPa^2): 1.642 | R2(MPa): 0.9655 | lr: 4.98e-05 | epoch: 9.4s
+Epoch 384 | train MSE: 0.009748 | val MSE: 0.034439 | val MSE(MPa^2): 1.641 | R2(MPa): 0.9656 | lr: 4.91e-05 | epoch: 9.3s
+Epoch 385 | train MSE: 0.009769 | val MSE: 0.034334 | val MSE(MPa^2): 1.636 | R2(MPa): 0.9657 | lr: 4.83e-05 | epoch: 9.3s
+Epoch 386 | train MSE: 0.009697 | val MSE: 0.034306 | val MSE(MPa^2): 1.635 | R2(MPa): 0.9657 | lr: 4.76e-05 | epoch: 9.3s
+Epoch 387 | train MSE: 0.009665 | val MSE: 0.034472 | val MSE(MPa^2): 1.643 | R2(MPa): 0.9655 | lr: 4.68e-05 | epoch: 9.3s
+Epoch 388 | train MSE: 0.009628 | val MSE: 0.034213 | val MSE(MPa^2): 1.630 | R2(MPa): 0.9658 | lr: 4.61e-05 | epoch: 9.3s
+Epoch 389 | train MSE: 0.009575 | val MSE: 0.034209 | val MSE(MPa^2): 1.630 | R2(MPa): 0.9658 | lr: 4.54e-05 | epoch: 9.3s
+Epoch 390 | train MSE: 0.009541 | val MSE: 0.034309 | val MSE(MPa^2): 1.635 | R2(MPa): 0.9657 | lr: 4.47e-05 | epoch: 9.3s
+Epoch 391 | train MSE: 0.009519 | val MSE: 0.034212 | val MSE(MPa^2): 1.630 | R2(MPa): 0.9658 | lr: 4.39e-05 | epoch: 9.3s
+Epoch 392 | train MSE: 0.009507 | val MSE: 0.034215 | val MSE(MPa^2): 1.631 | R2(MPa): 0.9658 | lr: 4.32e-05 | epoch: 9.3s
+Epoch 393 | train MSE: 0.009480 | val MSE: 0.034299 | val MSE(MPa^2): 1.634 | R2(MPa): 0.9657 | lr: 4.25e-05 | epoch: 9.3s
+Epoch 394 | train MSE: 0.009467 | val MSE: 0.034210 | val MSE(MPa^2): 1.630 | R2(MPa): 0.9658 | lr: 4.18e-05 | epoch: 9.3s
+Epoch 395 | train MSE: 0.009427 | val MSE: 0.034171 | val MSE(MPa^2): 1.628 | R2(MPa): 0.9658 | lr: 4.11e-05 | epoch: 9.3s
+Epoch 396 | train MSE: 0.009420 | val MSE: 0.034353 | val MSE(MPa^2): 1.637 | R2(MPa): 0.9657 | lr: 4.04e-05 | epoch: 9.4s
+Epoch 397 | train MSE: 0.009422 | val MSE: 0.034302 | val MSE(MPa^2): 1.635 | R2(MPa): 0.9657 | lr: 3.97e-05 | epoch: 9.3s
+Epoch 398 | train MSE: 0.009376 | val MSE: 0.034372 | val MSE(MPa^2): 1.638 | R2(MPa): 0.9656 | lr: 3.91e-05 | epoch: 9.3s
+Epoch 399 | train MSE: 0.009376 | val MSE: 0.034245 | val MSE(MPa^2): 1.632 | R2(MPa): 0.9658 | lr: 3.84e-05 | epoch: 9.3s
+Epoch 400 | train MSE: 0.009375 | val MSE: 0.034328 | val MSE(MPa^2): 1.636 | R2(MPa): 0.9657 | lr: 3.77e-05 | epoch: 9.3s
+Epoch 401 | train MSE: 0.009361 | val MSE: 0.034282 | val MSE(MPa^2): 1.634 | R2(MPa): 0.9657 | lr: 3.71e-05 | epoch: 9.3s
+Epoch 402 | train MSE: 0.009299 | val MSE: 0.034146 | val MSE(MPa^2): 1.627 | R2(MPa): 0.9659 | lr: 3.64e-05 | epoch: 9.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 403 | train MSE: 0.009302 | val MSE: 0.034156 | val MSE(MPa^2): 1.628 | R2(MPa): 0.9658 | lr: 3.57e-05 | epoch: 9.3s
+Epoch 404 | train MSE: 0.009289 | val MSE: 0.034123 | val MSE(MPa^2): 1.626 | R2(MPa): 0.9659 | lr: 3.51e-05 | epoch: 9.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 405 | train MSE: 0.009278 | val MSE: 0.034147 | val MSE(MPa^2): 1.627 | R2(MPa): 0.9659 | lr: 3.45e-05 | epoch: 9.3s
+Epoch 406 | train MSE: 0.009251 | val MSE: 0.034099 | val MSE(MPa^2): 1.625 | R2(MPa): 0.9659 | lr: 3.38e-05 | epoch: 9.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 407 | train MSE: 0.009263 | val MSE: 0.034210 | val MSE(MPa^2): 1.630 | R2(MPa): 0.9658 | lr: 3.32e-05 | epoch: 9.3s
+Epoch 408 | train MSE: 0.009243 | val MSE: 0.034195 | val MSE(MPa^2): 1.630 | R2(MPa): 0.9658 | lr: 3.26e-05 | epoch: 9.3s
+Epoch 409 | train MSE: 0.009241 | val MSE: 0.034292 | val MSE(MPa^2): 1.634 | R2(MPa): 0.9657 | lr: 3.20e-05 | epoch: 9.3s
+Epoch 410 | train MSE: 0.009215 | val MSE: 0.034193 | val MSE(MPa^2): 1.629 | R2(MPa): 0.9658 | lr: 3.13e-05 | epoch: 9.4s
+Epoch 411 | train MSE: 0.009201 | val MSE: 0.034110 | val MSE(MPa^2): 1.626 | R2(MPa): 0.9659 | lr: 3.07e-05 | epoch: 9.4s
+Epoch 412 | train MSE: 0.009181 | val MSE: 0.034199 | val MSE(MPa^2): 1.630 | R2(MPa): 0.9658 | lr: 3.01e-05 | epoch: 9.4s
+Epoch 413 | train MSE: 0.009155 | val MSE: 0.034177 | val MSE(MPa^2): 1.629 | R2(MPa): 0.9658 | lr: 2.95e-05 | epoch: 9.4s
+Epoch 414 | train MSE: 0.009136 | val MSE: 0.034110 | val MSE(MPa^2): 1.626 | R2(MPa): 0.9659 | lr: 2.89e-05 | epoch: 9.4s
+Epoch 415 | train MSE: 0.009132 | val MSE: 0.034042 | val MSE(MPa^2): 1.622 | R2(MPa): 0.9660 | lr: 2.84e-05 | epoch: 9.4s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 416 | train MSE: 0.009131 | val MSE: 0.034203 | val MSE(MPa^2): 1.630 | R2(MPa): 0.9658 | lr: 2.78e-05 | epoch: 9.3s
+Epoch 417 | train MSE: 0.009097 | val MSE: 0.034218 | val MSE(MPa^2): 1.631 | R2(MPa): 0.9658 | lr: 2.72e-05 | epoch: 9.3s
+Epoch 418 | train MSE: 0.009094 | val MSE: 0.034133 | val MSE(MPa^2): 1.627 | R2(MPa): 0.9659 | lr: 2.67e-05 | epoch: 9.3s
+Epoch 419 | train MSE: 0.009059 | val MSE: 0.034083 | val MSE(MPa^2): 1.624 | R2(MPa): 0.9659 | lr: 2.61e-05 | epoch: 9.3s
+Epoch 420 | train MSE: 0.009071 | val MSE: 0.034250 | val MSE(MPa^2): 1.632 | R2(MPa): 0.9658 | lr: 2.55e-05 | epoch: 9.3s
+Epoch 421 | train MSE: 0.009054 | val MSE: 0.034132 | val MSE(MPa^2): 1.627 | R2(MPa): 0.9659 | lr: 2.50e-05 | epoch: 9.3s
+Epoch 422 | train MSE: 0.009045 | val MSE: 0.034119 | val MSE(MPa^2): 1.626 | R2(MPa): 0.9659 | lr: 2.45e-05 | epoch: 9.3s
+Epoch 423 | train MSE: 0.009019 | val MSE: 0.034206 | val MSE(MPa^2): 1.630 | R2(MPa): 0.9658 | lr: 2.39e-05 | epoch: 9.3s
+Epoch 424 | train MSE: 0.009010 | val MSE: 0.034126 | val MSE(MPa^2): 1.626 | R2(MPa): 0.9659 | lr: 2.34e-05 | epoch: 9.3s
+Epoch 425 | train MSE: 0.008999 | val MSE: 0.034079 | val MSE(MPa^2): 1.624 | R2(MPa): 0.9659 | lr: 2.29e-05 | epoch: 9.3s
+Epoch 426 | train MSE: 0.009005 | val MSE: 0.034195 | val MSE(MPa^2): 1.630 | R2(MPa): 0.9658 | lr: 2.24e-05 | epoch: 9.3s
+Epoch 427 | train MSE: 0.008951 | val MSE: 0.034128 | val MSE(MPa^2): 1.626 | R2(MPa): 0.9659 | lr: 2.19e-05 | epoch: 9.3s
+Epoch 428 | train MSE: 0.008946 | val MSE: 0.034184 | val MSE(MPa^2): 1.629 | R2(MPa): 0.9658 | lr: 2.13e-05 | epoch: 9.3s
+Epoch 429 | train MSE: 0.008958 | val MSE: 0.034111 | val MSE(MPa^2): 1.626 | R2(MPa): 0.9659 | lr: 2.09e-05 | epoch: 9.3s
+Epoch 430 | train MSE: 0.008948 | val MSE: 0.034144 | val MSE(MPa^2): 1.627 | R2(MPa): 0.9659 | lr: 2.04e-05 | epoch: 9.3s
+Epoch 431 | train MSE: 0.008929 | val MSE: 0.034027 | val MSE(MPa^2): 1.622 | R2(MPa): 0.9660 | lr: 1.99e-05 | epoch: 9.3s
+Saved best model to: /usr1/home/abdulla.fathalla/PointNetMLP_Paper1/SpectralDeepONet/Trained_models/H-pnmlp_412fd4ca.pt
+Epoch 432 | train MSE: 0.008928 | val MSE: 0.034172 | val MSE(MPa^2): 1.628 | R2(MPa): 0.9658 | lr: 1.94e-05 | epoch: 9.3s
+Epoch 433 | train MSE: 0.008924 | val MSE: 0.034204 | val MSE(MPa^2): 1.630 | R2(MPa): 0.9658 | lr: 1.89e-05 | epoch: 9.3s
+Epoch 434 | train MSE: 0.008879 | val MSE: 0.034073 | val MSE(MPa^2): 1.624 | R2(MPa): 0.9659 | lr: 1.85e-05 | epoch: 9.3s
+Epoch 435 | train MSE: 0.008874 | val MSE: 0.034082 | val MSE(MPa^2): 1.624 | R2(MPa): 0.9659 | lr: 1.80e-05 | epoch: 9.3s
+Epoch 436 | train MSE: 0.008883 | val MSE: 0.034134 | val MSE(MPa^2): 1.627 | R2(MPa): 0.9659 | lr: 1.76e-05 | epoch: 9.3s
+Epoch 437 | train MSE: 0.008853 | val MSE: 0.034097 | val MSE(MPa^2): 1.625 | R2(MPa): 0.9659 | lr: 1.71e-05 | epoch: 9.3s
+Epoch 438 | train MSE: 0.008852 | val MSE: 0.034090 | val MSE(MPa^2): 1.625 | R2(MPa): 0.9659 | lr: 1.67e-05 | epoch: 9.3s
+Epoch 439 | train MSE: 0.008826 | val MSE: 0.034138 | val MSE(MPa^2): 1.627 | R2(MPa): 0.9659 | lr: 1.62e-05 | epoch: 9.4s
+Epoch 440 | train MSE: 0.008819 | val MSE: 0.034096 | val MSE(MPa^2): 1.625 | R2(MPa): 0.9659 | lr: 1.58e-05 | epoch: 9.3s
+Epoch 441 | train MSE: 0.008827 | val MSE: 0.034122 | val MSE(MPa^2): 1.626 | R2(MPa): 0.9659 | lr: 1.54e-05 | epoch: 9.4s
+Epoch 442 | train MSE: 0.008837 | val MSE: 0.034089 | val MSE(MPa^2): 1.625 | R2(MPa): 0.9659 | lr: 1.50e-05 | epoch: 9.4s
+Epoch 443 | train MSE: 0.008800 | val MSE: 0.034117 | val MSE(MPa^2): 1.626 | R2(MPa): 0.9659 | lr: 1.46e-05 | epoch: 9.4s
+Epoch 444 | train MSE: 0.008778 | val MSE: 0.034124 | val MSE(MPa^2): 1.626 | R2(MPa): 0.9659 | lr: 1.42e-05 | epoch: 9.4s
+Epoch 445 | train MSE: 0.008775 | val MSE: 0.034087 | val MSE(MPa^2): 1.624 | R2(MPa): 0.9659 | lr: 1.38e-05 | epoch: 9.4s
+Epoch 446 | train MSE: 0.008776 | val MSE: 0.034068 | val MSE(MPa^2): 1.623 | R2(MPa): 0.9659 | lr: 1.34e-05 | epoch: 9.5s
+Epoch 447 | train MSE: 0.008775 | val MSE: 0.034048 | val MSE(MPa^2): 1.623 | R2(MPa): 0.9660 | lr: 1.30e-05 | epoch: 9.4s
+Epoch 448 | train MSE: 0.008769 | val MSE: 0.034104 | val MSE(MPa^2): 1.625 | R2(MPa): 0.9659 | lr: 1.27e-05 | epoch: 9.4s
+Epoch 449 | train MSE: 0.008745 | val MSE: 0.034087 | val MSE(MPa^2): 1.624 | R2(MPa): 0.9659 | lr: 1.23e-05 | epoch: 9.4s
+Epoch 450 | train MSE: 0.008740 | val MSE: 0.034066 | val MSE(MPa^2): 1.623 | R2(MPa): 0.9659 | lr: 1.19e-05 | epoch: 9.4s
+Epoch 451 | train MSE: 0.008754 | val MSE: 0.034080 | val MSE(MPa^2): 1.624 | R2(MPa): 0.9659 | lr: 1.16e-05 | epoch: 9.4s
+Epoch 452 | train MSE: 0.008732 | val MSE: 0.034072 | val MSE(MPa^2): 1.624 | R2(MPa): 0.9659 | lr: 1.12e-05 | epoch: 9.4s
+Epoch 453 | train MSE: 0.008728 | val MSE: 0.034121 | val MSE(MPa^2): 1.626 | R2(MPa): 0.9659 | lr: 1.09e-05 | epoch: 9.4s
+Epoch 454 | train MSE: 0.008737 | val MSE: 0.034114 | val MSE(MPa^2): 1.626 | R2(MPa): 0.9659 | lr: 1.06e-05 | epoch: 9.4s
+Epoch 455 | train MSE: 0.008691 | val MSE: 0.034075 | val MSE(MPa^2): 1.624 | R2(MPa): 0.9659 | lr: 1.03e-05 | epoch: 9.4s
+Epoch 456 | train MSE: 0.008702 | val MSE: 0.034093 | val MSE(MPa^2): 1.625 | R2(MPa): 0.9659 | lr: 9.94e-06 | epoch: 9.4s
+Epoch 457 | train MSE: 0.008689 | val MSE: 0.034078 | val MSE(MPa^2): 1.624 | R2(MPa): 0.9659 | lr: 9.63e-06 | epoch: 9.4s
+Epoch 458 | train MSE: 0.008673 | val MSE: 0.034089 | val MSE(MPa^2): 1.625 | R2(MPa): 0.9659 | lr: 9.33e-06 | epoch: 9.4s
+Epoch 459 | train MSE: 0.008679 | val MSE: 0.034093 | val MSE(MPa^2): 1.625 | R2(MPa): 0.9659 | lr: 9.03e-06 | epoch: 9.4s
+Epoch 460 | train MSE: 0.008664 | val MSE: 0.034070 | val MSE(MPa^2): 1.624 | R2(MPa): 0.9659 | lr: 8.74e-06 | epoch: 9.4s
+Epoch 461 | train MSE: 0.008671 | val MSE: 0.034071 | val MSE(MPa^2): 1.624 | R2(MPa): 0.9659 | lr: 8.46e-06 | epoch: 9.4s
+Epoch 462 | train MSE: 0.008648 | val MSE: 0.034068 | val MSE(MPa^2): 1.624 | R2(MPa): 0.9659 | lr: 8.18e-06 | epoch: 9.4s
+Epoch 463 | train MSE: 0.008680 | val MSE: 0.034097 | val MSE(MPa^2): 1.625 | R2(MPa): 0.9659 | lr: 7.92e-06 | epoch: 9.4s
+Epoch 464 | train MSE: 0.008657 | val MSE: 0.034045 | val MSE(MPa^2): 1.622 | R2(MPa): 0.9660 | lr: 7.66e-06 | epoch: 9.5s
+Epoch 465 | train MSE: 0.008655 | val MSE: 0.034044 | val MSE(MPa^2): 1.622 | R2(MPa): 0.9660 | lr: 7.40e-06 | epoch: 9.4s
+Epoch 466 | train MSE: 0.008644 | val MSE: 0.034063 | val MSE(MPa^2): 1.623 | R2(MPa): 0.9659 | lr: 7.15e-06 | epoch: 9.4s
+Epoch 467 | train MSE: 0.008633 | val MSE: 0.034061 | val MSE(MPa^2): 1.623 | R2(MPa): 0.9659 | lr: 6.91e-06 | epoch: 9.4s
+Epoch 468 | train MSE: 0.008624 | val MSE: 0.034051 | val MSE(MPa^2): 1.623 | R2(MPa): 0.9660 | lr: 6.68e-06 | epoch: 9.4s
+Epoch 469 | train MSE: 0.008633 | val MSE: 0.034070 | val MSE(MPa^2): 1.624 | R2(MPa): 0.9659 | lr: 6.46e-06 | epoch: 9.4s
+Epoch 470 | train MSE: 0.008618 | val MSE: 0.034062 | val MSE(MPa^2): 1.623 | R2(MPa): 0.9659 | lr: 6.24e-06 | epoch: 9.4s
+Epoch 471 | train MSE: 0.008605 | val MSE: 0.034036 | val MSE(MPa^2): 1.622 | R2(MPa): 0.9660 | lr: 6.03e-06 | epoch: 9.3s
+Early stopping triggered after 40 epochs without improvement. Best val MSE: 0.034027
+Training finished in 73.7 min. Best val MSE: 0.034027
+[GPU0] Preset=L | Completed with batch=60 | Geometry=Plate_hole
+GPU0 run set finished.
+DONE
