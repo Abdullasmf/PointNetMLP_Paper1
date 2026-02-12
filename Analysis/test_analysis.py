@@ -81,7 +81,7 @@ print('='*60)
 L_bracket_data_path = repo_dir / 'L_Bracket' / 'L_bracket_stress.h5'
 print(f'Loading data: {L_bracket_data_path.name}')
 L_bracket_samples = load_h5_data(L_bracket_data_path, max_samples=50)  # Limit for faster testing
-L_bracket_val_samples, _ = train_test_split(L_bracket_samples, test_size=0.2, random_state=42)
+_, L_bracket_val_samples = train_test_split(L_bracket_samples, test_size=0.2, random_state=42)
 print(f'Validation samples: {len(L_bracket_val_samples)}\n')
 
 L_bracket_results = {}
@@ -120,7 +120,7 @@ print('='*60)
 Plate_hole_data_path = repo_dir / 'Plate_Hole' / 'Plate_hole_stress.h5'
 print(f'Loading data: {Plate_hole_data_path.name}')
 Plate_hole_samples = load_h5_data(Plate_hole_data_path, max_samples=50)
-Plate_hole_val_samples, _ = train_test_split(Plate_hole_samples, test_size=0.2, random_state=42)
+_, Plate_hole_val_samples = train_test_split(Plate_hole_samples, test_size=0.2, random_state=42)
 print(f'Validation samples: {len(Plate_hole_val_samples)}\n')
 
 Plate_hole_results = {}
