@@ -64,6 +64,13 @@ class VanillaDeepONet(nn.Module):
     ):
         super().__init__()
         
+        # Extract normalization settings from encoder_cfg
+        norm_type = "batch"  # default
+        num_groups = 16  # default
+        if encoder_cfg is not None:
+            norm_type = str(encoder_cfg.get("norm", "batch"))
+            num_groups = int(encoder_cfg.get("num_groups", 16))
+        
         # 1. Branch Network
         # Shared Encoder
         self.encoder = PointNet2Encoder2D(latent_dim=latent_dim, encoder_cfg=encoder_cfg)
@@ -75,7 +82,8 @@ class VanillaDeepONet(nn.Module):
             in_dim=eff_latent,
             hidden=branch_hidden,
             out_dim=basis_dim * out_dim,
-            norm="batch" # Assuming batch norm as default from pn_models
+            norm=norm_type,
+            num_groups=num_groups
         )
 
         # 2. Trunk Network
@@ -85,7 +93,8 @@ class VanillaDeepONet(nn.Module):
             in_dim=2,
             hidden=trunk_hidden,
             out_dim=basis_dim * out_dim,
-            norm="batch"
+            norm=norm_type,
+            num_groups=num_groups
         )
         
         self.basis_dim = basis_dim
@@ -151,6 +160,13 @@ class SpectralDeepONet(nn.Module):
     ):
         super().__init__()
         
+        # Extract normalization settings from encoder_cfg
+        norm_type = "batch"  # default
+        num_groups = 16  # default
+        if encoder_cfg is not None:
+            norm_type = str(encoder_cfg.get("norm", "batch"))
+            num_groups = int(encoder_cfg.get("num_groups", 16))
+        
         # 1. Branch Network
         self.encoder = PointNet2Encoder2D(latent_dim=latent_dim, encoder_cfg=encoder_cfg)
         eff_latent = self.encoder.latent_dim
@@ -159,7 +175,8 @@ class SpectralDeepONet(nn.Module):
             in_dim=eff_latent,
             hidden=branch_hidden,
             out_dim=basis_dim * out_dim,
-            norm="batch"
+            norm=norm_type,
+            num_groups=num_groups
         )
 
         # 2. Trunk Network
@@ -171,7 +188,8 @@ class SpectralDeepONet(nn.Module):
             in_dim=trunk_in_dim,
             hidden=trunk_hidden,
             out_dim=basis_dim * out_dim,
-            norm="batch"
+            norm=norm_type,
+            num_groups=num_groups
         )
         
         self.basis_dim = basis_dim
@@ -214,6 +232,13 @@ class DenseNoFFT(nn.Module):
     ):
         super().__init__()
         
+        # Extract normalization settings from encoder_cfg
+        norm_type = "batch"  # default
+        num_groups = 16  # default
+        if encoder_cfg is not None:
+            norm_type = str(encoder_cfg.get("norm", "batch"))
+            num_groups = int(encoder_cfg.get("num_groups", 16))
+        
         # Shared Encoder
         self.encoder = PointNet2Encoder2D(latent_dim=latent_dim, encoder_cfg=encoder_cfg)
         eff_latent = self.encoder.latent_dim
@@ -230,7 +255,8 @@ class DenseNoFFT(nn.Module):
             in_dim=head_in_dim,
             hidden=mlp_hidden,
             out_dim=out_dim,
-            norm="batch", # Defaulting to batch norm as widely used here
+            norm=norm_type,
+            num_groups=num_groups
             # PointNetMLPJoint uses dropout and norm from config, effectively logic duplicated here for simplicity
         )
 
