@@ -92,6 +92,25 @@ All models use **standardized** training settings for fair comparison:
 - **LR Scheduler**: OneCycleLR (cosine annealing)
 - **Gradient Clipping**: 0.5
 - **Early Stopping**: 40 epochs patience
+- **Mixed Precision Training**: Enabled (AMP) with optimized scheduler step ordering
+
+### Training Optimizations
+
+The training scripts use several optimizations for efficient and stable training:
+
+1. **Mixed Precision Training (AMP)**: Uses PyTorch's automatic mixed precision to reduce memory usage and speed up training on GPUs with tensor cores.
+
+2. **Optimized Scheduler Ordering**: The learning rate scheduler is called in the correct order with gradient scaling:
+   ```python
+   scaler.step(optimizer)      # Step 1: Update weights (skipped if gradients are inf/NaN)
+   scheduler.step()             # Step 2: Update learning rate
+   scaler.update()              # Step 3: Update gradient scaler
+   ```
+   This ordering prevents the PyTorch warning about calling `lr_scheduler.step()` before `optimizer.step()` and ensures proper learning rate tracking with AMP.
+
+3. **Gradient Clipping**: Applied before optimizer step to prevent gradient explosion.
+
+4. **OneCycleLR Scheduler**: Steps after each batch (not epoch) for smooth learning rate annealing throughout training.
 
 ### Data Processing
 - **Train/Val Split**: 80/20 (random_state=42)
