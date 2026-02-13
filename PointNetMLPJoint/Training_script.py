@@ -368,12 +368,21 @@ def train(
                 "cuda", enabled=(device.type == "cuda" and use_amp)
             ):
                 pred = model(gp, query_xy)  # [B,Kq,1]
-                # Use sample weights if provided (batched_all duplicate adjustment). Guard with 'is not None'.
+                # Calculate stress-weighted loss
+                # Weight higher stress values more heavily (per-sample normalization for batch consistency)
+                target_stress = target.abs()  # [B,Kq,1]
+                # Compute max per sample in batch dimension
+                max_per_sample = target_stress.view(target_stress.shape[0], -1).max(dim=1, keepdim=True).values.unsqueeze(-1)  # [B,1,1]
+                stress_weights = 1.0 + 5.0 * (target_stress / (max_per_sample + 1e-8))  # [B,Kq,1]
+                
+                # Combine with duplicate weights if provided (batched_all duplicate adjustment)
                 if isinstance(weights, torch.Tensor):
+                    combined_weights = weights * stress_weights
                     diff2 = (pred - target) ** 2
-                    loss = (diff2 * weights).mean()
+                    loss = (diff2 * combined_weights).mean()
                 else:
-                    loss = mse(pred, target)
+                    diff2 = (pred - target) ** 2
+                    loss = (diff2 * stress_weights).mean()
 
             scaler.scale(loss).backward()
             if grad_clip_norm is not None:

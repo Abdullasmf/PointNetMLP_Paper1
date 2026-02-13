@@ -23,16 +23,16 @@
         "head_hidden": [256, 256, 128],
         "train_batch_size": 6,
         "train_points_per_geom": 4096,
-        "norm": "layer",
-        "head_norm": "layer",
+        "norm": "batch",
+        "pool": "max",
+        "head_norm": "batch",
         "head_dropout": 0.0,
         "posenc": {
-            "n_freqs": 12,
-            "scale": 1.0
+            "n_freqs": 0
         },
         "head_posenc": {
-            "n_freqs": 12,
-            "scale": 1.0
+            "n_freqs": 6,
+            "scale": 0.5
         }
     },
     "M": {
@@ -59,16 +59,16 @@
         "head_hidden": [384, 384, 192],
         "train_batch_size": 6,
         "train_points_per_geom": 4096,
-        "norm": "layer",
-        "head_norm": "layer",
+        "norm": "batch",
+        "pool": "max",
+        "head_norm": "batch",
         "head_dropout": 0.0,
         "posenc": {
-            "n_freqs": 12,
-            "scale": 1.0
+            "n_freqs": 0
         },
         "head_posenc": {
-            "n_freqs": 12,
-            "scale": 1.0
+            "n_freqs": 6,
+            "scale": 0.5
         }
     },
     "L": {
@@ -95,16 +95,16 @@
         "head_hidden": [512, 512, 256],
         "train_batch_size": 4,
         "train_points_per_geom": 4096,
-        "norm": "layer",
-        "head_norm": "layer",
+        "norm": "batch",
+        "pool": "max",
+        "head_norm": "batch",
         "head_dropout": 0.0,
         "posenc": {
-            "n_freqs": 12,
-            "scale": 1.0
+            "n_freqs": 0
         },
         "head_posenc": {
-            "n_freqs": 12,
-            "scale": 1.0
+            "n_freqs": 6,
+            "scale": 0.5
         }
     },
     "XL": {
@@ -131,16 +131,16 @@
         "head_hidden": [512, 512, 256],
         "train_batch_size": 4,
         "train_points_per_geom": 4096,
-        "norm": "layer",
-        "head_norm": "layer",
+        "norm": "batch",
+        "pool": "max",
+        "head_norm": "batch",
         "head_dropout": 0.0,
         "posenc": {
-            "n_freqs": 12,
-            "scale": 1.0
+            "n_freqs": 0
         },
         "head_posenc": {
-            "n_freqs": 12,
-            "scale": 1.0
+            "n_freqs": 6,
+            "scale": 0.5
         }
     },
     "XXL": {
@@ -167,16 +167,16 @@
         "head_hidden": [768, 768, 384],
         "train_batch_size": 2,
         "train_points_per_geom": 4096,
-        "norm": "layer",
-        "head_norm": "layer",
+        "norm": "batch",
+        "pool": "max",
+        "head_norm": "batch",
         "head_dropout": 0.0,
         "posenc": {
-            "n_freqs": 12,
-            "scale": 1.0
+            "n_freqs": 0
         },
         "head_posenc": {
-            "n_freqs": 12,
-            "scale": 1.0
+            "n_freqs": 6,
+            "scale": 0.5
         }
     }
 }
