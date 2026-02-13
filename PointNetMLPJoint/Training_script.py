@@ -369,10 +369,11 @@ def train(
             ):
                 pred = model(gp, query_xy)  # [B,Kq,1]
                 # Calculate stress-weighted loss
-                # Weight higher stress values more heavily
-                target_stress = target.squeeze(-1)  # [B,Kq] or [B,Kq]
-                stress_weights = 1.0 + 5.0 * (target_stress / (target_stress.max() + 1e-8))
-                stress_weights = stress_weights.unsqueeze(-1)  # [B,Kq,1]
+                # Weight higher stress values more heavily (per-sample normalization for batch consistency)
+                target_stress = target.abs()  # [B,Kq,1]
+                # Compute max per sample in batch dimension
+                max_per_sample = target_stress.view(target_stress.shape[0], -1).max(dim=1, keepdim=True)[0].unsqueeze(-1)  # [B,1,1]
+                stress_weights = 1.0 + 5.0 * (target_stress / (max_per_sample + 1e-8))  # [B,Kq,1]
                 
                 # Combine with duplicate weights if provided (batched_all duplicate adjustment)
                 if isinstance(weights, torch.Tensor):
