@@ -23,12 +23,12 @@ except ImportError:
 # -----------------------------------------------------------------------------
 # 1. Configuration
 # -----------------------------------------------------------------------------
-num_samples = 2000
+num_samples = 5000
 lc_fine = 0.015    # Fine mesh size at hole boundary
 lc_coarse = 0.1    # Coarse mesh size away from hole
 E_val = 1000.0
 nu_val = 0.3
-traction_load = np.array([10.0, 0.0]) # Tension in X direction
+traction_load = np.array([15.0, 0.0]) # Tension in X direction
 current_dir = os.path.dirname(os.path.abspath(__file__))
 output_filename = os.path.join(current_dir, "Plate_hole_stress.h5")
 
