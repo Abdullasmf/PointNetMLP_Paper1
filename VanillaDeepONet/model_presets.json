@@ -23,8 +23,9 @@
         "head_hidden": [256, 256, 128],
         "train_batch_size": 6,
         "train_points_per_geom": 4096,
-        "norm": "layer",
-        "head_norm": "layer",
+        "norm": "batch",
+        "pool": "max",
+        "head_norm": "batch",
         "head_dropout": 0.0
     },
     "M": {
@@ -51,8 +52,9 @@
         "head_hidden": [384, 384, 192],
         "train_batch_size": 6,
         "train_points_per_geom": 4096,
-        "norm": "layer",
-        "head_norm": "layer",
+        "norm": "batch",
+        "pool": "max",
+        "head_norm": "batch",
         "head_dropout": 0.0
     },
     "L": {
@@ -79,8 +81,9 @@
         "head_hidden": [512, 512, 256],
         "train_batch_size": 4,
         "train_points_per_geom": 4096,
-        "norm": "layer",
-        "head_norm": "layer",
+        "norm": "batch",
+        "pool": "max",
+        "head_norm": "batch",
         "head_dropout": 0.0
     },
     "XL": {
@@ -107,8 +110,9 @@
         "head_hidden": [512, 512, 256],
         "train_batch_size": 4,
         "train_points_per_geom": 4096,
-        "norm": "layer",
-        "head_norm": "layer",
+        "norm": "batch",
+        "pool": "max",
+        "head_norm": "batch",
         "head_dropout": 0.0
     },
     "XXL": {
@@ -135,8 +139,9 @@
         "head_hidden": [768, 768, 384],
         "train_batch_size": 2,
         "train_points_per_geom": 4096,
-        "norm": "layer",
-        "head_norm": "layer",
+        "norm": "batch",
+        "pool": "max",
+        "head_norm": "batch",
         "head_dropout": 0.0
     }
 }
