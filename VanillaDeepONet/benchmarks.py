@@ -119,14 +119,12 @@ class VanillaDeepONet(nn.Module):
         coeffs = coeffs.view(B, 1, self.basis_dim, self.out_dim)
 
         # Trunk execution
-        # Trunk needs to operate point-wise. 
-        # We process flattened queries or use the MLP which handles arbitrary leading dims if linear layers allow? 
-        # The provided MLP class in pn_models basically uses Linear layers.
-        # nn.Linear applies to the last dimension, so [B, Q, 2] is fine.
-        basis = self.trunk_net(query_points) # [B, Q, basis_dim * out_dim]
+        # Flatten query_points to [B*Q, 2] for MLP processing (BatchNorm1d compatibility)
+        query_flat = query_points.reshape(B * Q, -1)  # [B*Q, 2]
+        basis_flat = self.trunk_net(query_flat)  # [B*Q, basis_dim * out_dim]
         
         # Reshape basis to [B, Q, basis_dim, out_dim]
-        basis = basis.view(B, Q, self.basis_dim, self.out_dim)
+        basis = basis_flat.view(B, Q, self.basis_dim, self.out_dim)
 
         # Fusion: Dot product over basis_dim
         # Sum( b_i * t_i )
@@ -207,8 +205,10 @@ class SpectralDeepONet(nn.Module):
         # Trunk
         # Apply FFT to query points
         q_embed = self.fourier(query_points) # [B, Q, trunk_in_dim]
-        basis = self.trunk_net(q_embed)      # [B, Q, basis_dim * out_dim]
-        basis = basis.view(B, Q, self.basis_dim, self.out_dim)
+        # Flatten for MLP processing (BatchNorm1d compatibility)
+        q_flat = q_embed.reshape(B * Q, -1)  # [B*Q, trunk_in_dim]
+        basis_flat = self.trunk_net(q_flat)  # [B*Q, basis_dim * out_dim]
+        basis = basis_flat.view(B, Q, self.basis_dim, self.out_dim)
 
         # Fusion
         out = torch.sum(coeffs * basis, dim=2)
