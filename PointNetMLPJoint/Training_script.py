@@ -389,8 +389,8 @@ def train(
                 scaler.unscale_(optimizer)
                 torch.nn.utils.clip_grad_norm_(model.parameters(), grad_clip_norm)
             scaler.step(optimizer)
-            scheduler.step()
             scaler.update()
+            scheduler.step()
 
             train_loss += loss.item() * Bmul
             ntrain += Bmul
