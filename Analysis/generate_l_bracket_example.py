@@ -3,6 +3,7 @@ import numpy as np
 import h5py
 import matplotlib.pyplot as plt
 from scipy.sparse.linalg import spsolve
+import os
 
 try:
     import skfem
@@ -29,9 +30,9 @@ lc_fine = 0.005    # Fine mesh size at fillet
 lc_coarse = 0.1    # Coarse mesh size away from corner
 E_val = 1000.0
 nu_val = 0.3
-traction_load = np.array([0.0, -10.0]) # Downward split
-
-output_filename = "L_bracket_example.h5"
+traction_load = np.array([0.0, -15.0]) # Downward split
+current_dir = os.path.dirname(os.path.abspath(__file__))
+output_filename = os.path.join(current_dir, "L_bracket_example.h5")
 
 # --- Plane Stress Parameters ---
 # Convert E, nu to Lame parameters (mu, lambda)
