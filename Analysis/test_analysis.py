@@ -23,7 +23,8 @@ model_dirs = {
     'PointNetMLPJoint': repo_dir / 'PointNetMLPJoint' / 'Trained_models',
     'DenseNoFFT': repo_dir / 'DenseNoFFT' / 'Trained_models',
     'SpectralDeepONet': repo_dir / 'SpectralDeepONet' / 'Trained_models',
-    'VanillaDeepONet': repo_dir / 'VanillaDeepONet' / 'Trained_models'
+    'VanillaDeepONet': repo_dir / 'VanillaDeepONet' / 'Trained_models',
+    'Point_DeepONet': repo_dir / 'Point_DeepONet' / 'Trained_models'
 }
 
 def load_h5_data(path, max_samples=None):
@@ -85,7 +86,7 @@ _, L_bracket_val_samples = train_test_split(L_bracket_samples, test_size=0.2, ra
 print(f'Validation samples: {len(L_bracket_val_samples)}\n')
 
 L_bracket_results = {}
-for model_name in ['PointNetMLPJoint', 'DenseNoFFT', 'SpectralDeepONet', 'VanillaDeepONet']:
+for model_name in ['PointNetMLPJoint', 'DenseNoFFT', 'SpectralDeepONet', 'VanillaDeepONet', 'Point_DeepONet']:
     print(f'Evaluating {model_name}...')
     model_path = list(model_dirs[model_name].glob('L-*.pt'))[0]
     
@@ -124,7 +125,7 @@ _, Plate_hole_val_samples = train_test_split(Plate_hole_samples, test_size=0.2, 
 print(f'Validation samples: {len(Plate_hole_val_samples)}\n')
 
 Plate_hole_results = {}
-for model_name in ['PointNetMLPJoint', 'DenseNoFFT', 'SpectralDeepONet', 'VanillaDeepONet']:
+for model_name in ['PointNetMLPJoint', 'DenseNoFFT', 'SpectralDeepONet', 'VanillaDeepONet', 'Point_DeepONet']:
     print(f'Evaluating {model_name}...')
     model_path = list(model_dirs[model_name].glob('H-*.pt'))[0]
     

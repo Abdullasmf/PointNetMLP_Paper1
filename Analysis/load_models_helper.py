@@ -2,7 +2,7 @@ import torch
 import json
 from pathlib import Path
 from pn_models import PointNetMLPJoint
-from benchmarks import VanillaDeepONet, SpectralDeepONet, DenseNoFFT
+from benchmarks import VanillaDeepONet, SpectralDeepONet, DenseNoFFT, ScaledDiagramDeepONet
 
 def load_model_with_checkpoint(model_path, model_type, device='cpu'):
     """
@@ -93,6 +93,14 @@ def load_model_with_checkpoint(model_path, model_type, device='cpu'):
             model = DenseNoFFT(
                 latent_dim=preset['latent_dim'],
                 mlp_hidden=preset['head_hidden'],
+                encoder_cfg=encoder_cfg
+            )
+        elif model_type == 'Point_DeepONet':
+            head_hidden = preset['head_hidden']
+            basis_dim = head_hidden[-1] if len(head_hidden) > 0 else 128
+            model = ScaledDiagramDeepONet(
+                latent_dim=preset['latent_dim'],
+                basis_dim=basis_dim,
                 encoder_cfg=encoder_cfg
             )
         else:
