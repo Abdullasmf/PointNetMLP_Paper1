@@ -286,3 +286,102 @@ class DenseNoFFT(nn.Module):
         y = y_flat.view(B, Q, -1) # [B, Q, Out_Dim]
         
         return y
+
+import torch
+import torch.nn as nn
+import numpy as np
+from typing import List, Dict, Any, Optional
+from pn_models import PointNet2Encoder2D, MLP
+
+class SineLayer(nn.Module):
+    def __init__(self, in_features, out_features, is_first=False, omega_0=30.0):
+        super().__init__()
+        self.omega_0 = omega_0
+        self.is_first = is_first
+        self.linear = nn.Linear(in_features, out_features)
+        self.init_weights()
+
+    def init_weights(self):
+        with torch.no_grad():
+            if self.is_first:
+                self.linear.weight.uniform_(-1 / self.linear.in_features, 1 / self.linear.in_features)
+            else:
+                self.linear.weight.uniform_(-np.sqrt(6 / self.linear.in_features) / self.omega_0,
+                                            np.sqrt(6 / self.linear.in_features) / self.omega_0)
+
+    def forward(self, x):
+        return torch.sin(self.omega_0 * self.linear(x))
+
+class ScaledDiagramDeepONet(nn.Module):
+    """
+    Architecture: Fair-scaled replica of the Point-DeepONet Diagram.
+    - Branch: PointNet++ (Matches your 'L' config)
+    - Trunk: SIREN Layers (Scaled to match your latent_dim)
+    - Fusion: Early Element-wise Multiplication -> MLP (Matches your head_hidden) -> Dot Product
+    """
+    def __init__(
+        self,
+        latent_dim: int = 192,
+        basis_dim: int = 128, # The final 'p' dimension for the dot product
+        head_hidden: List[int] = [512, 512, 256],
+        encoder_cfg: Optional[Dict[str, Any]] = None,
+    ):
+        super().__init__()
+        
+        # 1. Branch Network (PointNet++)
+        # We use YOUR exact encoder so the geometry extraction is a fair fight
+        self.encoder = PointNet2Encoder2D(latent_dim=latent_dim, encoder_cfg=encoder_cfg)
+        eff_latent = self.encoder.latent_dim
+        
+        # 2. Trunk Network (SIREN Layers)
+        # Scaled to gracefully project the 2D coordinates up to the eff_latent dimension
+        self.siren = nn.Sequential(
+            SineLayer(2, 64, is_first=True),
+            SineLayer(64, 128),
+            SineLayer(128, eff_latent)
+        )
+        
+        # 3. Post-Multiplication MLP
+        # This matches the raw parameter capacity of your 'L' configuration head
+        norm_type = str(encoder_cfg.get("norm", "batch")) if encoder_cfg else "batch"
+        num_groups = int(encoder_cfg.get("num_groups", 16)) if encoder_cfg else 16
+        
+        self.post_mul_mlp = MLP(
+            in_dim=eff_latent,
+            hidden=head_hidden,
+            out_dim=basis_dim, # Projects to B^beta
+            norm=norm_type,
+            num_groups=num_groups
+        )
+
+        # Projection to form T^beta for the final dot product
+        self.t_beta_proj = nn.Linear(eff_latent, basis_dim)
+
+        self.basis_dim = basis_dim
+        self.bias = nn.Parameter(torch.zeros(1))
+
+    def forward(self, geom_points, query_points):
+        B, Q, _ = query_points.shape
+
+        # --- BRANCH ---
+        b_alpha = self.encoder(geom_points) # [B, eff_latent]
+
+        # --- TRUNK ---
+        q_flat = query_points.reshape(-1, 2)
+        t_alpha = self.siren(q_flat).view(B, Q, -1) # [B, Q, eff_latent]
+
+        # --- EARLY FUSION (The odot circle) ---
+        b_alpha_exp = b_alpha.unsqueeze(1).expand(-1, Q, -1) # [B, Q, eff_latent]
+        fused = b_alpha_exp * t_alpha # Element-wise multiplication
+
+        # --- LATE FUSION PREP ---
+        fused_flat = fused.reshape(-1, b_alpha.shape[-1])
+        b_beta = self.post_mul_mlp(fused_flat).view(B, Q, self.basis_dim)
+        
+        t_alpha_flat = t_alpha.reshape(-1, b_alpha.shape[-1])
+        t_beta = self.t_beta_proj(t_alpha_flat).view(B, Q, self.basis_dim)
+
+        # --- TERMINAL DOT PRODUCT (The otimes circle) ---
+        out = torch.sum(b_beta * t_beta, dim=-1, keepdim=True) + self.bias
+        
+        return out
