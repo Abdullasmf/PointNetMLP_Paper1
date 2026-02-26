@@ -16,7 +16,7 @@ from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset, DataLoader
 
 from pn_models import PointNetMLPJoint
-from benchmarks import VanillaDeepONet, ScaledDiagramDeepONet
+from benchmarks import VanillaDeepONet, ScaledDiagramDeepONet, PointDeepONet
 
 project_dir = (
     os.path.dirname(os.path.abspath(__file__))
@@ -26,6 +26,63 @@ project_dir = (
 
 # Defer device prints and data loading to main() to avoid re-exec in worker processes
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+
+# ---------------------------------------------------------------------------
+# SDF computation helpers (used when SDF is not pre-stored in HDF5)
+# ---------------------------------------------------------------------------
+
+def _dist_point_to_segment_batch(
+    px: np.ndarray, py: np.ndarray,
+    ax: float, ay: float, bx: float, by: float,
+) -> np.ndarray:
+    dx, dy = bx - ax, by - ay
+    len2 = dx * dx + dy * dy
+    if len2 < 1e-12:
+        return np.hypot(px - ax, py - ay)
+    t = np.clip(((px - ax) * dx + (py - ay) * dy) / len2, 0.0, 1.0)
+    return np.hypot(px - (ax + t * dx), py - (ay + t * dy))
+
+
+def _compute_sdf_for_sample(
+    points: np.ndarray,
+    corner: Optional[np.ndarray],
+    params: Optional[np.ndarray],
+) -> np.ndarray:
+    """Compute per-point SDF analytically from stored geometry parameters.
+
+    Returns a 1-D array of shape (N,) with non-negative distances to the
+    nearest domain boundary.
+    """
+    px, py = points[:, 0], points[:, 1]
+
+    if corner is not None:
+        # L-bracket: six boundary segments (fillet ignored)
+        xc, yc = float(corner[0]), float(corner[1])
+        segments = [
+            (0.0, 0.0, 1.0, 0.0),
+            (1.0, 0.0, 1.0, yc),
+            (1.0, yc,  xc, yc),
+            (xc,  yc,  xc, 1.0),
+            (xc,  1.0, 0.0, 1.0),
+            (0.0, 1.0, 0.0, 0.0),
+        ]
+        dists = np.stack(
+            [_dist_point_to_segment_batch(px, py, ax, ay, bx, by)
+             for ax, ay, bx, by in segments],
+            axis=-1,
+        )
+        return dists.min(axis=-1)
+
+    if params is not None:
+        # Plate-with-hole: outer rectangle + circle
+        cx, cy, r = float(params[0]), float(params[1]), float(params[2])
+        dist_outer = np.minimum.reduce([px, 1.0 - px, py, 1.0 - py])
+        dist_hole  = np.abs(np.hypot(px - cx, py - cy) - r)
+        return np.minimum(dist_outer, dist_hole)
+
+    # Fallback: no geometry info – return zeros
+    return np.zeros(len(points), dtype=np.float32)
 
 
 def load_h5_pointsets(path: Path) -> List[torch.Tensor]:
@@ -52,9 +109,25 @@ def load_h5_pointsets(path: Path) -> List[torch.Tensor]:
                 sample['corner'] = group['corner'][:]
             if 'params' in group:
                 sample['params'] = group['params'][:]
-            
-            coord_stress = np.hstack((sample['points'], sample['stress']))  # (N, 3)
-            coord_stress_list.append(torch.from_numpy(coord_stress).float())
+
+            # Load pre-computed SDF if available; otherwise compute analytically
+            if 'sdf' in group:
+                sdf = group['sdf'][:]  # (N, 1)
+            else:
+                sdf = _compute_sdf_for_sample(
+                    sample['points'],
+                    sample.get('corner'),
+                    sample.get('params'),
+                )
+                sdf = sdf.reshape(-1, 1)
+
+            # Layout: (x, y, sdf, stress) -> (N, 4)
+            coord_sdf_stress = np.hstack(
+                (sample['points'], sdf, sample['stress'])
+            )
+            coord_stress_list.append(
+                torch.from_numpy(coord_sdf_stress).float()
+            )
             all_data.append(sample)
         
     return coord_stress_list
@@ -66,8 +139,9 @@ def load_h5_pointsets(path: Path) -> List[torch.Tensor]:
 class GeomStressDataset(Dataset):
     """
     Geometry-level dataset. Each item is one simulation geometry with variable number of points.
-    x: [N,2] coordinates, y: [N,1] stress.
+    x: [N,2] coordinates, sdf: [N,1], y: [N,1] stress.
     Applies global normalization using provided stats.
+    Tensors have layout (x, y, sdf, stress) -> shape [N, 4].
     """
 
     def __init__(
@@ -77,31 +151,41 @@ class GeomStressDataset(Dataset):
         coord_half_range: torch.Tensor,
         stress_mean: torch.Tensor,
         stress_std: torch.Tensor,
+        sdf_mean: Optional[torch.Tensor] = None,
+        sdf_std: Optional[torch.Tensor] = None,
     ) -> None:
         super().__init__()
-        self.items: List[Tuple[torch.Tensor, torch.Tensor]] = []
+        self.items: List[Tuple[torch.Tensor, torch.Tensor, torch.Tensor]] = []
         self.coord_center = coord_center
         self.coord_half_range = torch.clamp(coord_half_range, min=1e-8)
         self.stress_mean = stress_mean
         self.stress_std = torch.clamp(stress_std, min=1e-8)
+        self.sdf_mean = sdf_mean if sdf_mean is not None else torch.zeros(1)
+        self.sdf_std = torch.clamp(
+            sdf_std if sdf_std is not None else torch.ones(1), min=1e-8
+        )
         for t in tensors:
-            if t.shape[1] < 3:
-                raise ValueError("Each tensor must be [N,3]: x,y,stress")
-            xy = t[:, :2].contiguous()
-            s = t[:, 2:3].contiguous()
-            self.items.append((xy, s))
+            if t.shape[1] != 4:
+                raise ValueError("Each tensor must have shape [N,4]: x,y,sdf,stress")
+            xy  = t[:, :2].contiguous()
+            sdf = t[:, 2:3].contiguous()
+            s   = t[:, 3:4].contiguous()
+            self.items.append((xy, sdf, s))
 
     def __len__(self) -> int:
         return len(self.items)
 
     def __getitem__(self, idx: int) -> Dict[str, torch.Tensor]:
-        xy, s = self.items[idx]
+        xy, sdf, s = self.items[idx]
         # Normalize with GLOBAL stats computed from training set
-        xyn = (xy - self.coord_center) / self.coord_half_range
-        sn = (s - self.stress_mean) / self.stress_std
+        xyn   = (xy  - self.coord_center) / self.coord_half_range
+        sdfn  = (sdf - self.sdf_mean)     / self.sdf_std
+        sn    = (s   - self.stress_mean)  / self.stress_std
+        # Points include SDF as 3rd channel: [N, 3]
+        pts_with_sdf = torch.cat([xyn, sdfn], dim=-1)
         return {
-            "points": xyn,  # [N,2]
-            "stress": sn,  # [N,1]
+            "points": pts_with_sdf,  # [N, 3]  (x_norm, y_norm, sdf_norm)
+            "stress": sn,            # [N, 1]
             # Provide also unnormalized for potential analysis if needed
             "points_raw": xy,
             "stress_raw": s,
@@ -226,17 +310,23 @@ class AllNodesPadCollate:
 
 def compute_global_normalization(
     train_tensors: List[torch.Tensor],
-) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
-    """Compute coord center/half-range and stress mean/std from training set."""
-    all_xy = torch.cat([t[:, :2] for t in train_tensors], dim=0)
-    all_s = torch.cat([t[:, 2:3] for t in train_tensors], dim=0)
+) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    """Compute coord center/half-range, SDF mean/std, and stress mean/std from training set.
+
+    Tensors have layout (x, y, sdf, stress) -> shape [N, 4].
+    """
+    all_xy  = torch.cat([t[:, :2]  for t in train_tensors], dim=0)
+    all_sdf = torch.cat([t[:, 2:3] for t in train_tensors], dim=0)
+    all_s   = torch.cat([t[:, 3:4] for t in train_tensors], dim=0)
     xy_min = all_xy.min(dim=0).values
     xy_max = all_xy.max(dim=0).values
-    coord_center = 0.5 * (xy_min + xy_max)
+    coord_center     = 0.5 * (xy_min + xy_max)
     coord_half_range = torch.clamp(0.5 * (xy_max - xy_min), min=1e-6)
+    sdf_mean = all_sdf.mean(dim=0)
+    sdf_std  = all_sdf.std(dim=0, unbiased=False).clamp(min=1e-6)
     stress_mean = all_s.mean(dim=0)
-    stress_std = all_s.std(dim=0, unbiased=False).clamp(min=1e-6)
-    return coord_center, coord_half_range, stress_mean, stress_std
+    stress_std  = all_s.std(dim=0, unbiased=False).clamp(min=1e-6)
+    return coord_center, coord_half_range, stress_mean, stress_std, sdf_mean, sdf_std
 
 
 def set_seed(seed: int = 42) -> None:
@@ -255,6 +345,8 @@ def train(
     coord_half_range: torch.Tensor,
     stress_mean: torch.Tensor,
     stress_std: torch.Tensor,
+    sdf_mean: Optional[torch.Tensor] = None,
+    sdf_std: Optional[torch.Tensor] = None,
     epochs: int = 100,
     lr: float = 1e-3,
     weight_decay: float = 1e-4,
@@ -455,6 +547,8 @@ def train(
                     "arch": model.get_arch() if hasattr(model, "get_arch") else None,
                     "coord_center": coord_center.cpu(),
                     "coord_half_range": coord_half_range.cpu(),
+                    "sdf_mean": sdf_mean.cpu() if sdf_mean is not None else None,
+                    "sdf_std": sdf_std.cpu() if sdf_std is not None else None,
                     "stress_mean": stress_mean.cpu(),
                     "stress_std": stress_std.cpu(),
                     "config": {
@@ -594,18 +688,22 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
     train_tensors = [PS_list_whole[i] for i in train_idx]
     val_tensors = [PS_list_whole[i] for i in val_idx]
 
-    coord_center, coord_half_range, stress_mean, stress_std = (
+    coord_center, coord_half_range, stress_mean, stress_std, sdf_mean, sdf_std = (
         compute_global_normalization(train_tensors)
     )
     print(
-        f"Coord center={coord_center.numpy()}, half_range={coord_half_range.numpy()} | stress_mean={stress_mean.item():.4f}, stress_std={stress_std.item():.4f}"
+        f"Coord center={coord_center.numpy()}, half_range={coord_half_range.numpy()} | "
+        f"sdf_mean={sdf_mean.item():.4f}, sdf_std={sdf_std.item():.4f} | "
+        f"stress_mean={stress_mean.item():.4f}, stress_std={stress_std.item():.4f}"
     )
 
     train_ds = GeomStressDataset(
-        train_tensors, coord_center, coord_half_range, stress_mean, stress_std
+        train_tensors, coord_center, coord_half_range, stress_mean, stress_std,
+        sdf_mean=sdf_mean, sdf_std=sdf_std,
     )
     val_ds = GeomStressDataset(
-        val_tensors, coord_center, coord_half_range, stress_mean, stress_std
+        val_tensors, coord_center, coord_half_range, stress_mean, stress_std,
+        sdf_mean=sdf_mean, sdf_std=sdf_std,
     )
 
     # Training mode: "full" (encoder sees ALL points, batch_size=1),
@@ -683,38 +781,45 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
     }
 
     # DeepONet Config extraction directly from JSON (_cfg)
-    # Allows identifying explicit keys for DeepONet, or falling back to mapping 'head_hidden'
-    
+    # Allows identifying explicit keys for PointDeepONet, or falling back to mapping 'head_hidden'
+
     # 1. Basis Dimension
     if "basis_dim" in _cfg:
         do_basis_dim = int(_cfg["basis_dim"])
     elif len(head_hidden) > 0:
-        # Fallback: treat last element of head_hidden as basis dimension
         do_basis_dim = head_hidden[-1]
     else:
-        do_basis_dim = 128 # default
+        do_basis_dim = 128
 
-    # 2. Hidden Layers (Branch/Trunk)
+    # 2. Branch hidden layers (Vanilla PointNet shared MLP)
     if "branch_hidden" in _cfg:
         do_branch_hidden = list(_cfg["branch_hidden"])
     elif len(head_hidden) > 1:
-        # Fallback: treat remaining elements as hidden layers
         do_branch_hidden = head_hidden[:-1]
     else:
-        do_branch_hidden = [256, 256] # default
-        
-    if "trunk_hidden" in _cfg:
-        do_trunk_hidden = list(_cfg["trunk_hidden"])
-    else:
-        do_trunk_hidden = list(do_branch_hidden) # symmetric default
+        do_branch_hidden = [64, 128, 256]
 
-    model = ScaledDiagramDeepONet(
-        latent_dim=latent_dim, 
+    # 3. SIREN trunk hidden layers
+    if "siren_hidden" in _cfg:
+        do_siren_hidden = list(_cfg["siren_hidden"])
+    else:
+        do_siren_hidden = [256, 256]
+
+    # 4. Post-multiplication MLP hidden layers
+    if "post_mlp_hidden" in _cfg:
+        do_post_mlp_hidden = list(_cfg["post_mlp_hidden"])
+    else:
+        do_post_mlp_hidden = list(head_hidden)  # default: same as head_hidden
+
+    model = PointDeepONet(
+        in_ch=3,                          # x, y, sdf
+        latent_dim=latent_dim,
         basis_dim=do_basis_dim,
-        # branch_hidden=do_branch_hidden,
-        # trunk_hidden=do_trunk_hidden,
-        # out_dim=1,
-        encoder_cfg=encoder_cfg
+        branch_hidden=do_branch_hidden,
+        siren_hidden=do_siren_hidden,
+        post_mlp_hidden=do_post_mlp_hidden,
+        norm=enc_norm,
+        num_groups=enc_num_groups,
     )
 
 
@@ -729,6 +834,8 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
         coord_half_range,
         stress_mean,
         stress_std,
+        sdf_mean=sdf_mean,
+        sdf_std=sdf_std,
         epochs=epochs,
         lr=lr,
         weight_decay=weight_decay,

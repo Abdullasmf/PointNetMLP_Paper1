@@ -5,7 +5,13 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-__all__ = ["PointNetMLPJoint", "PointNet2Encoder2D", "SetAbstraction", "MLP"]
+__all__ = [
+    "PointNetMLPJoint",
+    "PointNet2Encoder2D",
+    "VanillaPointNetEncoder",
+    "SetAbstraction",
+    "MLP",
+]
 
 
 def farthest_point_sampling(xyz: torch.Tensor, n_samples: int) -> torch.Tensor:
@@ -459,6 +465,60 @@ class PointNetMLPJoint(nn.Module):
         y = self.head(x)
         y = y.view(B, Q, 1)
         return y
+
+
+class VanillaPointNetEncoder(nn.Module):
+    """Standard Vanilla PointNet encoder for 2D (or higher-dim) point clouds.
+
+    Applies a series of shared pointwise MLP layers then aggregates via
+    global max-pooling to produce a single latent vector B^α.
+    No local neighbourhood set-abstraction is used.
+
+    Args:
+        in_ch:      Number of input features per point (e.g. 3 for x,y,sdf).
+        latent_dim: Dimension of the output latent vector.
+        hidden:     Hidden channel sizes for the shared pointwise MLP.
+        norm:       Normalisation type ('batch' | 'layer' | 'group' | 'none').
+        num_groups: Groups for GroupNorm (ignored for other norms).
+    """
+
+    def __init__(
+        self,
+        in_ch: int = 3,
+        latent_dim: int = 128,
+        hidden: Optional[List[int]] = None,
+        norm: str = "batch",
+        num_groups: int = 16,
+    ):
+        super().__init__()
+        self.latent_dim = latent_dim
+        if hidden is None:
+            hidden = [64, 128, 256]
+        # Shared pointwise MLP (applied via reshape; no neighbourhood info)
+        self.mlp = MLP(
+            in_dim=in_ch,
+            hidden=hidden,
+            out_dim=latent_dim,
+            norm=norm,
+            num_groups=num_groups,
+        )
+
+    def forward(self, xyz: torch.Tensor) -> torch.Tensor:
+        """
+        Args:
+            xyz: [B, N, in_ch] – input point cloud with per-point features.
+
+        Returns:
+            latent: [B, latent_dim] – global max-pooled feature vector B^α.
+        """
+        B, N, _ = xyz.shape
+        # Flatten to [B*N, in_ch] for pointwise MLP (handles BatchNorm correctly)
+        x = xyz.reshape(B * N, -1)
+        x = self.mlp(x)                    # [B*N, latent_dim]
+        x = x.view(B, N, self.latent_dim)
+        # Global max-pooling over all points -> single geometry descriptor
+        latent, _ = torch.max(x, dim=1)    # [B, latent_dim]
+        return latent
 
 
 def build_model_from_arch(arch: Dict[str, Any]) -> PointNetMLPJoint:
