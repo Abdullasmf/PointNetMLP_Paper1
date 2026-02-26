@@ -282,6 +282,10 @@ class PointNet2Encoder2D(nn.Module):
         num_groups: int = int(cfg.get("num_groups", 16))
         pool_type: str = str(cfg.get("pool", "max"))  # 'max' | 'max+mean'
 
+        # Optional extra per-point features (e.g., SDF) appended after 2D coords
+        sdf_ch: int = int(cfg.get("sdf_ch", 0))
+        self.sdf_ch = sdf_ch
+
         # Optional Fourier positional encoding before pre-MLP
         posenc_cfg = cfg.get("posenc", None)
         self.posenc: Optional[FourierFeatures] = None
@@ -294,6 +298,9 @@ class PointNet2Encoder2D(nn.Module):
                     n_freqs=n_freqs, scale=scale, include_input=True
                 )
                 in_ch_pre = self.posenc.out_dim
+
+        # Include extra per-point features (e.g., SDF) in pre-MLP input
+        in_ch_pre += sdf_ch
 
         # Pre pointwise MLP on coords
         pre_layers: List[nn.Module] = []
@@ -357,6 +364,7 @@ class PointNet2Encoder2D(nn.Module):
             "norm": norm_type,
             "num_groups": num_groups,
             "pool": pool_type,
+            "sdf_ch": sdf_ch,
         }
         if isinstance(posenc_cfg, dict):
             self.encoder_cfg["posenc"] = {
@@ -365,9 +373,18 @@ class PointNet2Encoder2D(nn.Module):
             }
 
     def forward(self, xyz: torch.Tensor) -> torch.Tensor:
-        x_in = self.posenc(xyz) if self.posenc is not None else xyz
+        # When sdf_ch > 0, input is [B, N, 2+sdf_ch]; split spatial coords from extra features
+        if self.sdf_ch > 0:
+            coords = xyz[..., :2]
+            extra = xyz[..., 2:2 + self.sdf_ch]
+        else:
+            coords = xyz
+            extra = None
+        x_in = self.posenc(coords) if self.posenc is not None else coords
+        if extra is not None:
+            x_in = torch.cat([x_in, extra], dim=-1)
         feats = self.pre(x_in)
-        centers = xyz
+        centers = coords  # always 2D for spatial operations (FPS, ball query)
         for sa in self.sa_layers:
             centers, feats = sa(centers, feats)
         latent = self.glob(feats)
