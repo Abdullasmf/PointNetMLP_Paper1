@@ -642,7 +642,7 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
     gf_hidden: List[int] = list(_cfg["gf_hidden"])  # global feature head
     head_hidden: List[int] = list(_cfg["head_hidden"])  # MLP head sizes
     # Optional human-readable model name (prefix for the file); set to None to use default
-    model_name: Optional[str] = None  # e.g., "pn_small_r0p08"
+    model_name: Optional[str] = _cfg.get("model_name")  # e.g., "pn_small_r0p08"
 
     # Fourier positional encodings to enhance spatial/detail sensitivity
     # Allow overriding positional encodings per preset; default to 4 freqs if unspecified
@@ -780,36 +780,21 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
         # "head_dropout": head_dropout,
     }
 
-    # DeepONet Config extraction directly from JSON (_cfg)
-    # Allows identifying explicit keys for PointDeepONet, or falling back to mapping 'head_hidden'
+    # Point-DeepONet explicit config from preset (with safe backward-compatible fallbacks)
+    do_basis_dim = int(_cfg.get("basis_dim", head_hidden[-1] if len(head_hidden) > 0 else 128))
+    do_branch_hidden = list(
+        _cfg.get(
+            "branch_hidden",
+            head_hidden[:-1] if len(head_hidden) > 1 else [64, 128, 256],
+        )
+    )
+    do_siren_hidden = list(_cfg.get("siren_hidden", [256, 256]))
+    do_post_mlp_hidden = list(_cfg.get("post_mlp_hidden", head_hidden))
 
-    # 1. Basis Dimension
-    if "basis_dim" in _cfg:
-        do_basis_dim = int(_cfg["basis_dim"])
-    elif len(head_hidden) > 0:
-        do_basis_dim = head_hidden[-1]
-    else:
-        do_basis_dim = 128
-
-    # 2. Branch hidden layers (Vanilla PointNet shared MLP)
-    if "branch_hidden" in _cfg:
-        do_branch_hidden = list(_cfg["branch_hidden"])
-    elif len(head_hidden) > 1:
-        do_branch_hidden = head_hidden[:-1]
-    else:
-        do_branch_hidden = [64, 128, 256]
-
-    # 3. SIREN trunk hidden layers
-    if "siren_hidden" in _cfg:
-        do_siren_hidden = list(_cfg["siren_hidden"])
-    else:
-        do_siren_hidden = [256, 256]
-
-    # 4. Post-multiplication MLP hidden layers
-    if "post_mlp_hidden" in _cfg:
-        do_post_mlp_hidden = list(_cfg["post_mlp_hidden"])
-    else:
-        do_post_mlp_hidden = list(head_hidden)  # default: same as head_hidden
+    print(
+        "Building PointDeepONet with VanillaPointNetEncoder branch "
+        "(PointNet baseline, not PointNet++)."
+    )
 
     model = PointDeepONet(
         in_ch=3,                          # x, y, sdf
