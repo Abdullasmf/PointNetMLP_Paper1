@@ -1,259 +1,246 @@
-# PointNet-MLP Benchmarking Repository
+# Point-DeepONet Benchmarking Repository
 
-This repository contains benchmarking code for 4 different neural network architectures for stress prediction on two different geometries: **L-bracket** and **Hole plate**.
+Benchmarking of three **Point-DeepONet** variants for stress-field prediction on 2-D FEM geometries. Each variant is a faithful ablation study: same training procedure, same **M-preset** size budget, different encoder/SDF configuration.
+
+---
 
 ## Models
 
-### 1. SpectralDeepONet
-**Architecture**: DeepONet with Fourier features
-- **Branch Network**: PointNet2Encoder2D → MLP → basis coefficients
-- **Trunk Network**: Fourier features of coordinates → MLP → basis functions
-- **Fusion**: Dot product of branch and trunk outputs
-- **Key Feature**: Uses spectral/Fourier positional encoding for enhanced spatial resolution
+| Folder | Encoder | SDF in trunk? | Description |
+|---|---|---|---|
+| `Point_DeepONet` | Vanilla PointNet (global max-pool) | ✅ (x, y, sdf) | Park et al. baseline — no boundary conditions, SDF used as geometric feature |
+| `Point++_DeepONet_noSDF` | PointNet++ (set abstraction) | ❌ (x, y only) | PointNet++ branch, (x, y)-only SIREN trunk |
+| `Point++_DeepONet_wSDF` | PointNet++ (set abstraction) | ✅ (x, y, sdf) | PointNet++ branch, SDF-augmented SIREN trunk |
 
-### 2. DenseNoFFT
-**Architecture**: Dense concatenation without Fourier features
-- **Encoder**: PointNet2Encoder2D → latent representation
-- **Decoder**: Concatenate [latent, query_coords] → MLP → stress prediction
-- **Key Feature**: Direct concatenation of geometry encoding with query coordinates
+### Architecture overview
 
-### 3. PointNetMLPJoint
-**Architecture**: Joint PointNet encoder with MLP head
-- **Encoder**: PointNet2Encoder2D → latent representation
-- **Decoder**: Concatenate [latent, query_coords] → MLP → stress prediction
-- **Key Feature**: Standard joint architecture for point cloud regression
+All three models follow the same **DeepONet diagram**:
 
-### 4. VanillaDeepONet
-**Architecture**: Standard DeepONet without Fourier features
-- **Branch Network**: PointNet2Encoder2D → MLP → basis coefficients
-- **Trunk Network**: Raw coordinates → MLP → basis functions
-- **Fusion**: Dot product of branch and trunk outputs
-- **Key Feature**: Baseline DeepONet without positional encoding
+```
+Geometry point cloud
+        │
+   [ Branch encoder ]  ──►  B^α  [B, latent_dim]
+                               │
+                           element-wise multiply (⊙)
+                               │
+Query coordinates (± SDF)      │
+        │                      │
+   [ Trunk SIREN ]  ──────────► T^α  [B, Q, latent_dim]
+                               │
+                   [ Post-fusion MLP ]  ──►  B^β  [B, Q, basis_dim]
+                               │
+              T^β = Linear(T^α)  [B, Q, basis_dim]
+                               │
+               dot-product Σ(B^β · T^β) + bias  ──►  stress [B, Q, 1]
+```
+
+**Branch differences:**
+- `Point_DeepONet` — `VanillaPointNetEncoder`: shared pointwise MLP → global max-pool. Input: (x, y, sdf).
+- `Point++_DeepONet_*` — `PointNet2Encoder2D`: two set-abstraction layers → global feature. Input: (x, y) only (the PointNet++ branch is geometry-only in both noSDF and wSDF).
+
+**Trunk differences:**
+- `noSDF`: SIREN input = (x, y) — 2 channels.
+- `wSDF` and `Point_DeepONet`: SIREN input = (x, y, sdf) — 3 channels.
+
+---
 
 ## Repository Structure
 
 ```
 .
-├── SpectralDeepONet/
-│   ├── Training_script.py      # Training script
-│   ├── benchmarks.py            # Model definitions
-│   ├── pn_models.py            # Shared encoder components
-│   └── model_presets.json      # Architecture presets
-├── DenseNoFFT/
-│   ├── Training_script.py
-│   ├── benchmarks.py
-│   ├── pn_models.py
-│   └── model_presets.json
-├── PointNetMLPJoint/
-│   ├── Training_script.py
-│   ├── pn_models.py
-│   └── model_presets.json
-├── VanillaDeepONet/
-│   ├── Training_script.py
-│   ├── benchmarks.py
-│   ├── pn_models.py
-│   └── model_presets.json
+├── Point_DeepONet/
+│   ├── Training_script.py      # Data loading, training loop (SDF pipeline)
+│   ├── benchmarks.py           # PointDeepONet, VanillaDeepONet, ScaledDiagramDeepONet
+│   ├── pn_models.py            # VanillaPointNetEncoder, PointNet2Encoder2D, MLP
+│   ├── model_presets.json      # S / M / L / XL / XXL preset definitions
+│   └── GPU0.py                 # Entry point: runs preset M on both datasets
+│
+├── Point++_DeepONet_noSDF/
+│   ├── Training_script.py      # (x, y)-only data pipeline
+│   ├── benchmarks.py           # ScaledDiagramDeepONet (no-SDF variant)
+│   ├── pn_models.py            # PointNet2Encoder2D with sdf_ch support
+│   ├── model_presets.json
+│   └── GPU0.py
+│
+├── Point++_DeepONet_wSDF/
+│   ├── Training_script.py      # (x, y, sdf) data pipeline; sdf_ch=1 in encoder_cfg
+│   ├── benchmarks.py           # ScaledDiagramDeepONet (SDF-in-trunk variant)
+│   ├── pn_models.py            # PointNet2Encoder2D with sdf_ch support
+│   ├── model_presets.json
+│   └── GPU0.py
+│
 ├── L_Bracket/
-│   ├── L_bracket_stress.h5     # Training data
+│   ├── L_bracket_stress.h5     # Training data — L-bracket FEM simulations
 │   └── generate_l_bracket.py   # Data generation script
-└── TRAINING_VALIDATION.md      # Validation report
+│
+├── Plate_Hole/
+│   ├── Plate_hole_stress.h5    # Training data — plate-with-hole FEM simulations
+│   └── Generate_plate_hole.py  # Data generation script
+│
+├── Analysis/                   # Post-training analysis notebooks (not yet active)
+│
+├── compute_sdf.py              # Utility: compute and append SDF to HDF5 datasets
+├── run0.sh                     # SLURM: Point_DeepONet (GPU 0)
+├── run1.sh                     # SLURM: Point++_DeepONet_wSDF (GPU 1)
+├── run2.sh                     # SLURM: Point++_DeepONet_noSDF (GPU 2)
+├── QUICKSTART.md
+└── TRAINING_VALIDATION.md
 ```
 
-## Data
+---
 
-The repository includes training data for two different geometries:
+## Datasets
 
-### L-Bracket Dataset
-- **Location**: `L_Bracket/L_bracket_stress.h5`
-- **Format**: HDF5 file with groups `sample_0`, `sample_1`, ..., `sample_N`
-- Each sample contains:
-  - `points`: (N, 2) array of (x, y) coordinates
-  - `stress`: (N, 1) array of stress values
-  - `corner`: (2,) corner position for L-bracket geometry
+Both datasets are stored as **HDF5** files. Each sample is a group `sample_0`, `sample_1`, … containing:
 
-### Hole Plate Dataset
-- **Location**: `Plate_Hole/Plate_hole_stress.h5`
-- **Format**: HDF5 file with groups `sample_0`, `sample_1`, ..., `sample_N`
-- Each sample contains:
-  - `points`: (N, 2) array of (x, y) coordinates
-  - `stress`: (N, 1) array of stress values
-  - `params`: Geometry parameters for hole plate
+| Key | Shape | Description |
+|---|---|---|
+| `points` | (N, 2) | (x, y) mesh node coordinates (normalised to [0, 1]²) |
+| `stress` | (N, 1) | von Mises stress at each node (MPa) |
+| `corner` | (2,) | L-bracket corner position *(L-bracket only)* |
+| `params` | (3,) | Hole centre + radius *(Plate-hole only)* |
+| `sdf` | (N, 1) | Pre-computed SDF *(optional — computed on-the-fly if absent)* |
+
+SDF is the minimum distance from each mesh node to the nearest boundary edge (positive inside the domain, zero on the boundary). Run `python compute_sdf.py --dataset both` to pre-compute and cache SDF values in the HDF5 files.
+
+---
 
 ## Training Configuration
 
-All models use **standardized** training settings for fair comparison:
+All three models are trained with **identical** hyperparameters for a fair comparison.
 
-### Hyperparameters
-- **Epochs**: 500 (with early stopping)
-- **Learning Rate**: 3e-4
-- **Weight Decay**: 1e-4
-- **Batch Size**: 8
-- **Optimizer**: AdamW
-- **LR Scheduler**: OneCycleLR (cosine annealing)
-- **Gradient Clipping**: 0.5
-- **Early Stopping**: 40 epochs patience
-- **Mixed Precision Training**: Enabled (AMP) with optimized scheduler step ordering
+| Hyperparameter | Value |
+|---|---|
+| Preset | **M** |
+| Epochs | 500 (early stopping) |
+| Early stopping patience | 40 epochs |
+| Learning rate | 3 × 10⁻⁴ |
+| Optimizer | AdamW (weight decay 1 × 10⁻⁴) |
+| LR scheduler | OneCycleLR — cosine, 10 % warm-up |
+| Gradient clip | 0.5 |
+| Training mode | `batched_all` — all nodes per geometry, padded to batch max |
+| Mixed precision | AMP (CUDA) |
+| Train / val split | 80 / 20, seed 42 |
 
-### Training Optimizations
+### Preset M — architecture dimensions
 
-The training scripts use several optimizations for efficient and stable training:
+Every component scales with the preset tier. All three models share the same M-tier dimensions:
 
-1. **Mixed Precision Training (AMP)**: Uses PyTorch's automatic mixed precision to reduce memory usage and speed up training on GPUs with tensor cores.
+| Component | Dimension |
+|---|---|
+| `latent_dim` | 160 |
+| `pre_hidden` (PointNet++ pre-MLP) | [96, 96] |
+| SA block 1 | out_ch=192, mlp_hidden=[96], max_k=40 |
+| SA block 2 | out_ch=384, mlp_hidden=[192], max_k=40 |
+| `gf_hidden` (global feature MLP) | [96] |
+| `basis_dim` | 192 |
+| `siren_hidden` (trunk SIREN hidden) | [384, 384] |
+| `post_mlp_hidden` (post-fusion MLP) | [384, 384, 192] |
 
-2. **Optimized Scheduler Ordering**: The learning rate scheduler is called in the correct order with gradient scaling:
-   ```python
-   scaler.step(optimizer)      # Step 1: Update weights (skipped if gradients are inf/NaN)
-   scheduler.step()             # Step 2: Update learning rate
-   scaler.update()              # Step 3: Update gradient scaler
-   ```
-   This ordering prevents the PyTorch warning about calling `lr_scheduler.step()` before `optimizer.step()` and ensures proper learning rate tracking with AMP.
+For `Point_DeepONet`, `branch_hidden` for the Vanilla PointNet MLP is [96, 192, 384].
 
-3. **Gradient Clipping**: Applied before optimizer step to prevent gradient explosion.
+Available preset tiers: **S** (latent 128) · **M** (latent 160) · **L** (latent 192) · **XL** (latent 256) · **XXL** (latent 384). All component widths scale proportionally with the tier.
 
-4. **OneCycleLR Scheduler**: Steps after each batch (not epoch) for smooth learning rate annealing throughout training.
-
-### Data Processing
-- **Train/Val Split**: 80/20 (random_state=42)
-- **Normalization**: 
-  - Coordinates: center and half-range normalization
-  - Stress: mean and standard deviation normalization
-- **Training Mode**: "batched_all" (uses all nodes with padding)
-
-### Model Architecture Presets
-
-Available presets in `model_presets.json` (S, M, L, XL, XXL):
-- **S (Small)**: Latent dim 128, suitable for quick experiments
-- **M (Medium)**: Latent dim 160, balanced performance
-- **L (Large)**: Latent dim 192, recommended for benchmarking
-- **XL (Extra Large)**: Latent dim 256, high capacity
-- **XXL (Double Extra Large)**: Latent dim 384, maximum capacity
-
-Example L preset architecture:
-- **Latent Dimension**: 192
-- **Pre-hidden Layers**: [128, 128]
-- **Set Abstraction Blocks**: 2
-  - Block 1: radius=0.02, max_k=48, out_ch=256
-  - Block 2: radius=0.05, max_k=48, out_ch=512
-- **Global Feature Hidden**: [128]
-- **Head Hidden Layers**: [512, 512, 256]
+---
 
 ## Usage
 
 ### Requirements
+
 ```bash
 pip install torch numpy h5py scikit-learn
 ```
 
-### Training a Model
+### Running on a SLURM cluster (recommended)
 
-All training scripts support both L-bracket and Hole plate datasets. To train any model, navigate to its directory and run the training script:
+Each SLURM script submits one model to one GPU. `GPU0.py` automatically trains on both datasets sequentially and retries with smaller batch sizes on OOM errors.
 
 ```bash
-# Train SpectralDeepONet (default: L-bracket dataset)
-cd SpectralDeepONet
-python Training_script.py
-
-# Train DenseNoFFT (default: L-bracket dataset)
-cd ../DenseNoFFT
-python Training_script.py
-
-# Train PointNetMLPJoint (default: L-bracket dataset)
-cd ../PointNetMLPJoint
-python Training_script.py
-
-# Train VanillaDeepONet (default: L-bracket dataset)
-cd ../VanillaDeepONet
-python Training_script.py
+sbatch run0.sh   # Point_DeepONet       → logs: GPU0.log
+sbatch run1.sh   # Point++_wSDF         → logs: GPU1.log
+sbatch run2.sh   # Point++_noSDF        → logs: GPU2.log
 ```
 
-### Output
+### Running directly
 
-Each training script will:
-1. Load data from the selected dataset (default: `L_Bracket/L_bracket_stress.h5`)
-2. Split into train/validation sets (80/20)
-3. Train for up to 500 epochs with early stopping
-4. Log metrics: train MSE, validation MSE, validation MSE (MPa²), R² score
-5. Save best model checkpoint to `Trained_models/` directory with geometry prefix
+```bash
+cd Point_DeepONet
+python GPU0.py                # trains M preset on L-bracket then Plate-hole
 
-Example output:
-```
-Starting training script with preset 'L', batch size 8, and dataset 'L_bracket'
-Using device: cuda
-Loading data from: /path/to/L_Bracket/L_bracket_stress.h5
-Found 2000 samples. Loading...
-Loaded 2000 datasets from the HDF5 file.
-Coord center=[...], half_range=[...] | stress_mean=..., stress_std=...
-Using 'batched_all' training with batch size 8
-Saving best checkpoint to: Trained_models/L-pnmlp_abc12345.pt
-
-Epoch 001 | train MSE: 0.123456 | val MSE: 0.234567 | val MSE(MPa^2): 12.345 | R2(MPa): 0.8912 | lr: 3.00e-05 | epoch: 45.2s
-...
+# or call the training script directly for a single dataset:
+python Training_script.py     # edit main() call at the bottom to select dataset/preset
 ```
 
-### Customization
+### Selecting dataset or preset
 
-#### Selecting a Dataset
-
-To train on a different dataset, modify the `main()` call in the training script:
+Edit the `main()` call at the bottom of `Training_script.py`:
 
 ```python
 if __name__ == "__main__":
-    try:
-        # Train on L-bracket dataset (default)
-        main("L", batch=8, dataset="L_bracket")
-        
-        # Or train on Hole plate dataset
-        # main("L", batch=8, dataset="Plate_hole")
-    except Exception as e:
-        print(f"Error during training: {e}")
-        raise
+    main("M", batch=8, dataset="L_bracket")    # L-bracket with M preset
+    # main("M", batch=8, dataset="Plate_hole") # Plate-hole with M preset
 ```
 
-**Dataset Options:**
-- `"L_bracket"`: Use L-bracket geometry data (prefix: `L-`)
-- `"Plate_hole"`: Use Hole plate geometry data (prefix: `H-`)
-
-The saved model files will be automatically prefixed based on the dataset:
-- L-bracket models: `L-pnmlp_abc12345.pt`
-- Hole plate models: `H-pnmlp_abc12345.pt`
-
-#### Changing Model Size or Batch Size
-
-To use a different preset or batch size:
+Or via `GPU0.py`:
 
 ```python
-if __name__ == "__main__":
-    try:
-        # Available presets: "S", "M", "L", "XL", "XXL"
-        # Larger models need smaller batch sizes
-        main("XL", batch=4, dataset="L_bracket")  # Use XL model with batch size 4
-    except Exception as e:
-        print(f"Error during training: {e}")
-        raise
+PRESETS_GPU0 = [
+    ["M", "L_bracket"],
+    ["M", "Plate_hole"],
+]
 ```
 
-## Model Checkpoints
+### Pre-computing SDF (optional)
 
-Trained models are saved with:
-- Model state dictionary
-- Architecture configuration
-- Normalization parameters (coord_center, coord_half_range, stress_mean, stress_std)
-- Training metrics (best validation loss, epochs trained)
+The training scripts compute SDF on-the-fly if the `sdf` key is absent from the HDF5 file. To cache it for faster data loading:
 
-Checkpoint naming: `{geometry_prefix}{model_name}_{arch_hash}.pt`
-- Examples: `L-pnmlp_abc12345.pt`, `H-spectral_l_def67890.pt`
+```bash
+python compute_sdf.py --dataset both
+```
 
-## Validation
+---
 
-See `TRAINING_VALIDATION.md` for detailed validation of:
-- Training script correctness
-- Configuration standardization
-- Data loading consistency
-- Hyperparameter verification
+## Checkpoints
+
+Best checkpoints are saved to `<model_folder>/Trained_models/` with the naming convention:
+
+```
+{geom_prefix}{model_name}_{arch_hash}.pt
+```
+
+Examples: `L-pnt_deeponet_m_a1b2c3d4.pt`, `H-pn2_wsdf_m_e5f6a7b8.pt`
+
+Each checkpoint contains:
+
+```python
+{
+    "model_state":      <state_dict>,
+    "arch":             <arch_dict>,          # model config (if supported)
+    "coord_center":     <tensor>,
+    "coord_half_range": <tensor>,
+    "sdf_mean":         <tensor or None>,     # wSDF / Point_DeepONet only
+    "sdf_std":          <tensor or None>,
+    "stress_mean":      <tensor>,
+    "stress_std":       <tensor>,
+    "best_val_loss":    <float>,
+}
+```
+
+---
+
+## Metrics logged during training
+
+```
+Epoch 001 | train MSE: 0.1234 | val MSE: 0.2345 | val MSE(MPa^2): 12.34 | R2(MPa): 0.8912 | lr: 3.00e-05 | epoch: 45.2s
+```
+
+- **train/val MSE** — normalised MSE (dimensionless)
+- **val MSE (MPa²)** — MSE in physical stress units
+- **R² (MPa)** — coefficient of determination in stress space
+
+---
 
 ## Citation
-
-If you use this code in your research, please cite:
 
 ```
 [Add citation information here]
