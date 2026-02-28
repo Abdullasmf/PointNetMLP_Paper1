@@ -311,8 +311,8 @@ class SineLayer(nn.Module):
 class ScaledDiagramDeepONet(nn.Module):
     """
     Architecture: Fair-scaled replica of the Point-DeepONet Diagram.
-    - Branch: PointNet++ (Matches your 'L' config)
-    - Trunk: SIREN Layers (Scaled to match your latent_dim)
+    - Branch: PointNet++ with optional SDF features (Matches your 'L' config)
+    - Trunk: Configurable SIREN Layers (input = x,y[,sdf])
     - Fusion: Early Element-wise Multiplication -> MLP (Matches your head_hidden) -> Dot Product
     """
     def __init__(
@@ -320,28 +320,34 @@ class ScaledDiagramDeepONet(nn.Module):
         latent_dim: int = 192,
         basis_dim: int = 128, # The final 'p' dimension for the dot product
         head_hidden: List[int] = [512, 512, 256],
+        siren_hidden: List[int] = [256, 256],
         encoder_cfg: Optional[Dict[str, Any]] = None,
     ):
         super().__init__()
-        
+
+        # SDF channel count (0 = no SDF, 1 = SDF appended as 3rd per-point feature)
+        sdf_ch = int(encoder_cfg.get("sdf_ch", 0)) if encoder_cfg else 0
+        self.sdf_ch = sdf_ch
+        trunk_in_ch = 2 + sdf_ch  # SIREN input: (x, y) or (x, y, sdf)
+
         # 1. Branch Network (PointNet++)
         # We use YOUR exact encoder so the geometry extraction is a fair fight
         self.encoder = PointNet2Encoder2D(latent_dim=latent_dim, encoder_cfg=encoder_cfg)
         eff_latent = self.encoder.latent_dim
-        
-        # 2. Trunk Network (SIREN Layers)
-        # Scaled to gracefully project the 2D coordinates up to the eff_latent dimension
-        self.siren = nn.Sequential(
-            SineLayer(2, 64, is_first=True),
-            SineLayer(64, 128),
-            SineLayer(128, eff_latent)
-        )
-        
+
+        # 2. Trunk Network (configurable SIREN Layers)
+        # Scaled to gracefully project the input coordinates up to the eff_latent dimension
+        siren_layers: List[nn.Module] = [SineLayer(trunk_in_ch, siren_hidden[0], is_first=True)]
+        for i in range(len(siren_hidden) - 1):
+            siren_layers.append(SineLayer(siren_hidden[i], siren_hidden[i + 1]))
+        siren_layers.append(SineLayer(siren_hidden[-1], eff_latent))
+        self.siren = nn.Sequential(*siren_layers)
+
         # 3. Post-Multiplication MLP
         # This matches the raw parameter capacity of your 'L' configuration head
         norm_type = str(encoder_cfg.get("norm", "batch")) if encoder_cfg else "batch"
         num_groups = int(encoder_cfg.get("num_groups", 16)) if encoder_cfg else 16
-        
+
         self.post_mul_mlp = MLP(
             in_dim=eff_latent,
             hidden=head_hidden,
@@ -357,13 +363,13 @@ class ScaledDiagramDeepONet(nn.Module):
         self.bias = nn.Parameter(torch.zeros(1))
 
     def forward(self, geom_points, query_points):
-        B, Q, _ = query_points.shape
+        B, Q, q_ch = query_points.shape
 
         # --- BRANCH ---
         b_alpha = self.encoder(geom_points) # [B, eff_latent]
 
         # --- TRUNK ---
-        q_flat = query_points.reshape(-1, 2)
+        q_flat = query_points.reshape(-1, q_ch)  # [B*Q, q_ch]
         t_alpha = self.siren(q_flat).view(B, Q, -1) # [B, Q, eff_latent]
 
         # --- EARLY FUSION (The odot circle) ---
@@ -373,13 +379,13 @@ class ScaledDiagramDeepONet(nn.Module):
         # --- LATE FUSION PREP ---
         fused_flat = fused.reshape(-1, b_alpha.shape[-1])
         b_beta = self.post_mul_mlp(fused_flat).view(B, Q, self.basis_dim)
-        
+
         t_alpha_flat = t_alpha.reshape(-1, b_alpha.shape[-1])
         t_beta = self.t_beta_proj(t_alpha_flat).view(B, Q, self.basis_dim)
 
         # --- TERMINAL DOT PRODUCT (The otimes circle) ---
         out = torch.sum(b_beta * t_beta, dim=-1, keepdim=True) + self.bias
-        
+
         return out
 
 
