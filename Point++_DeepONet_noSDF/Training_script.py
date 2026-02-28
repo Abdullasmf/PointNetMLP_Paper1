@@ -548,7 +548,7 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
     gf_hidden: List[int] = list(_cfg["gf_hidden"])  # global feature head
     head_hidden: List[int] = list(_cfg["head_hidden"])  # MLP head sizes
     # Optional human-readable model name (prefix for the file); set to None to use default
-    model_name: Optional[str] = None  # e.g., "pn_small_r0p08"
+    model_name: Optional[str] = _cfg.get("model_name")
 
     # Fourier positional encodings to enhance spatial/detail sensitivity
     # Allow overriding positional encodings per preset; default to 4 freqs if unspecified
@@ -683,38 +683,22 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
     }
 
     # DeepONet Config extraction directly from JSON (_cfg)
-    # Allows identifying explicit keys for DeepONet, or falling back to mapping 'head_hidden'
-    
-    # 1. Basis Dimension
-    if "basis_dim" in _cfg:
-        do_basis_dim = int(_cfg["basis_dim"])
-    elif len(head_hidden) > 0:
-        # Fallback: treat last element of head_hidden as basis dimension
-        do_basis_dim = head_hidden[-1]
-    else:
-        do_basis_dim = 128 # default
+    default_basis_dim = head_hidden[-1] if len(head_hidden) > 0 else 128
+    do_basis_dim = int(_cfg.get("basis_dim", default_basis_dim))
+    do_siren_hidden = list(_cfg.get("siren_hidden", [256, 256]))
+    do_post_mlp_hidden = list(_cfg.get("post_mlp_hidden", head_hidden))
 
-    # 2. Hidden Layers (Branch/Trunk)
-    if "branch_hidden" in _cfg:
-        do_branch_hidden = list(_cfg["branch_hidden"])
-    elif len(head_hidden) > 1:
-        # Fallback: treat remaining elements as hidden layers
-        do_branch_hidden = head_hidden[:-1]
-    else:
-        do_branch_hidden = [256, 256] # default
-        
-    if "trunk_hidden" in _cfg:
-        do_trunk_hidden = list(_cfg["trunk_hidden"])
-    else:
-        do_trunk_hidden = list(do_branch_hidden) # symmetric default
+    print(
+        "Building ScaledDiagramDeepONet with PointNet++ branch, no SDF "
+        f"(siren_hidden={do_siren_hidden}, basis_dim={do_basis_dim})."
+    )
 
     model = ScaledDiagramDeepONet(
-        latent_dim=latent_dim, 
+        latent_dim=latent_dim,
         basis_dim=do_basis_dim,
-        # branch_hidden=do_branch_hidden,
-        # trunk_hidden=do_trunk_hidden,
-        # out_dim=1,
-        encoder_cfg=encoder_cfg
+        head_hidden=do_post_mlp_hidden,
+        siren_hidden=do_siren_hidden,
+        encoder_cfg=encoder_cfg,
     )
 
 

@@ -272,8 +272,8 @@ class AllNodesPadCollate:
 
     Pads each geometry in the batch to the maximum node count by repeating valid indices
     (no zero-padding), and returns a dual-set dict compatible with the model forward:
-      - 'geom_points': [B,maxN,2]
-      - 'query_points': [B,maxN,2]
+      - 'geom_points': [B,maxN,C]  where C=3 (x,y,sdf) for wSDF
+      - 'query_points': [B,maxN,C]
       - 'stress': [B,maxN,1]
     """
 
@@ -392,8 +392,8 @@ def train(
             weights: Optional[torch.Tensor] = None
             if "geom_points" in batch:
                 # Dual-sampling batched mode
-                gp: torch.Tensor = batch["geom_points"].to(device)  # [B,Kenc,2]
-                query_xy: torch.Tensor = batch["query_points"].to(device)  # [B,Kq,2]
+                gp: torch.Tensor = batch["geom_points"].to(device)  # [B,Kenc,3] (x,y,sdf)
+                query_xy: torch.Tensor = batch["query_points"].to(device)  # [B,Kq,3] (x,y,sdf)
                 target: torch.Tensor = batch["stress"].to(device)  # [B,Kq,1]
                 B, Kq, _ = query_xy.shape
                 Bmul = B * Kq
@@ -417,7 +417,7 @@ def train(
                     )  # [B,Kq,1]
             else:
                 # Full-geometry single/batched mode from earlier
-                pts: torch.Tensor = batch["points"].to(device)  # [N,2] or [B,K,2]
+                pts: torch.Tensor = batch["points"].to(device)  # [N,2] or [B,K,2] — fallback path (train_mode != batched_all)
                 stress: torch.Tensor = batch["stress"].to(device)  # [N,1] or [B,K,1]
                 if pts.dim() == 2:
                     # Single geometry
@@ -502,7 +502,7 @@ def train(
         count_mpa = 0
         with torch.no_grad():
             for batch in val_loader:
-                pts: torch.Tensor = batch["points"].to(device)  # [N,2]
+                pts: torch.Tensor = batch["points"].to(device)  # [N,3] (x_norm, y_norm, sdf_norm)
                 stress: torch.Tensor = batch["stress"].to(device)  # [N,1]
                 N = pts.shape[0]
                 with torch.amp.autocast(
@@ -642,7 +642,7 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
     gf_hidden: List[int] = list(_cfg["gf_hidden"])  # global feature head
     head_hidden: List[int] = list(_cfg["head_hidden"])  # MLP head sizes
     # Optional human-readable model name (prefix for the file); set to None to use default
-    model_name: Optional[str] = None  # e.g., "pn_small_r0p08"
+    model_name: Optional[str] = _cfg.get("model_name")
 
     # Fourier positional encodings to enhance spatial/detail sensitivity
     # Allow overriding positional encodings per preset; default to 4 freqs if unspecified

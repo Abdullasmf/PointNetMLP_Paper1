@@ -1,10 +1,11 @@
 import torch
 import torch.nn as nn
+import numpy as np
 import math
 from typing import List, Dict, Any, Optional
 
 # Import necessary components from pn_models
-from pn_models import PointNet2Encoder2D, MLP
+from pn_models import PointNet2Encoder2D, MLP, VanillaPointNetEncoder
 
 class FourierFeatures(nn.Module):
     """Fourier positional encoding for 2D inputs.
@@ -287,11 +288,6 @@ class DenseNoFFT(nn.Module):
         
         return y
 
-import torch
-import torch.nn as nn
-import numpy as np
-from typing import List, Dict, Any, Optional
-from pn_models import PointNet2Encoder2D, MLP, VanillaPointNetEncoder
 
 class SineLayer(nn.Module):
     def __init__(self, in_features, out_features, is_first=False, omega_0=30.0):
