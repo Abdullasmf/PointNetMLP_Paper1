@@ -55,7 +55,7 @@
         "gf_hidden": [96],
         "head_hidden": [384, 384, 192],
         "basis_dim": 192,
-        "branch_hidden": [384, 384],
+        "branch_hidden": [96, 192, 384],
         "siren_hidden": [256, 256],
         "post_mlp_hidden": [384, 384, 192],
         "train_batch_size": 6,

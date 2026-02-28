@@ -15,8 +15,7 @@ import torch.optim as optim
 from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset, DataLoader
 
-from pn_models import PointNetMLPJoint
-from benchmarks import VanillaDeepONet, ScaledDiagramDeepONet
+from benchmarks import ScaledDiagramDeepONet
 
 project_dir = (
     os.path.dirname(os.path.abspath(__file__))
