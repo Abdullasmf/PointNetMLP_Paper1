@@ -1,6 +1,6 @@
 {
     "S": {
-        "model_name": "vanilla_s",
+        "model_name": "pn2_wsdf_s",
         "latent_dim": 128,
         "pre_hidden": [64, 64],
         "sa_blocks": [
@@ -33,7 +33,7 @@
         "head_dropout": 0.0
     },
     "M": {
-        "model_name": "vanilla_m",
+        "model_name": "pn2_wsdf_m",
         "latent_dim": 160,
         "pre_hidden": [96, 96],
         "sa_blocks": [
@@ -66,7 +66,7 @@
         "head_dropout": 0.0
     },
     "L": {
-        "model_name": "vanilla_l",
+        "model_name": "pn2_wsdf_l",
         "latent_dim": 192,
         "pre_hidden": [128, 128],
         "sa_blocks": [
@@ -99,7 +99,7 @@
         "head_dropout": 0.0
     },
     "XL": {
-        "model_name": "vanilla_xl",
+        "model_name": "pn2_wsdf_xl",
         "latent_dim": 256,
         "pre_hidden": [128, 128],
         "sa_blocks": [
@@ -132,7 +132,7 @@
         "head_dropout": 0.0
     },
     "XXL": {
-        "model_name": "vanilla_xxl",
+        "model_name": "pn2_wsdf_xxl",
         "latent_dim": 384,
         "pre_hidden": [192, 192],
         "sa_blocks": [

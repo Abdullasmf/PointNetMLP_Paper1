@@ -642,7 +642,7 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
     gf_hidden: List[int] = list(_cfg["gf_hidden"])  # global feature head
     head_hidden: List[int] = list(_cfg["head_hidden"])  # MLP head sizes
     # Optional human-readable model name (prefix for the file); set to None to use default
-    model_name: Optional[str] = None  # e.g., "pn_small_r0p08"
+    model_name: Optional[str] = _cfg.get("model_name")
 
     # Fourier positional encodings to enhance spatial/detail sensitivity
     # Allow overriding positional encodings per preset; default to 4 freqs if unspecified

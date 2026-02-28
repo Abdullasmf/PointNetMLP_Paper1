@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import numpy as np
 import math
 from typing import List, Dict, Any, Optional
 
@@ -287,11 +288,6 @@ class DenseNoFFT(nn.Module):
         
         return y
 
-import torch
-import torch.nn as nn
-import numpy as np
-from typing import List, Dict, Any, Optional
-from pn_models import PointNet2Encoder2D, MLP
 
 class SineLayer(nn.Module):
     def __init__(self, in_features, out_features, is_first=False, omega_0=30.0):
