@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=PointNetMLPJoint
+#SBATCH --job-name=Point++_DeepONet_wSDF
 #SBATCH --output=PointNetMLP_Paper1/GPU1.log
 #SBATCH --error=PointNetMLP_Paper1/GPU1.log
 #SBATCH --time=24:00:00
@@ -21,6 +21,6 @@ conda activate /usr1/home/abdulla.fathalla/.aixvipmap/envs/MLEnv
 
 echo "starting script"
 
-python -u PointNetMLP_Paper1/PointNetMLPJoint/GPU0.py
+python -u PointNetMLP_Paper1/Point++_DeepONet_wSDF/GPU0.py
 
 echo "DONE"

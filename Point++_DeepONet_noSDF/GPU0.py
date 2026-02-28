@@ -15,8 +15,8 @@ from Training_script import main as train_main  # noqa: E402
 
 
 PRESETS_GPU0 = [
-    ["L","L_bracket"],
-    ["L","Plate_hole"],
+    ["M","L_bracket"],
+    ["M","Plate_hole"],
 ]
 
 
