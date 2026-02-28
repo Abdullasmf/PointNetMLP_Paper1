@@ -1,10 +1,11 @@
 import torch
 import torch.nn as nn
+import numpy as np
 import math
 from typing import List, Dict, Any, Optional
 
 # Import necessary components from pn_models
-from pn_models import PointNet2Encoder2D, MLP
+from pn_models import PointNet2Encoder2D, MLP, VanillaPointNetEncoder
 
 class FourierFeatures(nn.Module):
     """Fourier positional encoding for 2D inputs.
@@ -287,11 +288,6 @@ class DenseNoFFT(nn.Module):
         
         return y
 
-import torch
-import torch.nn as nn
-import numpy as np
-from typing import List, Dict, Any, Optional
-from pn_models import PointNet2Encoder2D, MLP
 
 class SineLayer(nn.Module):
     def __init__(self, in_features, out_features, is_first=False, omega_0=30.0):
@@ -384,4 +380,112 @@ class ScaledDiagramDeepONet(nn.Module):
         # --- TERMINAL DOT PRODUCT (The otimes circle) ---
         out = torch.sum(b_beta * t_beta, dim=-1, keepdim=True) + self.bias
         
+        return out
+
+
+class PointDeepONet(nn.Module):
+    """Point-DeepONet: strict baseline benchmark (Park et al. architecture).
+
+    This model is stripped of boundary-condition encoding and uses:
+
+    Branch Network (Vanilla PointNet)
+        - Input : geometry point cloud  [B, N, in_ch]  (x, y, sdf)
+        - Shared pointwise MLP + global max-pool  →  B^α  [B, latent_dim]
+
+    Trunk Network (SIREN)
+        - Input : query coordinates + SDF  [B, Q, in_ch]  (x, y, sdf)
+        - SIREN layers (sin activations)  →  T^α  [B, Q, latent_dim]
+
+    Early Spatial Modulation
+        - Fused = B^α (broadcast-expanded) ⊙ T^α   (element-wise multiply)
+
+    Deep Processing
+        - B^β = deep_MLP(Fused)   →  [B, Q, basis_dim]
+        - T^β = linear(T^α)       →  [B, Q, basis_dim]
+
+    Terminal Fusion (classical DeepONet dot product)
+        - output = Σ(B^β ⊗ T^β) + bias  →  [B, Q, 1]
+    """
+
+    def __init__(
+        self,
+        in_ch: int = 3,                         # x, y, sdf
+        latent_dim: int = 192,
+        basis_dim: int = 128,
+        branch_hidden: List[int] = [64, 128, 256],
+        siren_hidden: List[int] = [256, 256],
+        post_mlp_hidden: List[int] = [512, 512, 256],
+        norm: str = "batch",
+        num_groups: int = 16,
+    ):
+        super().__init__()
+
+        # 1. Branch Network: Vanilla PointNet (global max-pool only)
+        self.branch = VanillaPointNetEncoder(
+            in_ch=in_ch,
+            latent_dim=latent_dim,
+            hidden=branch_hidden,
+            norm=norm,
+            num_groups=num_groups,
+        )
+
+        # 2. Trunk Network: SIREN (sin activations, no ReLU)
+        siren_layers: List[nn.Module] = [
+            SineLayer(in_ch, siren_hidden[0], is_first=True)
+        ]
+        for i in range(len(siren_hidden) - 1):
+            siren_layers.append(SineLayer(siren_hidden[i], siren_hidden[i + 1]))
+        siren_layers.append(SineLayer(siren_hidden[-1], latent_dim))
+        self.siren = nn.Sequential(*siren_layers)
+
+        # 3. Post-Multiplication MLP: Fused → B^β
+        self.post_mul_mlp = MLP(
+            in_dim=latent_dim,
+            hidden=post_mlp_hidden,
+            out_dim=basis_dim,
+            norm=norm,
+            num_groups=num_groups,
+        )
+
+        # 4. T^β projection: T^α → T^β
+        self.t_beta_proj = nn.Linear(latent_dim, basis_dim)
+
+        self.latent_dim = latent_dim
+        self.basis_dim = basis_dim
+        self.bias = nn.Parameter(torch.zeros(1))
+
+    def forward(
+        self, geom_points: torch.Tensor, query_points: torch.Tensor
+    ) -> torch.Tensor:
+        """
+        Args:
+            geom_points  : [B, N, in_ch] – geometry point cloud (x, y, sdf)
+            query_points : [B, Q, in_ch] – query locations      (x, y, sdf)
+
+        Returns:
+            [B, Q, 1]
+        """
+        B, Q, _ = query_points.shape
+
+        # --- BRANCH ---
+        b_alpha = self.branch(geom_points)          # [B, latent_dim]
+
+        # --- TRUNK ---
+        q_flat  = query_points.reshape(B * Q, -1)   # [B*Q, in_ch]
+        t_alpha = self.siren(q_flat).view(B, Q, -1) # [B, Q, latent_dim]
+
+        # --- EARLY SPATIAL MODULATION (element-wise multiply) ---
+        b_alpha_exp = b_alpha.unsqueeze(1).expand(-1, Q, -1)  # [B, Q, latent_dim]
+        fused = b_alpha_exp * t_alpha                          # [B, Q, latent_dim]
+
+        # --- DEEP PROCESSING ---
+        fused_flat = fused.reshape(B * Q, self.latent_dim)
+        b_beta = self.post_mul_mlp(fused_flat).view(B, Q, self.basis_dim)
+
+        t_alpha_flat = t_alpha.reshape(B * Q, self.latent_dim)
+        t_beta = self.t_beta_proj(t_alpha_flat).view(B, Q, self.basis_dim)
+
+        # --- TERMINAL DOT PRODUCT (DeepONet: Σ B^β ⊗ T^β) ---
+        out = torch.sum(b_beta * t_beta, dim=-1, keepdim=True) + self.bias
+
         return out
