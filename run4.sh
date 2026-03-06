@@ -1,7 +1,7 @@
 #!/bin/bash
-#SBATCH --job-name=VanillaDeepONet
-#SBATCH --output=PointNetMLP_Paper1/GPU3.log
-#SBATCH --error=PointNetMLP_Paper1/GPU3.log
+#SBATCH --job-name=Point++_DeepONet_wSDF_FFM_CAtt
+#SBATCH --output=PointNetMLP_Paper1/GPU4.log
+#SBATCH --error=PointNetMLP_Paper1/GPU4.log
 #SBATCH --time=24:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
@@ -21,6 +21,6 @@ conda activate /usr1/home/abdulla.fathalla/.aixvipmap/envs/MLEnv
 
 echo "starting script"
 
-python -u PointNetMLP_Paper1/VanillaDeepONet/GPU0.py
+python -u PointNetMLP_Paper1/Point++_DeepONet_wSDF_FFM_CAtt_v2/GPU0.py
 
 echo "DONE"
