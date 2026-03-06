@@ -222,12 +222,23 @@ class GlobalFeature(nn.Module):
             hidden = [max(8, latent_dim // 2)]
         self.mlp = MLP(in_ch, hidden, latent_dim, norm=norm, num_groups=num_groups)
 
-    def forward(self, feats: torch.Tensor) -> torch.Tensor:
+    def project_per_point(self, feats: torch.Tensor) -> torch.Tensor:
+        """Apply the projection MLP per-point without global max-pooling.
+
+        Args:
+            feats: [B, S, in_ch]
+
+        Returns:
+            [B, S, latent_dim] – per-point projected features (no pooling).
+        """
         B, S, C = feats.shape
         x = feats.reshape(B * S, C)
         x = self.mlp(x)
-        x = x.view(B, S, -1)
-        x = torch.max(x, dim=1).values  # [B,latent]
+        return x.view(B, S, -1)
+
+    def forward(self, feats: torch.Tensor) -> torch.Tensor:
+        x = self.project_per_point(feats)  # [B, S, latent_dim]
+        x = torch.max(x, dim=1).values     # [B, latent_dim]
         return x
 
 
@@ -335,7 +346,7 @@ class PointNet2Encoder2D(nn.Module):
             self.sa_layers.append(sa)
             current_in = out_ch * 2 if pool_type == "max+mean" else out_ch
 
-        # Global feature aggregator
+        # Global feature aggregator (used when return_local_features=False)
         self.glob = GlobalFeature(
             in_ch=current_in,
             latent_dim=self.latent_dim,
@@ -343,6 +354,9 @@ class PointNet2Encoder2D(nn.Module):
             norm=norm_type,
             num_groups=num_groups,
         )
+
+        # Flag: when True, return per-point features [B, N', latent_dim] instead of [B, latent_dim]
+        self.return_local_features: bool = bool(cfg.get("return_local_features", False))
 
         # Persist resolved config
         self.encoder_cfg: Dict[str, Any] = {
@@ -365,6 +379,7 @@ class PointNet2Encoder2D(nn.Module):
             "num_groups": num_groups,
             "pool": pool_type,
             "sdf_ch": sdf_ch,
+            "return_local_features": self.return_local_features,
         }
         if isinstance(posenc_cfg, dict):
             self.encoder_cfg["posenc"] = {
@@ -373,6 +388,15 @@ class PointNet2Encoder2D(nn.Module):
             }
 
     def forward(self, xyz: torch.Tensor) -> torch.Tensor:
+        """Forward pass.
+
+        Returns:
+            If return_local_features is False (default):
+                [B, latent_dim] – globally pooled feature vector.
+            If return_local_features is True:
+                [B, N', latent_dim] – per-point features from the final SA layer,
+                projected to latent_dim without global pooling.
+        """
         # When sdf_ch > 0, input is [B, N, 2+sdf_ch]; split spatial coords from extra features
         if self.sdf_ch > 0:
             coords = xyz[..., :2]
@@ -387,8 +411,13 @@ class PointNet2Encoder2D(nn.Module):
         centers = coords  # always 2D for spatial operations (FPS, ball query)
         for sa in self.sa_layers:
             centers, feats = sa(centers, feats)
-        latent = self.glob(feats)
-        return latent
+        if self.return_local_features:
+            # Apply the projection MLP per-point but skip global max-pooling.
+            # Output: [B, N', latent_dim]
+            return self.glob.project_per_point(feats)
+        else:
+            latent = self.glob(feats)
+            return latent
 
 
 class PointNetMLPJoint(nn.Module):

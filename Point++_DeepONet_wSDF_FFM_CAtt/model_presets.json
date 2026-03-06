@@ -1,6 +1,6 @@
 {
     "S": {
-        "model_name": "pn2_wsdf_s",
+        "model_name": "pn2_wsdf_ffm_catt_s",
         "latent_dim": 128,
         "pre_hidden": [64, 64],
         "sa_blocks": [
@@ -23,8 +23,9 @@
         "head_hidden": [256, 256, 128],
         "basis_dim": 128,
         "branch_hidden": [64, 128, 256],
-        "siren_hidden": [256, 256],
-        "post_mlp_hidden": [256, 256, 128],
+        "ffm_mapping_size": 64,
+        "ffm_sigma_init": 10.0,
+        "cross_attention_heads": 4,
         "train_batch_size": 6,
         "train_points_per_geom": 4096,
         "norm": "batch",
@@ -33,7 +34,7 @@
         "head_dropout": 0.0
     },
     "M": {
-        "model_name": "pn2_wsdf_m",
+        "model_name": "pn2_wsdf_ffm_catt_m",
         "latent_dim": 160,
         "pre_hidden": [96, 96],
         "sa_blocks": [
@@ -56,8 +57,9 @@
         "head_hidden": [384, 384, 192],
         "basis_dim": 192,
         "branch_hidden": [96, 192, 384],
-        "siren_hidden": [256, 256],
-        "post_mlp_hidden": [384, 384, 192],
+        "ffm_mapping_size": 128,
+        "ffm_sigma_init": 10.0,
+        "cross_attention_heads": 4,
         "train_batch_size": 6,
         "train_points_per_geom": 4096,
         "norm": "batch",
@@ -66,7 +68,7 @@
         "head_dropout": 0.0
     },
     "L": {
-        "model_name": "pn2_wsdf_l",
+        "model_name": "pn2_wsdf_ffm_catt_l",
         "latent_dim": 192,
         "pre_hidden": [128, 128],
         "sa_blocks": [
@@ -89,8 +91,9 @@
         "head_hidden": [512, 512, 256],
         "basis_dim": 256,
         "branch_hidden": [128, 256, 512],
-        "siren_hidden": [256, 256],
-        "post_mlp_hidden": [512, 512, 256],
+        "ffm_mapping_size": 128,
+        "ffm_sigma_init": 10.0,
+        "cross_attention_heads": 4,
         "train_batch_size": 4,
         "train_points_per_geom": 4096,
         "norm": "batch",
@@ -99,7 +102,7 @@
         "head_dropout": 0.0
     },
     "XL": {
-        "model_name": "pn2_wsdf_xl",
+        "model_name": "pn2_wsdf_ffm_catt_xl",
         "latent_dim": 256,
         "pre_hidden": [128, 128],
         "sa_blocks": [
@@ -122,8 +125,9 @@
         "head_hidden": [512, 512, 256],
         "basis_dim": 256,
         "branch_hidden": [128, 256, 512],
-        "siren_hidden": [256, 256],
-        "post_mlp_hidden": [512, 512, 256],
+        "ffm_mapping_size": 256,
+        "ffm_sigma_init": 10.0,
+        "cross_attention_heads": 8,
         "train_batch_size": 4,
         "train_points_per_geom": 4096,
         "norm": "batch",
@@ -132,7 +136,7 @@
         "head_dropout": 0.0
     },
     "XXL": {
-        "model_name": "pn2_wsdf_xxl",
+        "model_name": "pn2_wsdf_ffm_catt_xxl",
         "latent_dim": 384,
         "pre_hidden": [192, 192],
         "sa_blocks": [
@@ -155,8 +159,9 @@
         "head_hidden": [768, 768, 384],
         "basis_dim": 384,
         "branch_hidden": [192, 384, 768],
-        "siren_hidden": [256, 256],
-        "post_mlp_hidden": [768, 768, 384],
+        "ffm_mapping_size": 256,
+        "ffm_sigma_init": 10.0,
+        "cross_attention_heads": 8,
         "train_batch_size": 2,
         "train_points_per_geom": 4096,
         "norm": "batch",

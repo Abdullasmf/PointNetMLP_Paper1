@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import numpy as np
 import math
 from typing import List, Dict, Any, Optional
 
@@ -289,38 +288,67 @@ class DenseNoFFT(nn.Module):
         return y
 
 
-class SineLayer(nn.Module):
-    def __init__(self, in_features, out_features, is_first=False, omega_0=30.0):
+class FourierFeatureMapping(nn.Module):
+    """Fourier Feature Mapping (FFM) for arbitrary-dimensional inputs.
+
+    Given input v of shape [..., in_dim]:
+      1. Project: proj = v @ B_mat                   [..., ffm_mapping_size]
+      2. Scale:   scaled = 2*pi * proj * sigma        [..., ffm_mapping_size]
+      3. Encode:  gamma(v) = [cos(scaled), sin(scaled)] [..., 2*ffm_mapping_size]
+
+    The random Gaussian matrix B_mat is registered as a *buffer* (frozen, requires_grad=False).
+    The scale sigma is a learnable nn.Parameter.
+    """
+
+    def __init__(self, in_dim: int, ffm_mapping_size: int, sigma_init: float = 10.0):
         super().__init__()
-        self.omega_0 = omega_0
-        self.is_first = is_first
-        self.linear = nn.Linear(in_features, out_features)
-        self.init_weights()
+        # Frozen random projection matrix: [in_dim, ffm_mapping_size]
+        B_mat = torch.randn(in_dim, ffm_mapping_size)
+        self.register_buffer("B_mat", B_mat)  # NOT a parameter – strictly frozen
+        # Learnable scale
+        self.sigma = nn.Parameter(torch.tensor(float(sigma_init)))
 
-    def init_weights(self):
-        with torch.no_grad():
-            if self.is_first:
-                self.linear.weight.uniform_(-1 / self.linear.in_features, 1 / self.linear.in_features)
-            else:
-                self.linear.weight.uniform_(-np.sqrt(6 / self.linear.in_features) / self.omega_0,
-                                            np.sqrt(6 / self.linear.in_features) / self.omega_0)
+    @property
+    def out_dim(self) -> int:
+        return 2 * self.B_mat.shape[1]  # cos + sin concatenated
 
-    def forward(self, x):
-        return torch.sin(self.omega_0 * self.linear(x))
+    def forward(self, v: torch.Tensor) -> torch.Tensor:
+        # v: [..., in_dim]
+        proj = v @ self.B_mat                          # [..., ffm_mapping_size]
+        scaled = 2.0 * math.pi * proj * self.sigma     # [..., ffm_mapping_size]
+        return torch.cat([torch.cos(scaled), torch.sin(scaled)], dim=-1)  # [..., 2*ffm_mapping_size]
+
 
 class ScaledDiagramDeepONet(nn.Module):
+    """Refactored ScaledDiagramDeepONet with FFM trunk and Cross-Attention bridge.
+
+    Branch Mutation:
+        PointNet2Encoder2D is configured with return_local_features=True so that it
+        returns discrete, unpooled local geometric features: [B, N', latent_dim].
+
+    Trunk Mutation:
+        SIREN is replaced by a Fourier Feature Mapping (FFM) module followed by a
+        standard MLP with SiLU activations that projects to basis_dim.
+        Input v = (x, y, SDF): [B, Q, 3].
+
+    Bridge Mutation:
+        Element-wise multiplication is replaced by Multi-Head Cross-Attention.
+        Q = trunk features   [B, Q, basis_dim]
+        K = V = branch features [B, N', latent_dim] (projected to basis_dim first)
+        The attended output is passed through a post-attention MLP to produce B^beta.
+
+    Terminal:
+        DeepONet dot product: sum(B^beta * T^beta, dim=-1) + bias -> [B, Q, 1].
     """
-    Architecture: Fair-scaled replica of the Point-DeepONet Diagram.
-    - Branch: PointNet++ with optional SDF features (Matches your 'L' config)
-    - Trunk: Configurable SIREN Layers (input = x,y[,sdf])
-    - Fusion: Early Element-wise Multiplication -> MLP (Matches your head_hidden) -> Dot Product
-    """
+
     def __init__(
         self,
         latent_dim: int = 192,
-        basis_dim: int = 128, # The final 'p' dimension for the dot product
+        basis_dim: int = 128,
         head_hidden: List[int] = [512, 512, 256],
-        siren_hidden: List[int] = [256, 256],
+        ffm_mapping_size: int = 128,
+        ffm_sigma_init: float = 10.0,
+        cross_attention_heads: int = 4,
         encoder_cfg: Optional[Dict[str, Any]] = None,
     ):
         super().__init__()
@@ -328,62 +356,115 @@ class ScaledDiagramDeepONet(nn.Module):
         # SDF channel count (0 = no SDF, 1 = SDF appended as 3rd per-point feature)
         sdf_ch = int(encoder_cfg.get("sdf_ch", 0)) if encoder_cfg else 0
         self.sdf_ch = sdf_ch
-        trunk_in_ch = 2 + sdf_ch  # SIREN input: (x, y) or (x, y, sdf)
-        
-        # 1. Branch Network (PointNet++)
-        # We use YOUR exact encoder so the geometry extraction is a fair fight
-        self.encoder = PointNet2Encoder2D(latent_dim=latent_dim, encoder_cfg=encoder_cfg)
-        eff_latent = self.encoder.latent_dim
-        
-        # 2. Trunk Network (configurable SIREN Layers)
-        # Scaled to gracefully project the input coordinates up to the eff_latent dimension
-        siren_layers: List[nn.Module] = [SineLayer(trunk_in_ch, siren_hidden[0], is_first=True)]
-        for i in range(len(siren_hidden) - 1):
-            siren_layers.append(SineLayer(siren_hidden[i], siren_hidden[i + 1]))
-        siren_layers.append(SineLayer(siren_hidden[-1], eff_latent))
-        self.siren = nn.Sequential(*siren_layers)
-        
-        # 3. Post-Multiplication MLP
-        # This matches the raw parameter capacity of your 'L' configuration head
+        trunk_in_ch = 2 + sdf_ch  # FFM input dimensionality: (x, y) or (x, y, sdf)
+
         norm_type = str(encoder_cfg.get("norm", "batch")) if encoder_cfg else "batch"
         num_groups = int(encoder_cfg.get("num_groups", 16)) if encoder_cfg else 16
-        
-        self.post_mul_mlp = MLP(
-            in_dim=eff_latent,
+
+        # ------------------------------------------------------------------ #
+        # 1. Branch Network: PointNet++ returning local features [B, N', latent_dim]
+        # ------------------------------------------------------------------ #
+        # Inject return_local_features=True so the encoder skips global pooling.
+        enc_cfg: Dict[str, Any] = dict(encoder_cfg) if encoder_cfg is not None else {}
+        enc_cfg["return_local_features"] = True
+        self.encoder = PointNet2Encoder2D(latent_dim=latent_dim, encoder_cfg=enc_cfg)
+        eff_latent = self.encoder.latent_dim  # == latent_dim after glob.mlp projection
+
+        # ------------------------------------------------------------------ #
+        # 2. Trunk Network: FFM + SiLU MLP -> [B, Q, basis_dim]
+        # ------------------------------------------------------------------ #
+        self.ffm = FourierFeatureMapping(
+            in_dim=trunk_in_ch,
+            ffm_mapping_size=ffm_mapping_size,
+            sigma_init=ffm_sigma_init,
+        )
+        ffm_out_dim = self.ffm.out_dim  # 2 * ffm_mapping_size
+
+        # MLP with SiLU activations: ffm_out_dim -> basis_dim
+        self.trunk_mlp = MLP(
+            in_dim=ffm_out_dim,
             hidden=head_hidden,
-            out_dim=basis_dim, # Projects to B^beta
+            out_dim=basis_dim,
+            act=nn.SiLU,
             norm=norm_type,
-            num_groups=num_groups
+            num_groups=num_groups,
         )
 
-        # Projection to form T^beta for the final dot product
-        self.t_beta_proj = nn.Linear(eff_latent, basis_dim)
+        # ------------------------------------------------------------------ #
+        # 3. Bridge: Multi-Head Cross-Attention
+        # ------------------------------------------------------------------ #
+        # Linear projection to align branch latent_dim -> basis_dim for K and V
+        self.kv_proj = nn.Linear(eff_latent, basis_dim)
+
+        # Validate that basis_dim is divisible by cross_attention_heads
+        assert basis_dim % cross_attention_heads == 0, (
+            f"basis_dim ({basis_dim}) must be divisible by cross_attention_heads ({cross_attention_heads})"
+        )
+        self.cross_attn = nn.MultiheadAttention(
+            embed_dim=basis_dim,
+            num_heads=cross_attention_heads,
+            batch_first=True,
+        )
+
+        # Post-attention MLP: produces B^beta [B, Q, basis_dim]
+        self.post_attn_mlp = MLP(
+            in_dim=basis_dim,
+            hidden=head_hidden,
+            out_dim=basis_dim,
+            norm=norm_type,
+            num_groups=num_groups,
+        )
 
         self.basis_dim = basis_dim
         self.bias = nn.Parameter(torch.zeros(1))
 
-    def forward(self, geom_points, query_points):
+    def forward(self, geom_points: torch.Tensor, query_points: torch.Tensor) -> torch.Tensor:
+        """
+        Args:
+            geom_points:  [B, N, 2+sdf_ch]  – geometry point cloud with optional SDF
+            query_points: [B, Q, 2+sdf_ch]  – query locations (x, y[, sdf])
+
+        Returns:
+            [B, Q, 1]  – predicted scalar stress at each query point
+        """
         B, Q, q_ch = query_points.shape
 
-        # --- BRANCH ---
-        b_alpha = self.encoder(geom_points) # [B, eff_latent]
+        # ------------------------------------------------------------------ #
+        # BRANCH: encode geometry into discrete local features
+        # geom_points [B, N, 2+sdf_ch]  ->  local_feats [B, N', eff_latent]
+        # ------------------------------------------------------------------ #
+        local_feats = self.encoder(geom_points)           # [B, N', eff_latent]
 
-        # --- TRUNK ---
-        q_flat = query_points.reshape(-1, q_ch)  # [B*Q, q_ch]
-        t_alpha = self.siren(q_flat).view(B, Q, -1) # [B, Q, eff_latent]
+        # ------------------------------------------------------------------ #
+        # TRUNK: Fourier Feature Mapping + SiLU MLP
+        # query_points [B, Q, 2+sdf_ch]
+        #   -> ffm_out  [B, Q, 2*ffm_mapping_size]
+        #   -> t_beta   [B, Q, basis_dim]
+        # ------------------------------------------------------------------ #
+        ffm_out = self.ffm(query_points)                  # [B, Q, 2*ffm_mapping_size]
+        ffm_flat = ffm_out.reshape(B * Q, -1)             # [B*Q, 2*ffm_mapping_size]
+        t_beta = self.trunk_mlp(ffm_flat).view(B, Q, self.basis_dim)  # [B, Q, basis_dim]
 
-        # --- EARLY FUSION (The odot circle) ---
-        b_alpha_exp = b_alpha.unsqueeze(1).expand(-1, Q, -1) # [B, Q, eff_latent]
-        fused = b_alpha_exp * t_alpha # Element-wise multiplication
+        # ------------------------------------------------------------------ #
+        # BRIDGE: Multi-Head Cross-Attention
+        # Query (Q_attn): trunk features      [B, Q, basis_dim]
+        # Key   (K_attn): branch features     [B, N', eff_latent] -> projected [B, N', basis_dim]
+        # Value (V_attn): branch features     [B, N', eff_latent] -> projected [B, N', basis_dim]
+        # ------------------------------------------------------------------ #
+        kv = self.kv_proj(local_feats)                    # [B, N', basis_dim]
+        # cross_attn(query, key, value) with batch_first=True
+        attended, _ = self.cross_attn(t_beta, kv, kv)    # attended: [B, Q, basis_dim]
 
-        # --- LATE FUSION PREP ---
-        fused_flat = fused.reshape(-1, b_alpha.shape[-1])
-        b_beta = self.post_mul_mlp(fused_flat).view(B, Q, self.basis_dim)
-        
-        t_alpha_flat = t_alpha.reshape(-1, b_alpha.shape[-1])
-        t_beta = self.t_beta_proj(t_alpha_flat).view(B, Q, self.basis_dim)
+        # Post-attention MLP: produces B^beta
+        attended_flat = attended.reshape(B * Q, -1)       # [B*Q, basis_dim]
+        b_beta = self.post_attn_mlp(attended_flat).view(B, Q, self.basis_dim)  # [B, Q, basis_dim]
 
-        # --- TERMINAL DOT PRODUCT (The otimes circle) ---
-        out = torch.sum(b_beta * t_beta, dim=-1, keepdim=True) + self.bias
-        
+        # ------------------------------------------------------------------ #
+        # TERMINAL DOT PRODUCT: sum(B^beta * T^beta, dim=-1) + bias
+        # b_beta: [B, Q, basis_dim]
+        # t_beta: [B, Q, basis_dim]
+        # out:    [B, Q, 1]
+        # ------------------------------------------------------------------ #
+        out = torch.sum(b_beta * t_beta, dim=-1, keepdim=True) + self.bias  # [B, Q, 1]
+
         return out
