@@ -324,7 +324,8 @@ class ScaledDiagramDeepONet(nn.Module):
 
     Branch Mutation:
         PointNet2Encoder2D is configured with return_local_features=True so that it
-        returns discrete, unpooled local geometric features: [B, N', latent_dim].
+        returns a tuple (local_feats [B, N', latent_dim], centers [B, N', 2]) where
+        centers are the 2D physical coordinates of the subsampled SA points.
 
     Trunk Mutation:
         SIREN is replaced by a Fourier Feature Mapping (FFM) module followed by a
@@ -332,9 +333,12 @@ class ScaledDiagramDeepONet(nn.Module):
         Input v = (x, y, SDF): [B, Q, 3].
 
     Bridge Mutation:
-        Element-wise multiplication is replaced by Multi-Head Cross-Attention.
-        Q = trunk features   [B, Q, basis_dim]
-        K = V = branch features [B, N', latent_dim] (projected to basis_dim first)
+        Element-wise multiplication is replaced by spatially-grounded, temperature-
+        scaled Multi-Head Cross-Attention.
+        - centers [B, N', 2] are encoded via center_ffm + center_mlp -> center_pos_embed [B, N', basis_dim]
+        - K = kv_proj(local_feats) + center_pos_embed  (spatially grounded keys)
+        - V = kv_proj(local_feats)                     (unmodified values)
+        - Q_scaled = t_beta / attn_temp                (temperature-scaled queries)
         The attended output is passed through a post-attention MLP to produce B^beta.
 
     Terminal:
@@ -347,8 +351,9 @@ class ScaledDiagramDeepONet(nn.Module):
         basis_dim: int = 128,
         head_hidden: List[int] = [512, 512, 256],
         ffm_mapping_size: int = 128,
-        ffm_sigma_init: float = 10.0,
+        ffm_sigma_init: float = 2.0,
         cross_attention_heads: int = 4,
+        attn_temp: float = 0.1,
         encoder_cfg: Optional[Dict[str, Any]] = None,
     ):
         super().__init__()
@@ -361,10 +366,14 @@ class ScaledDiagramDeepONet(nn.Module):
         norm_type = str(encoder_cfg.get("norm", "batch")) if encoder_cfg else "batch"
         num_groups = int(encoder_cfg.get("num_groups", 16)) if encoder_cfg else 16
 
+        # Attention temperature: scales Q before cross-attention to control softmax sharpness
+        self.attn_temp = float(attn_temp)
+
         # ------------------------------------------------------------------ #
         # 1. Branch Network: PointNet++ returning local features [B, N', latent_dim]
+        #    and spatial centers [B, N', 2]
         # ------------------------------------------------------------------ #
-        # Inject return_local_features=True so the encoder skips global pooling.
+        # Inject return_local_features=True so the encoder returns (local_feats, centers).
         enc_cfg: Dict[str, Any] = dict(encoder_cfg) if encoder_cfg is not None else {}
         enc_cfg["return_local_features"] = True
         self.encoder = PointNet2Encoder2D(latent_dim=latent_dim, encoder_cfg=enc_cfg)
@@ -391,10 +400,26 @@ class ScaledDiagramDeepONet(nn.Module):
         )
 
         # ------------------------------------------------------------------ #
-        # 3. Bridge: Multi-Head Cross-Attention
+        # 3. Bridge: Spatially Grounded, Temperature-Scaled Cross-Attention
         # ------------------------------------------------------------------ #
         # Linear projection to align branch latent_dim -> basis_dim for K and V
         self.kv_proj = nn.Linear(eff_latent, basis_dim)
+
+        # Center positional encoding: FFM for the 2D SA centers
+        self.center_ffm = FourierFeatureMapping(
+            in_dim=2,
+            ffm_mapping_size=ffm_mapping_size,
+            sigma_init=ffm_sigma_init,
+        )
+        # MLP to project center FFM output [2*ffm_mapping_size] -> basis_dim
+        self.center_mlp = MLP(
+            in_dim=2 * ffm_mapping_size,
+            hidden=head_hidden,
+            out_dim=basis_dim,
+            act=nn.SiLU,
+            norm=norm_type,
+            num_groups=num_groups,
+        )
 
         # Validate that basis_dim is divisible by cross_attention_heads
         assert basis_dim % cross_attention_heads == 0, (
@@ -430,10 +455,13 @@ class ScaledDiagramDeepONet(nn.Module):
         B, Q, q_ch = query_points.shape
 
         # ------------------------------------------------------------------ #
-        # BRANCH: encode geometry into discrete local features
-        # geom_points [B, N, 2+sdf_ch]  ->  local_feats [B, N', eff_latent]
+        # BRANCH: encode geometry into discrete local features + SA centers
+        # geom_points [B, N, 2+sdf_ch]
+        #   -> local_feats [B, N', eff_latent]
+        #   -> centers     [B, N', 2]
         # ------------------------------------------------------------------ #
-        local_feats = self.encoder(geom_points)           # [B, N', eff_latent]
+        local_feats, centers = self.encoder(geom_points)  # [B, N', eff_latent], [B, N', 2]
+        N_prime = local_feats.shape[1]
 
         # ------------------------------------------------------------------ #
         # TRUNK: Fourier Feature Mapping + SiLU MLP
@@ -446,18 +474,39 @@ class ScaledDiagramDeepONet(nn.Module):
         t_beta = self.trunk_mlp(ffm_flat).view(B, Q, self.basis_dim)  # [B, Q, basis_dim]
 
         # ------------------------------------------------------------------ #
-        # BRIDGE: Multi-Head Cross-Attention
-        # Query (Q_attn): trunk features      [B, Q, basis_dim]
-        # Key   (K_attn): branch features     [B, N', eff_latent] -> projected [B, N', basis_dim]
-        # Value (V_attn): branch features     [B, N', eff_latent] -> projected [B, N', basis_dim]
+        # BRIDGE: Spatially Grounded, Temperature-Scaled Cross-Attention
+        #
+        # Positional encoding for SA centers:
+        #   centers [B, N', 2]
+        #   -> center_ffm_out    [B, N', 2*ffm_mapping_size]
+        #   -> center_pos_embed  [B, N', basis_dim]
+        #
+        # Spatially grounded Keys:
+        #   V = kv_proj(local_feats)                     [B, N', basis_dim]
+        #   K = kv_proj(local_feats) + center_pos_embed  [B, N', basis_dim]
+        #
+        # Temperature-scaled Queries:
+        #   Q_scaled = t_beta / attn_temp                [B, Q, basis_dim]
         # ------------------------------------------------------------------ #
-        kv = self.kv_proj(local_feats)                    # [B, N', basis_dim]
+        center_ffm_out = self.center_ffm(centers)                                        # [B, N', 2*ffm_mapping_size]
+        center_ffm_flat = center_ffm_out.reshape(B * N_prime, self.center_ffm.out_dim)  # [B*N', 2*ffm_mapping_size]
+        center_pos_embed = self.center_mlp(center_ffm_flat).view(
+            B, N_prime, self.basis_dim
+        )                                                                 # [B, N', basis_dim]
+
+        V = self.kv_proj(local_feats)                                    # [B, N', basis_dim]
+        K = V + center_pos_embed                                         # [B, N', basis_dim]
+
+        Q_scaled = t_beta / self.attn_temp                               # [B, Q, basis_dim]
+
         # cross_attn(query, key, value) with batch_first=True
-        attended, _ = self.cross_attn(t_beta, kv, kv)    # attended: [B, Q, basis_dim]
+        attended, _ = self.cross_attn(Q_scaled, K, V)                   # [B, Q, basis_dim]
 
         # Post-attention MLP: produces B^beta
-        attended_flat = attended.reshape(B * Q, -1)       # [B*Q, basis_dim]
-        b_beta = self.post_attn_mlp(attended_flat).view(B, Q, self.basis_dim)  # [B, Q, basis_dim]
+        attended_flat = attended.reshape(B * Q, -1)                      # [B*Q, basis_dim]
+        b_beta = self.post_attn_mlp(attended_flat).view(
+            B, Q, self.basis_dim
+        )                                                                 # [B, Q, basis_dim]
 
         # ------------------------------------------------------------------ #
         # TERMINAL DOT PRODUCT: sum(B^beta * T^beta, dim=-1) + bias
