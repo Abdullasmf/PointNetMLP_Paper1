@@ -371,7 +371,7 @@ def train(
         max_lr=lr,
         epochs=epochs,
         steps_per_epoch=steps_per_epoch,
-        pct_start=0.1,
+        pct_start=0.3,
         div_factor=10.0,
         final_div_factor=10.0,
         anneal_strategy="cos",
@@ -779,25 +779,31 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
         "sdf_ch": 1,
     }
 
-    # DeepONet Config extraction directly from JSON (_cfg)
+
+# DeepONet Config extraction directly from JSON (_cfg)
     default_basis_dim = head_hidden[-1] if len(head_hidden) > 0 else 128
     do_basis_dim = int(_cfg.get("basis_dim", default_basis_dim))
-    do_siren_hidden = list(_cfg.get("siren_hidden", [256, 256]))
     do_post_mlp_hidden = list(_cfg.get("post_mlp_hidden", head_hidden))
+    
+    # Extract new FFM and Cross-Attention parameters
+    ffm_map_size = int(_cfg.get("ffm_mapping_size", 128))
+    ffm_sigma = float(_cfg.get("ffm_sigma_init", 10.0))
+    attn_heads = int(_cfg.get("cross_attention_heads", 4))
 
     print(
         "Building ScaledDiagramDeepONet with PointNet++ branch + SDF "
-        f"(siren_hidden={do_siren_hidden}, basis_dim={do_basis_dim})."
+        f"(ffm_size={ffm_map_size}, basis_dim={do_basis_dim}, heads={attn_heads})."
     )
 
     model = ScaledDiagramDeepONet(
         latent_dim=latent_dim,
         basis_dim=do_basis_dim,
         head_hidden=do_post_mlp_hidden,
-        siren_hidden=do_siren_hidden,
+        ffm_mapping_size=ffm_map_size,
+        ffm_sigma_init=ffm_sigma,
+        cross_attention_heads=attn_heads,
         encoder_cfg=encoder_cfg,
     )
-
 
     # Ensure save directory exists
     save_path.parent.mkdir(parents=True, exist_ok=True)
