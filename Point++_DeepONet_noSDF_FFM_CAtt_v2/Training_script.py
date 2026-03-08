@@ -776,7 +776,7 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
         "num_groups": enc_num_groups,
         "pool": enc_pool,
         # SDF channel: PointNet++ branch and SIREN trunk both receive (x, y, sdf)
-        "sdf_ch": 1,
+        "sdf_ch": 0,
     }
 
 
@@ -787,12 +787,13 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
     
     # Extract new FFM and Cross-Attention parameters
     ffm_map_size = int(_cfg.get("ffm_mapping_size", 128))
-    ffm_sigma = float(_cfg.get("ffm_sigma_init", 10.0))
+    ffm_sigma = float(_cfg.get("ffm_sigma_init", 2.0))
     attn_heads = int(_cfg.get("cross_attention_heads", 4))
+    attn_temp = float(_cfg.get("attn_temp", 0.1))
 
     print(
         "Building ScaledDiagramDeepONet with PointNet++ branch + SDF "
-        f"(ffm_size={ffm_map_size}, basis_dim={do_basis_dim}, heads={attn_heads})."
+        f"(ffm_size={ffm_map_size}, basis_dim={do_basis_dim}, heads={attn_heads}, attn_temp={attn_temp})."
     )
 
     model = ScaledDiagramDeepONet(
@@ -802,6 +803,7 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
         ffm_mapping_size=ffm_map_size,
         ffm_sigma_init=ffm_sigma,
         cross_attention_heads=attn_heads,
+        attn_temp=attn_temp,
         encoder_cfg=encoder_cfg,
     )
 
