@@ -1,6 +1,6 @@
 {
     "S": {
-        "model_name": "pn2_wsdf_ffm_catt_s",
+        "model_name": "pn2_nosdf_ffm_catt_s",
         "latent_dim": 128,
         "pre_hidden": [64, 64],
         "sa_blocks": [
@@ -35,7 +35,7 @@
         "head_dropout": 0.0
     },
     "M": {
-        "model_name": "pn2_wsdf_ffm_catt_m",
+        "model_name": "pn2_nosdf_ffm_catt_m",
         "latent_dim": 160,
         "pre_hidden": [96, 96],
         "sa_blocks": [
@@ -70,7 +70,7 @@
         "head_dropout": 0.0
     },
     "L": {
-        "model_name": "pn2_wsdf_ffm_catt_l",
+        "model_name": "pn2_nosdf_ffm_catt_l",
         "latent_dim": 192,
         "pre_hidden": [128, 128],
         "sa_blocks": [
@@ -105,7 +105,7 @@
         "head_dropout": 0.0
     },
     "XL": {
-        "model_name": "pn2_wsdf_ffm_catt_xl",
+        "model_name": "pn2_nosdf_ffm_catt_xl",
         "latent_dim": 256,
         "pre_hidden": [128, 128],
         "sa_blocks": [
@@ -140,7 +140,7 @@
         "head_dropout": 0.0
     },
     "XXL": {
-        "model_name": "pn2_wsdf_ffm_catt_xxl",
+        "model_name": "pn2_nosdf_ffm_catt_xxl",
         "latent_dim": 384,
         "pre_hidden": [192, 192],
         "sa_blocks": [
