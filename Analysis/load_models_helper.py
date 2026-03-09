@@ -5,7 +5,7 @@ from pathlib import Path
 from pn_models import PointNetMLPJoint
 from benchmarks import (
     VanillaDeepONet, SpectralDeepONet, DenseNoFFT,
-    ScaledDiagramDeepONet, PointDeepONet,
+    ScaledDiagramDeepONet, PointDeepONet, ScaledDiagramDeepONetFFMCAtt,
 )
 
 
@@ -83,6 +83,27 @@ def load_model_with_checkpoint(model_path, model_type, device='cpu'):
                 basis_dim=basis_dim,
                 head_hidden=head_hidden,
                 siren_hidden=siren_hidden,
+                encoder_cfg=encoder_cfg,
+            )
+
+        elif model_type in ('Pn2NoSDF_FFM_CAtt', 'Pn2wSDF_FFM_CAtt'):
+            # ScaledDiagramDeepONetFFMCAtt (PointNet++ branch, FFM trunk, cross-attention)
+            if model_type == 'Pn2wSDF_FFM_CAtt':
+                encoder_cfg['sdf_ch'] = 1  # encoder receives (x, y, sdf)
+            basis_dim = int(preset.get('basis_dim', preset['head_hidden'][-1]))
+            head_hidden = list(preset.get('head_hidden', [256, 256, 128]))
+            ffm_mapping_size = int(preset.get('ffm_mapping_size', 128))
+            ffm_sigma_init = float(preset.get('ffm_sigma_init', 2.0))
+            cross_attention_heads = int(preset.get('cross_attention_heads', 4))
+            attn_temp = float(preset.get('attn_temp', 0.1))
+            model = ScaledDiagramDeepONetFFMCAtt(
+                latent_dim=preset['latent_dim'],
+                basis_dim=basis_dim,
+                head_hidden=head_hidden,
+                ffm_mapping_size=ffm_mapping_size,
+                ffm_sigma_init=ffm_sigma_init,
+                cross_attention_heads=cross_attention_heads,
+                attn_temp=attn_temp,
                 encoder_cfg=encoder_cfg,
             )
 

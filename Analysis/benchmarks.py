@@ -495,3 +495,182 @@ class PointDeepONet(nn.Module):
         out = torch.sum(b_beta * t_beta, dim=-1, keepdim=True) + self.bias
 
         return out
+
+
+# ---------------------------------------------------------------------------
+# New v2 architecture: FFM + Cross-Attention bridge (no SIREN)
+# Used by Point++_DeepONet_noSDF_FFM_CAtt_v2 and Point++_DeepONet_wSDF_FFM_CAtt_v2
+# ---------------------------------------------------------------------------
+
+class FourierFeatureMapping(nn.Module):
+    """Fourier Feature Mapping (FFM) for arbitrary-dimensional inputs.
+
+    Given input v of shape [..., in_dim]:
+      1. Project: proj = v @ B_mat                   [..., ffm_mapping_size]
+      2. Scale:   scaled = 2*pi * proj * sigma        [..., ffm_mapping_size]
+      3. Encode:  gamma(v) = [cos(scaled), sin(scaled)] [..., 2*ffm_mapping_size]
+
+    The random Gaussian matrix B_mat is registered as a *buffer* (frozen).
+    The scale sigma is a learnable nn.Parameter.
+    """
+
+    def __init__(self, in_dim: int, ffm_mapping_size: int, sigma_init: float = 10.0):
+        super().__init__()
+        B_mat = torch.randn(in_dim, ffm_mapping_size)
+        self.register_buffer("B_mat", B_mat)
+        self.sigma = nn.Parameter(torch.tensor(float(sigma_init)))
+
+    @property
+    def out_dim(self) -> int:
+        return 2 * self.B_mat.shape[1]
+
+    def forward(self, v: torch.Tensor) -> torch.Tensor:
+        proj = v @ self.B_mat
+        scaled = 2.0 * math.pi * proj * self.sigma
+        return torch.cat([torch.cos(scaled), torch.sin(scaled)], dim=-1)
+
+
+class ScaledDiagramDeepONetFFMCAtt(nn.Module):
+    """ScaledDiagramDeepONet with FFM trunk and Cross-Attention bridge (v2).
+
+    This is the architecture used by:
+      - Point++_DeepONet_noSDF_FFM_CAtt_v2  (sdf_ch=0, 2D input)
+      - Point++_DeepONet_wSDF_FFM_CAtt_v2   (sdf_ch=1, 3D input x,y,sdf)
+
+    Branch:
+        PointNet2Encoder2D with return_local_features=True returns
+        (local_feats [B, N', latent_dim], centers [B, N', 2]).
+
+    Trunk:
+        FourierFeatureMapping + SiLU MLP -> t_beta [B, Q, basis_dim].
+
+    Bridge (Spatially Grounded Cross-Attention):
+        Centers are positionally encoded via center_ffm + center_mlp.
+        K = kv_proj(local_feats) + center_pos_embed
+        V = kv_proj(local_feats)
+        Q_scaled = t_beta / attn_temp
+        Attended output -> post_attn_mlp -> b_beta [B, Q, basis_dim].
+
+    Terminal:
+        out = sum(b_beta * t_beta, dim=-1, keepdim=True) + bias  [B, Q, 1].
+    """
+
+    def __init__(
+        self,
+        latent_dim: int = 192,
+        basis_dim: int = 128,
+        head_hidden: List[int] = [512, 512, 256],
+        ffm_mapping_size: int = 128,
+        ffm_sigma_init: float = 2.0,
+        cross_attention_heads: int = 4,
+        attn_temp: float = 0.1,
+        encoder_cfg: Optional[Dict[str, Any]] = None,
+    ):
+        super().__init__()
+
+        sdf_ch = int(encoder_cfg.get("sdf_ch", 0)) if encoder_cfg else 0
+        self.sdf_ch = sdf_ch
+        trunk_in_ch = 2 + sdf_ch
+
+        norm_type = str(encoder_cfg.get("norm", "batch")) if encoder_cfg else "batch"
+        num_groups = int(encoder_cfg.get("num_groups", 16)) if encoder_cfg else 16
+
+        self.attn_temp = float(attn_temp)
+
+        # 1. Branch: PointNet++ returning local features + SA centers
+        enc_cfg: Dict[str, Any] = dict(encoder_cfg) if encoder_cfg is not None else {}
+        enc_cfg["return_local_features"] = True
+        self.encoder = PointNet2Encoder2D(latent_dim=latent_dim, encoder_cfg=enc_cfg)
+        eff_latent = self.encoder.latent_dim
+
+        # 2. Trunk: FFM + SiLU MLP -> [B, Q, basis_dim]
+        self.ffm = FourierFeatureMapping(
+            in_dim=trunk_in_ch,
+            ffm_mapping_size=ffm_mapping_size,
+            sigma_init=ffm_sigma_init,
+        )
+        ffm_out_dim = self.ffm.out_dim
+
+        self.trunk_mlp = MLP(
+            in_dim=ffm_out_dim,
+            hidden=head_hidden,
+            out_dim=basis_dim,
+            act=nn.SiLU,
+            norm=norm_type,
+            num_groups=num_groups,
+        )
+
+        # 3. Bridge: Spatially Grounded Cross-Attention
+        self.kv_proj = nn.Linear(eff_latent, basis_dim)
+
+        self.center_ffm = FourierFeatureMapping(
+            in_dim=2,
+            ffm_mapping_size=ffm_mapping_size,
+            sigma_init=ffm_sigma_init,
+        )
+        self.center_mlp = MLP(
+            in_dim=2 * ffm_mapping_size,
+            hidden=head_hidden,
+            out_dim=basis_dim,
+            act=nn.SiLU,
+            norm=norm_type,
+            num_groups=num_groups,
+        )
+
+        assert basis_dim % cross_attention_heads == 0, (
+            f"basis_dim ({basis_dim}) must be divisible by cross_attention_heads ({cross_attention_heads})"
+        )
+        self.cross_attn = nn.MultiheadAttention(
+            embed_dim=basis_dim,
+            num_heads=cross_attention_heads,
+            batch_first=True,
+        )
+
+        self.post_attn_mlp = MLP(
+            in_dim=basis_dim,
+            hidden=head_hidden,
+            out_dim=basis_dim,
+            norm=norm_type,
+            num_groups=num_groups,
+        )
+
+        self.basis_dim = basis_dim
+        self.bias = nn.Parameter(torch.zeros(1))
+
+    def forward(self, geom_points: torch.Tensor, query_points: torch.Tensor) -> torch.Tensor:
+        """
+        Args:
+            geom_points:  [B, N, 2+sdf_ch]
+            query_points: [B, Q, 2+sdf_ch]
+        Returns:
+            [B, Q, 1]
+        """
+        B, Q, _ = query_points.shape
+
+        # BRANCH
+        local_feats, centers = self.encoder(geom_points)
+        N_prime = local_feats.shape[1]
+
+        # TRUNK
+        ffm_out = self.ffm(query_points)
+        ffm_flat = ffm_out.reshape(B * Q, -1)
+        t_beta = self.trunk_mlp(ffm_flat).view(B, Q, self.basis_dim)
+
+        # BRIDGE
+        center_ffm_out = self.center_ffm(centers)
+        center_ffm_flat = center_ffm_out.reshape(B * N_prime, self.center_ffm.out_dim)
+        center_pos_embed = self.center_mlp(center_ffm_flat).view(B, N_prime, self.basis_dim)
+
+        V = self.kv_proj(local_feats)
+        K = V + center_pos_embed
+        Q_scaled = t_beta / self.attn_temp
+
+        attended, _ = self.cross_attn(Q_scaled, K, V)
+
+        attended_flat = attended.reshape(B * Q, -1)
+        b_beta = self.post_attn_mlp(attended_flat).view(B, Q, self.basis_dim)
+
+        # TERMINAL DOT PRODUCT
+        out = torch.sum(b_beta * t_beta, dim=-1, keepdim=True) + self.bias
+
+        return out
