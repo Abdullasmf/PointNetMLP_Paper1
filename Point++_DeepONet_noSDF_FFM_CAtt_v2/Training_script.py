@@ -296,7 +296,28 @@ def train(
     mse = nn.MSELoss()
     t0 = time.time()
     epochs_since_improve = 0
-    for epoch in range(1, epochs + 1):
+    start_epoch = 1
+
+    # Resume from checkpoint if the file already exists
+    if save_path is not None and Path(save_path).exists():
+        print(f"Found existing checkpoint at {save_path}. Resuming training...")
+        resume_ckpt = torch.load(str(save_path), map_location=device, weights_only=False)
+        model.load_state_dict(resume_ckpt["model_state"])
+        if "optimizer_state" in resume_ckpt:
+            optimizer.load_state_dict(resume_ckpt["optimizer_state"])
+        if "scheduler_state" in resume_ckpt:
+            scheduler.load_state_dict(resume_ckpt["scheduler_state"])
+        if "scaler_state" in resume_ckpt:
+            scaler.load_state_dict(resume_ckpt["scaler_state"])
+        best_val = resume_ckpt.get("best_val_loss", float("inf"))
+        epochs_since_improve = resume_ckpt.get("epochs_since_improve", 0)
+        start_epoch = resume_ckpt.get("config", {}).get("epochs_trained", 0) + 1
+        print(
+            f"Resumed: best_val={best_val:.6f}, start_epoch={start_epoch}, "
+            f"epochs_since_improve={epochs_since_improve}"
+        )
+
+    for epoch in range(start_epoch, epochs + 1):
         epoch_t0 = time.time()
         model.train()
         train_loss = 0.0
@@ -458,11 +479,15 @@ def train(
             if save_path is not None:
                 ckpt = {
                     "model_state": model.state_dict(),
+                    "optimizer_state": optimizer.state_dict(),
+                    "scheduler_state": scheduler.state_dict(),
+                    "scaler_state": scaler.state_dict(),
                     "arch": model.get_arch() if hasattr(model, "get_arch") else None,
                     "coord_center": coord_center.cpu(),
                     "coord_half_range": coord_half_range.cpu(),
                     "stress_mean": stress_mean.cpu(),
                     "stress_std": stress_std.cpu(),
+                    "epochs_since_improve": epochs_since_improve,
                     "config": {
                         "epochs_trained": epoch,
                         "best_val": best_val,
