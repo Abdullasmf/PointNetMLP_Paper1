@@ -173,5 +173,40 @@
         "pool": "max",
         "head_norm": "batch",
         "head_dropout": 0.0
+    },
+    "M_v2": {
+        "model_name": "pn2_wsdf_ffm_catt_m_v2",
+        "latent_dim": 160,
+        "pre_hidden": [96, 96],
+        "sa_blocks": [
+            {
+                "n_samples": 0,
+                "radius": 0.02,
+                "max_k": 40,
+                "out_ch": 192,
+                "mlp_hidden": [96]
+            },
+            {
+                "n_samples": 0,
+                "radius": 0.06,
+                "max_k": 40,
+                "out_ch": 384,
+                "mlp_hidden": [192]
+            }
+        ],
+        "gf_hidden": [96],
+        "head_hidden": [384, 384, 192],
+        "basis_dim": 192,
+        "branch_hidden": [96, 192, 384],
+        "ffm_mapping_size": 128,
+        "ffm_sigma_init": 4.0,
+        "cross_attention_heads": 4,
+        "attn_temp": 0.1,
+        "train_batch_size": 6,
+        "train_points_per_geom": 4096,
+        "norm": "layer",
+        "pool": "max",
+        "head_norm": "layer",
+        "head_dropout": 0.0
     }
 }
