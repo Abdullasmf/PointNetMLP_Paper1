@@ -624,7 +624,7 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
 
     _cfg = PRESETS[preset_name]
     # In-file configuration (no CLI needed)
-    epochs: int = 500
+    epochs: int = 5000
     lr: float = 3e-4
     weight_decay: float = 1e-4
     # Use all points every step (no subsampling of queries)
@@ -632,7 +632,7 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
         None  # set to an int to sample per-geometry points per step
     )
     # Early stopping
-    early_stopping_patience: int = 40
+    early_stopping_patience: int = 200
     early_stopping_min_delta: float = 0.0
     # Architecture
     latent_dim: int = int(_cfg["latent_dim"])  # encoder latent size
