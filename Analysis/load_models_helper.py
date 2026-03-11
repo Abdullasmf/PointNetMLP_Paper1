@@ -23,8 +23,20 @@ def _find_preset_for_checkpoint(model_path, presets):
     return presets.get('L', next(iter(presets.values())))
 
 #model parameters count
-def count_parameters(model_path):
-    """Count parameter tensors stored in a model checkpoint."""
+def count_parameters(model_or_path):
+    """Count parameters in a model or model checkpoint file.
+
+    Accepts either:
+    - a `torch.nn.Module` instance (counts trainable + non-trainable parameters
+      via `p.numel()` for each parameter tensor), or
+    - a file path to a `.pt` checkpoint (loads the state dict and sums tensor sizes).
+    """
+    import torch.nn as nn
+    if isinstance(model_or_path, nn.Module):
+        return sum(p.numel() for p in model_or_path.parameters())
+
+    # Treat as a file path to a checkpoint
+    model_path = model_or_path
     try:
         # PyTorch >=2.6 may default to weights_only=True and fail on full checkpoints
         checkpoint = torch.load(model_path, map_location='cpu', weights_only=False)
@@ -51,13 +63,6 @@ def count_parameters(model_path):
     except Exception as e:
         print(f'Error counting parameters for {model_path}: {e}')
         return None
-
-for model_name in ['Pn2_NoSDF', 'Pn2_wSDF', 'Pnt_DeepONet', 'Pn2_NoSDF_FFM_CAtt', 'Pn2_wSDF_FFM_CAtt']:
-    model_path_list = list(model_dirs[model_name].glob('L-*.pt'))
-    for model_path in model_path_list:
-        n_params = count_parameters(model_path)
-        if n_params is not None:
-            print(f'{model_name} | {model_path.stem}: {n_params:,} parameters')
     
 
 
