@@ -22,6 +22,44 @@ def _find_preset_for_checkpoint(model_path, presets):
     # Fallback: return 'L' preset if present, else first preset
     return presets.get('L', next(iter(presets.values())))
 
+#model parameters count
+def count_parameters(model_path):
+    """Count parameter tensors stored in a model checkpoint."""
+    try:
+        # PyTorch >=2.6 may default to weights_only=True and fail on full checkpoints
+        checkpoint = torch.load(model_path, map_location='cpu', weights_only=False)
+
+        # Support common checkpoint key names
+        if isinstance(checkpoint, dict):
+            if 'model_state_dict' in checkpoint:
+                state_dict = checkpoint['model_state_dict']
+            elif 'model_state' in checkpoint:
+                state_dict = checkpoint['model_state']
+            elif 'state_dict' in checkpoint:
+                state_dict = checkpoint['state_dict']
+            else:
+                state_dict = checkpoint
+        else:
+            state_dict = checkpoint
+
+        if not isinstance(state_dict, dict):
+            raise ValueError('Loaded state is not a parameter dictionary.')
+
+        # Count only tensor entries (skip optimizer/scheduler/etc.)
+        total_params = sum(v.numel() for v in state_dict.values() if torch.is_tensor(v))
+        return total_params
+    except Exception as e:
+        print(f'Error counting parameters for {model_path}: {e}')
+        return None
+
+for model_name in ['Pn2_NoSDF', 'Pn2_wSDF', 'Pnt_DeepONet', 'Pn2_NoSDF_FFM_CAtt', 'Pn2_wSDF_FFM_CAtt']:
+    model_path_list = list(model_dirs[model_name].glob('L-*.pt'))
+    for model_path in model_path_list:
+        n_params = count_parameters(model_path)
+        if n_params is not None:
+            print(f'{model_name} | {model_path.stem}: {n_params:,} parameters')
+    
+
 
 def load_model_with_checkpoint(model_path, model_type, device='cpu'):
     """
