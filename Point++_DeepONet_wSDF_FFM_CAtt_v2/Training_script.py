@@ -832,6 +832,8 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
         encoder_cfg=encoder_cfg,
     )
 
+    n_param = sum(p.numel() for p in model.parameters())
+    print(f"Model parameter count: {n_param:,}")
     # Ensure save directory exists
     save_path.parent.mkdir(parents=True, exist_ok=True)
     print(f"Saving best checkpoint to: {save_path}")

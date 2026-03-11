@@ -26,7 +26,34 @@ project_dir = (
 # Defer device prints and data loading to main() to avoid re-exec in worker processes
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+def count_parameters(model_path):
+    """Count parameter tensors stored in a model checkpoint."""
+    try:
+        # PyTorch >=2.6 may default to weights_only=True and fail on full checkpoints
+        checkpoint = torch.load(model_path, map_location='cpu', weights_only=False)
 
+        # Support common checkpoint key names
+        if isinstance(checkpoint, dict):
+            if 'model_state_dict' in checkpoint:
+                state_dict = checkpoint['model_state_dict']
+            elif 'model_state' in checkpoint:
+                state_dict = checkpoint['model_state']
+            elif 'state_dict' in checkpoint:
+                state_dict = checkpoint['state_dict']
+            else:
+                state_dict = checkpoint
+        else:
+            state_dict = checkpoint
+
+        if not isinstance(state_dict, dict):
+            raise ValueError('Loaded state is not a parameter dictionary.')
+
+        # Count only tensor entries (skip optimizer/scheduler/etc.)
+        total_params = sum(v.numel() for v in state_dict.values() if torch.is_tensor(v))
+        return total_params
+    except Exception as e:
+        print(f'Error counting parameters for {model_path}: {e}')
+        return None
 def load_h5_pointsets(path: Path) -> List[torch.Tensor]:
     all_data = []
     coord_stress_list = []
@@ -738,7 +765,8 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
         attn_temp=attn_temp,
         encoder_cfg=encoder_cfg,
     )
-
+    n_param = sum(p.numel() for p in model.parameters())
+    print(f"Model parameter count: {n_param:,}")
     # Ensure save directory exists
     save_path.parent.mkdir(parents=True, exist_ok=True)
     print(f"Saving best checkpoint to: {save_path}")
@@ -765,7 +793,7 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
 if __name__ == "__main__":
     try:
         # Choose dataset: "L_bracket" for L-bracket geometry or "Plate_hole" for hole plate geometry
-        main("L", batch=8, dataset="L_bracket")
+        main("S", batch=8, dataset="L_bracket")
     except Exception as e:
         print(f"Error during training: {e}")
         raise
