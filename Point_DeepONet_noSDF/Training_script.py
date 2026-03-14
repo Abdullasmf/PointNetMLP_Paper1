@@ -28,7 +28,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 def load_h5_pointsets(path: Path) -> List[torch.Tensor]:
-    coord_stress_list = []
+    samples = []
     with h5py.File(path, 'r') as hf:
         # Sort keys to ensure numerical order (sample_0, sample_1, ...)
         # splitting by '_' and taking the last part ensures 'sample_10' comes after 'sample_2'
@@ -42,12 +42,11 @@ def load_h5_pointsets(path: Path) -> List[torch.Tensor]:
             stress = group['stress'][:]  # (N, 1)
 
             # Layout: (x, y, stress) -> (N, 3)  — no SDF
-            coord_stress = np.hstack((points, stress))
-            coord_stress_list.append(
-                torch.from_numpy(coord_stress).float()
+            samples.append(
+                torch.from_numpy(np.hstack((points, stress))).float()
             )
         
-    return coord_stress_list
+    return samples
 
 
 # Loaded in main()
