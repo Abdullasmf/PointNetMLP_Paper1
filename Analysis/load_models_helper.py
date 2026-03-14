@@ -173,6 +173,29 @@ def load_model_with_checkpoint(model_path, model_type, device='cpu'):
                 num_groups=int(preset.get('num_groups', 16)),
             )
 
+        elif model_type == 'PointDeepONetNoSDF':
+            # PointDeepONet without SDF (VanillaPointNet branch, SIREN trunk, x,y only)
+            basis_dim = int(preset.get('basis_dim', preset['head_hidden'][-1]))
+            head_hidden = preset['head_hidden']
+            branch_hidden = list(
+                preset.get(
+                    'branch_hidden',
+                    head_hidden[:-1] if len(head_hidden) > 1 else [64, 128, 256],
+                )
+            )
+            siren_hidden = list(preset.get('siren_hidden', [256, 256]))
+            post_mlp_hidden = list(preset.get('post_mlp_hidden', head_hidden))
+            model = PointDeepONet(
+                in_ch=2,  # x, y only — no SDF
+                latent_dim=preset['latent_dim'],
+                basis_dim=basis_dim,
+                branch_hidden=branch_hidden,
+                siren_hidden=siren_hidden,
+                post_mlp_hidden=post_mlp_hidden,
+                norm=preset.get('norm', 'batch'),
+                num_groups=int(preset.get('num_groups', 16)),
+            )
+
         # ---- Legacy model types (kept for backward compatibility) ----
         elif model_type in ('SpectralDeepONet', 'VanillaDeepONet', 'DenseNoFFT',
                             'Point_DeepONet'):
