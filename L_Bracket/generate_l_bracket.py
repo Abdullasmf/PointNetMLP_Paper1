@@ -26,7 +26,6 @@ except ImportError:
 # 1. Configuration
 # -----------------------------------------------------------------------------
 num_samples = 5000
-fillet_radius = 0.05
 lc_fine = 0.005    # Fine mesh size at fillet
 lc_coarse = 0.1    # Coarse mesh size away from corner
 E_val = 1000.0
@@ -107,35 +106,47 @@ def compute_von_mises(u_sol, basis):
 # -----------------------------------------------------------------------------
 # 3. Mesh Generation (Gmsh)
 # -----------------------------------------------------------------------------
-def generate_l_bracket_mesh(xc, yc, r, lc_fine, lc_coarse):
+def generate_l_bracket_mesh(xc_rel, yc_rel, r, lc_fine, lc_coarse,
+                             W=1.0, H=1.0, x_offset=0.0, y_offset=0.0):
     """
     Generates a filleted L-bracket mesh using Gmsh.
     Returns a skfem.MeshTri object.
+
+    Parameters
+    ----------
+    xc_rel, yc_rel : relative position of the re-entrant corner within the
+                     bounding box (i.e. distance from x_offset / y_offset).
+    r              : fillet radius
+    lc_fine        : fine mesh size at fillet
+    lc_coarse      : coarse mesh size away from corner
+    W, H           : bounding-box width and height
+    x_offset, y_offset : bottom-left corner of the bounding box
     """
     gmsh.initialize()
     gmsh.option.setNumber("General.Verbosity", 0) # Silence
     gmsh.model.add("L_Bracket")
 
-    # Dimensions
-    # Domain: (0,0) -> (1,0) -> (1, yc) -[fillet]-> (xc, 1) -> (0,1) -> (0,0)
-    
+    # Absolute coordinates of the re-entrant corner
+    xc = x_offset + xc_rel
+    yc = y_offset + yc_rel
+
     # Tangent points for fillet
     # The sharp corner is at (xc, yc).
     # The fillet connects (xc+r, yc) to (xc, yc+r).
     # Center is at (xc+r, yc+r).
-    
+
     # Coordinates of points
-    p1 = gmsh.model.geo.addPoint(0, 0, 0, lc_coarse)
-    p2 = gmsh.model.geo.addPoint(1, 0, 0, lc_coarse)
-    p3 = gmsh.model.geo.addPoint(1, yc, 0, lc_coarse)
-    
+    p1 = gmsh.model.geo.addPoint(x_offset,         y_offset,         0, lc_coarse)
+    p2 = gmsh.model.geo.addPoint(x_offset + W,      y_offset,         0, lc_coarse)
+    p3 = gmsh.model.geo.addPoint(x_offset + W,      yc,               0, lc_coarse)
+
     # Fillet points (High resolution here)
-    p4 = gmsh.model.geo.addPoint(xc+r, yc, 0, lc_fine)
-    p5 = gmsh.model.geo.addPoint(xc, yc+r, 0, lc_fine)
-    p_center = gmsh.model.geo.addPoint(xc+r, yc+r, 0, 0)
-    
-    p6 = gmsh.model.geo.addPoint(xc, 1, 0, lc_coarse)
-    p7 = gmsh.model.geo.addPoint(0, 1, 0, lc_coarse)
+    p4 = gmsh.model.geo.addPoint(xc + r,            yc,               0, lc_fine)
+    p5 = gmsh.model.geo.addPoint(xc,                yc + r,           0, lc_fine)
+    p_center = gmsh.model.geo.addPoint(xc + r,      yc + r,           0, 0)
+
+    p6 = gmsh.model.geo.addPoint(xc,                y_offset + H,     0, lc_coarse)
+    p7 = gmsh.model.geo.addPoint(x_offset,          y_offset + H,     0, lc_coarse)
 
     # Lines
     l1 = gmsh.model.geo.addLine(p1, p2)      # Bottom
@@ -238,63 +249,65 @@ print(f"Generating {num_samples} samples using scikit-fem + Gmsh...")
 with h5py.File(output_filename, 'w') as hf:
     for i in range(num_samples):
         # --- A. Generate variable L-bracket Mesh ---
-        xc = np.random.uniform(0.3, 0.7)
-        yc = np.random.uniform(0.3, 0.7)
-        
+        # Per-sample fillet radius: uniform between sharp (0.01) and smooth (0.1)
+        fillet_radius = np.random.uniform(0.01, 0.1)
+
+        # Asymmetric bounding box parameters
+        W        = np.random.uniform(0.8, 1.2)
+        H        = np.random.uniform(0.8, 1.2)
+        x_offset = np.random.uniform(-0.5, 0.5)
+        y_offset = np.random.uniform(-0.5, 0.5)
+
+        # Relative corner position within the bounding box.
+        # Enforce minimum leg thickness of 0.2 on both sides.
+        xc_rel = np.random.uniform(0.2, W - 0.2)
+        yc_rel = np.random.uniform(0.2, H - 0.2)
+
+        # Absolute corner coordinates (used for BCs and metadata)
+        xc = x_offset + xc_rel
+        yc = y_offset + yc_rel
+
         # Use helper for filleted mesh
-        mesh = generate_l_bracket_mesh(xc, yc, fillet_radius, lc_fine, lc_coarse)
+        mesh = generate_l_bracket_mesh(xc_rel, yc_rel, fillet_radius,
+                                        lc_fine, lc_coarse,
+                                        W, H, x_offset, y_offset)
             
         # --- B. Solver Setup ---
         basis = Basis(mesh, e)
         
         # Boundaries
-        # Top: y = 1.0.  Right: x = 1.0.
         dofs = basis.get_dofs()
         
-        # 1. Clamp Top (Dirichlet)
-        # Identify nodes where y is close to 1
-        # Relax tolerance slightly for gmsh nodes
-        top_dofs = basis.get_dofs(lambda x: np.isclose(x[1], 1.0, atol=1e-3))
-        # Flatten vector DOFs for top boundary (constrain both components)
+        # 1. Clamp Top (Dirichlet): y == y_offset + H
+        top_dofs = basis.get_dofs(
+            lambda x, _yo=y_offset, _H=H: np.isclose(x[1], _yo + _H, atol=1e-3)
+        )
+        D = top_dofs.all()
         
-        D = top_dofs.all() # These are the indices to constrain to 0
-        
-        # 2. Traction Right (Neumann)
-        # Identify facets on x=1
-        right_facets = mesh.facets_satisfying(lambda x: np.isclose(x[0], 1.0))
+        # 2. Traction Right (Neumann): x == x_offset + W
+        right_facets = mesh.facets_satisfying(
+            lambda x, _xo=x_offset, _W=W: np.isclose(x[0], _xo + _W)
+        )
         
         # Create a specific basis restricted to the boundary facets for integration
-        # 'right_facets' gives indices into mesh.facets.
-        # We need a FacetBasis.
-        # Note: We must name the boundary to use it easily, or pass indices.
-        # But FacetBasis calculates on ALL boundaries by default if not filtered.
-        # We can filter 'facets' in FacetBasis constructor.
         basis_right = FacetBasis(mesh, e, facets=right_facets)
         
         # Assemble matrices
         K = asm(stiffness, basis)
         
         # Prepare traction field (interpolate constant vector to FacetBasis)
-        # Note: we need to wrap traction_load into a function of x for safe interpolation
-        traction_val = float(traction_load[1]) # y component is -10
+        traction_val = float(traction_load[1]) # y component is -15
         
-        # Get quadrature points on the boundary
-        # basis_right.global_coordinates() returns a DiscreteField
         x_quad = basis_right.global_coordinates().value 
         
-        # Evaluate traction at these points
-        # x_quad is (2, Nq, Nel)
-        # Create constant vector field (0, traction_val)
         traction_data = np.zeros_like(x_quad)
         traction_data[1, :, :] = traction_val # Set y-component
         
-        # Create DiscreteField explicitly
         traction_field = DiscreteField(value=traction_data)
         
         f = asm(traction_rhs, basis_right, traction=traction_field)
         
-        # Enforce Dirichlet BCs (Methods: condense or penalty. Condense is standard)
-        # solve K u = f s.t. u[D] = 0
+        # Enforce Dirichlet BCs
         u_sol = solve(*condense(K, f, D=D))
         
         # --- C. Post-Process (Von Mises) ---
@@ -306,7 +319,11 @@ with h5py.File(output_filename, 'w') as hf:
         grp = hf.create_group(f"sample_{i}")
         grp.create_dataset("points", data=points)
         grp.create_dataset("stress", data=vm_stress.reshape(-1, 1))
-        grp.create_dataset("corner", data=np.array([xc, yc]))
+        # Expanded corner: [xc, yc, W, H, x_offset, y_offset, fillet_radius]
+        # corner[0:2] = absolute corner position (backward compatible)
+        grp.create_dataset("corner", data=np.array(
+            [xc, yc, W, H, x_offset, y_offset, fillet_radius]
+        ))
         
         if (i+1) % 10 == 0:
             print(f"  Completed {i+1}/{num_samples}")

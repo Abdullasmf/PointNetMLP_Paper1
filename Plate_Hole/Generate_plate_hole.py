@@ -100,25 +100,30 @@ def compute_von_mises(u_sol, basis):
 # -----------------------------------------------------------------------------
 # 3. Mesh Generation (Gmsh)
 # -----------------------------------------------------------------------------
-def generate_plate_hole_mesh(cx, cy, r, lc_fine, lc_coarse):
+def generate_plate_hole_mesh(cx, cy, r, lc_fine, lc_coarse,
+                              W=1.0, H=1.0, x_offset=0.0, y_offset=0.0):
     """
-    Generates a 1x1 plate with a circular hole using Gmsh.
+    Generates a plate with a circular hole using Gmsh.
     Returns a skfem.MeshTri object.
-    
-    cx, cy: Center of the hole
-    r: Radius of the hole
+
+    Parameters
+    ----------
+    cx, cy   : absolute centre of the hole
+    r        : radius of the hole
+    lc_fine  : fine mesh size near hole boundary
+    lc_coarse: coarse mesh size elsewhere
+    W, H     : bounding-box width and height
+    x_offset, y_offset : bottom-left corner of the bounding box
     """
     gmsh.initialize()
     gmsh.option.setNumber("General.Verbosity", 0) # Silence
     gmsh.model.add("Plate_Hole")
 
-    # Dimensions: 1x1 Square
-    
-    # 1. Outer Square Points
-    p1 = gmsh.model.geo.addPoint(0, 0, 0, lc_coarse)
-    p2 = gmsh.model.geo.addPoint(1, 0, 0, lc_coarse)
-    p3 = gmsh.model.geo.addPoint(1, 1, 0, lc_coarse)
-    p4 = gmsh.model.geo.addPoint(0, 1, 0, lc_coarse)
+    # 1. Outer rectangle points using parametric bounding box
+    p1 = gmsh.model.geo.addPoint(x_offset,         y_offset,         0, lc_coarse)
+    p2 = gmsh.model.geo.addPoint(x_offset + W,      y_offset,         0, lc_coarse)
+    p3 = gmsh.model.geo.addPoint(x_offset + W,      y_offset + H,     0, lc_coarse)
+    p4 = gmsh.model.geo.addPoint(x_offset,          y_offset + H,     0, lc_coarse)
 
     l1 = gmsh.model.geo.addLine(p1, p2)      # Bottom
     l2 = gmsh.model.geo.addLine(p2, p3)      # Right
@@ -216,36 +221,52 @@ print(f"Generating {num_samples} samples using scikit-fem + Gmsh...")
 with h5py.File(output_filename, 'w') as hf:
     for i in range(num_samples):
         # --- A. Generate variable Plate Hole Mesh ---
-        # Center varies from 0.3 to 0.7
-        cx = np.random.uniform(0.3, 0.7)
-        cy = np.random.uniform(0.3, 0.7)
-        # Radius varies from 0.1 to 0.2
-        r_hole = np.random.uniform(0.1, 0.2)
-        
-        # Guard against hole hitting boundary (margin: center +/- radius should be within [0,1])
-        # 0.3 - 0.2 = 0.1 (safe)
-        # 0.7 + 0.2 = 0.9 (safe)
-        
-        mesh = generate_plate_hole_mesh(cx, cy, r_hole, lc_fine, lc_coarse)
+        # Asymmetric bounding box parameters
+        W        = np.random.uniform(0.8, 1.2)
+        H        = np.random.uniform(0.8, 1.2)
+        x_offset = np.random.uniform(-0.5, 0.5)
+        y_offset = np.random.uniform(-0.5, 0.5)
+
+        # Hole center relative to the bounding box
+        cx = np.random.uniform(x_offset + 0.3 * W, x_offset + 0.7 * W)
+        cy = np.random.uniform(y_offset + 0.3 * H, y_offset + 0.7 * H)
+
+        # Radius: uniform between 0.05 and 0.2
+        # Geometric safety check: ensure hole does not intersect any boundary
+        # (keep at least 0.05 clearance from the nearest edge)
+        min_dist_to_boundary = min(
+            cx - x_offset,
+            (x_offset + W) - cx,
+            cy - y_offset,
+            (y_offset + H) - cy,
+        )
+        r_max = min(0.2, min_dist_to_boundary - 0.05)
+        r_hole = np.random.uniform(0.05, r_max)
+
+        mesh = generate_plate_hole_mesh(cx, cy, r_hole, lc_fine, lc_coarse,
+                                         W, H, x_offset, y_offset)
             
         # --- B. Solver Setup ---
         basis = Basis(mesh, e)
         
         # Boundaries:
-        # Left (x=0): Clamp (Dirichlet)
-        # Right (x=1): Traction (Neumann)
+        # Left (x == x_offset): Clamp (Dirichlet)
+        # Right (x == x_offset + W): Traction (Neumann)
         
-        left_dofs = basis.get_dofs(lambda x: np.isclose(x[0], 0.0, atol=1e-3))
-        D = left_dofs.all() # Clamp all components on left edge
+        left_dofs = basis.get_dofs(
+            lambda x, _xo=x_offset: np.isclose(x[0], _xo, atol=1e-3)
+        )
+        D = left_dofs.all()
         
-        right_facets = mesh.facets_satisfying(lambda x: np.isclose(x[0], 1.0))
+        right_facets = mesh.facets_satisfying(
+            lambda x, _xo=x_offset, _W=W: np.isclose(x[0], _xo + _W)
+        )
         basis_right = FacetBasis(mesh, e, facets=right_facets)
         
         # Assemble Stiffness
         K = asm(stiffness, basis)
         
         # Prepare traction field (Horizontal pull)
-        # Load is (10.0, 0.0) corresponding to traction_load
         trax_val_x = float(traction_load[0])
         trax_val_y = float(traction_load[1])
         
@@ -270,8 +291,11 @@ with h5py.File(output_filename, 'w') as hf:
         grp = hf.create_group(f"sample_{i}")
         grp.create_dataset("points", data=points)
         grp.create_dataset("stress", data=vm_stress.reshape(-1, 1))
-        # Save geometry parameters: center_x, center_y, radius
-        grp.create_dataset("params", data=np.array([cx, cy, r_hole]))
+        # Expanded params: [cx, cy, r, W, H, x_offset, y_offset]
+        # params[0:3] = [cx, cy, r] (backward compatible)
+        grp.create_dataset("params", data=np.array(
+            [cx, cy, r_hole, W, H, x_offset, y_offset]
+        ))
         
         if (i+1) % 10 == 0:
             print(f"  Completed {i+1}/{num_samples}")
