@@ -208,5 +208,40 @@
         "pool": "max",
         "head_norm": "layer",
         "head_dropout": 0.0
-    }
+    },
+    "S_v2": {
+        "model_name": "pn2_wsdf_ffm_catt_s_v2",
+        "latent_dim": 128,
+        "pre_hidden": [64, 64],
+        "sa_blocks": [
+            {
+                "n_samples": 0,
+                "radius": 0.02,
+                "max_k": 32,
+                "out_ch": 128,
+                "mlp_hidden": [64]
+            },
+            {
+                "n_samples": 0,
+                "radius": 0.06,
+                "max_k": 32,
+                "out_ch": 256,
+                "mlp_hidden": [128]
+            }
+        ],
+        "gf_hidden": [64],
+        "head_hidden": [256, 256, 128],
+        "basis_dim": 128,
+        "branch_hidden": [64, 128, 256],
+        "ffm_mapping_size": 64,
+        "ffm_sigma_init": 2.0,
+        "cross_attention_heads": 4,
+        "attn_temp": 0.1,
+        "train_batch_size": 6,
+        "train_points_per_geom": 4096,
+        "norm": "layer",
+        "pool": "max",
+        "head_norm": "layer",
+        "head_dropout": 0.0
+    },
 }
