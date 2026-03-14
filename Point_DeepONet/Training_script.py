@@ -50,6 +50,13 @@ def _compute_sdf_for_sample(
 ) -> np.ndarray:
     """Compute per-point SDF analytically from stored geometry parameters.
 
+    Supports the expanded metadata formats:
+      corner : [xc, yc] or [xc, yc, W, H, x_offset, y_offset, fillet_radius]
+      params : [cx, cy, r] or [cx, cy, r, W, H, x_offset, y_offset]
+
+    For old datasets (2- or 3-element arrays), falls back to the unit-square
+    boundary assumption.
+
     Returns a 1-D array of shape (N,) with non-negative distances to the
     nearest domain boundary.
     """
@@ -58,13 +65,18 @@ def _compute_sdf_for_sample(
     if corner is not None:
         # L-bracket: six boundary segments (fillet ignored)
         xc, yc = float(corner[0]), float(corner[1])
+        if len(corner) >= 7:
+            W, H = float(corner[2]), float(corner[3])
+            x_offset, y_offset = float(corner[4]), float(corner[5])
+        else:
+            W, H, x_offset, y_offset = 1.0, 1.0, 0.0, 0.0
         segments = [
-            (0.0, 0.0, 1.0, 0.0),
-            (1.0, 0.0, 1.0, yc),
-            (1.0, yc,  xc, yc),
-            (xc,  yc,  xc, 1.0),
-            (xc,  1.0, 0.0, 1.0),
-            (0.0, 1.0, 0.0, 0.0),
+            (x_offset,      y_offset,      x_offset + W,  y_offset),
+            (x_offset + W,  y_offset,      x_offset + W,  yc),
+            (x_offset + W,  yc,            xc,             yc),
+            (xc,            yc,            xc,             y_offset + H),
+            (xc,            y_offset + H,  x_offset,       y_offset + H),
+            (x_offset,      y_offset + H,  x_offset,       y_offset),
         ]
         dists = np.stack(
             [_dist_point_to_segment_batch(px, py, ax, ay, bx, by)
@@ -76,7 +88,17 @@ def _compute_sdf_for_sample(
     if params is not None:
         # Plate-with-hole: outer rectangle + circle
         cx, cy, r = float(params[0]), float(params[1]), float(params[2])
-        dist_outer = np.minimum.reduce([px, 1.0 - px, py, 1.0 - py])
+        if len(params) >= 7:
+            W, H = float(params[3]), float(params[4])
+            x_offset, y_offset = float(params[5]), float(params[6])
+        else:
+            W, H, x_offset, y_offset = 1.0, 1.0, 0.0, 0.0
+        dist_outer = np.minimum.reduce([
+            px - x_offset,
+            (x_offset + W) - px,
+            py - y_offset,
+            (y_offset + H) - py,
+        ])
         dist_hole  = np.abs(np.hypot(px - cx, py - cy) - r)
         return np.minimum(dist_outer, dist_hole)
 

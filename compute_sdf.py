@@ -47,35 +47,43 @@ def _dist_point_to_segment_batch(
 def compute_sdf_l_bracket(points: np.ndarray, corner: np.ndarray) -> np.ndarray:
     """Compute SDF for the filleted L-bracket domain (fillet ignored).
 
-    The L-bracket occupies [0,1]^2 minus the upper-right rectangle
-    (xc,1] x (yc,1].  Boundary is approximated by six straight segments
-    (the fillet arc of radius 0.05 is omitted for simplicity).
+    Supports the expanded corner format:
+      corner[0:2] = [xc, yc]  – absolute re-entrant corner coordinates
+      corner[2:7] = [W, H, x_offset, y_offset, fillet_radius]  (new, optional)
+
+    For old datasets with only 2 values, falls back to unit-square boundaries.
 
     Boundary segments (counter-clockwise):
-      1. Bottom       : (0,0) -> (1,0)
-      2. Right-lower  : (1,0) -> (1,yc)
-      3. Shelf        : (1,yc) -> (xc,yc)   [inner horizontal]
-      4. Inner-vert   : (xc,yc) -> (xc,1)   [inner vertical]
-      5. Top          : (xc,1) -> (0,1)
-      6. Left         : (0,1) -> (0,0)
+      1. Bottom       : (x_offset, y_offset) -> (x_offset+W, y_offset)
+      2. Right-lower  : (x_offset+W, y_offset) -> (x_offset+W, yc)
+      3. Shelf        : (x_offset+W, yc) -> (xc, yc)   [inner horizontal]
+      4. Inner-vert   : (xc, yc) -> (xc, y_offset+H)   [inner vertical]
+      5. Top          : (xc, y_offset+H) -> (x_offset, y_offset+H)
+      6. Left         : (x_offset, y_offset+H) -> (x_offset, y_offset)
 
     Parameters
     ----------
     points : (N, 2) – mesh node coordinates
-    corner : [xc, yc] – position of the re-entrant corner
+    corner : [xc, yc] or [xc, yc, W, H, x_offset, y_offset, fillet_radius]
 
     Returns
     -------
     sdf : (N,) – distance to nearest boundary edge (>= 0 for interior nodes)
     """
     xc, yc = float(corner[0]), float(corner[1])
+    if len(corner) >= 7:
+        W, H = float(corner[2]), float(corner[3])
+        x_offset, y_offset = float(corner[4]), float(corner[5])
+    else:
+        # Backward compatibility: assume unit square
+        W, H, x_offset, y_offset = 1.0, 1.0, 0.0, 0.0
     segments = [
-        (0.0, 0.0, 1.0, 0.0),   # bottom
-        (1.0, 0.0, 1.0, yc),    # right-lower
-        (1.0, yc,  xc, yc),     # shelf (inner horizontal)
-        (xc,  yc,  xc, 1.0),    # inner vertical
-        (xc,  1.0, 0.0, 1.0),   # top
-        (0.0, 1.0, 0.0, 0.0),   # left
+        (x_offset,      y_offset,      x_offset + W,  y_offset),      # bottom
+        (x_offset + W,  y_offset,      x_offset + W,  yc),            # right-lower
+        (x_offset + W,  yc,            xc,             yc),            # shelf
+        (xc,            yc,            xc,             y_offset + H),  # inner vertical
+        (xc,            y_offset + H,  x_offset,       y_offset + H),  # top
+        (x_offset,      y_offset + H,  x_offset,       y_offset),      # left
     ]
     px, py = points[:, 0], points[:, 1]
     dists = np.stack(
@@ -89,8 +97,12 @@ def compute_sdf_l_bracket(points: np.ndarray, corner: np.ndarray) -> np.ndarray:
 def compute_sdf_plate_hole(points: np.ndarray, params: np.ndarray) -> np.ndarray:
     """Compute SDF for the plate-with-hole domain.
 
-    Domain: unit square [0,1]^2 minus a circular hole of radius r
-    centred at (cx, cy).
+    Supports the expanded params format:
+      params[0:3] = [cx, cy, r]  – hole centre and radius
+      params[3:7] = [W, H, x_offset, y_offset]  (new, optional)
+
+    For old datasets with only 3 values, falls back to the unit-square outer
+    boundary.
 
     For each interior node the SDF equals the minimum of:
       - distance to the outer rectangular boundary, and
@@ -99,17 +111,28 @@ def compute_sdf_plate_hole(points: np.ndarray, params: np.ndarray) -> np.ndarray
     Parameters
     ----------
     points : (N, 2) – mesh node coordinates
-    params : [cx, cy, r] – hole centre and radius
+    params : [cx, cy, r] or [cx, cy, r, W, H, x_offset, y_offset]
 
     Returns
     -------
     sdf : (N,) – distance to nearest boundary (>= 0 for interior nodes)
     """
     cx, cy, r = float(params[0]), float(params[1]), float(params[2])
+    if len(params) >= 7:
+        W, H = float(params[3]), float(params[4])
+        x_offset, y_offset = float(params[5]), float(params[6])
+    else:
+        # Backward compatibility: assume unit square
+        W, H, x_offset, y_offset = 1.0, 1.0, 0.0, 0.0
     px, py = points[:, 0], points[:, 1]
 
-    # Distance to the four outer edges
-    dist_outer = np.minimum.reduce([px, 1.0 - px, py, 1.0 - py])  # (N,)
+    # Distance to the four outer edges of the bounding box
+    dist_outer = np.minimum.reduce([
+        px - x_offset,
+        (x_offset + W) - px,
+        py - y_offset,
+        (y_offset + H) - py,
+    ])  # (N,)
 
     # Distance to the circular hole boundary
     dist_hole = np.abs(np.hypot(px - cx, py - cy) - r)  # (N,)
