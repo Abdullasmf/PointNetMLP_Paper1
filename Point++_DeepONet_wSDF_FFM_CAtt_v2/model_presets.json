@@ -243,5 +243,5 @@
         "pool": "max",
         "head_norm": "layer",
         "head_dropout": 0.0
-    },
+    }
 }
