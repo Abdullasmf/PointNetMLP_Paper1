@@ -555,7 +555,7 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
 
     _cfg = PRESETS[preset_name]
     # In-file configuration (no CLI needed)
-    epochs: int = 5000
+    epochs: int = 50000
     lr: float = 3e-4
     weight_decay: float = 1e-4
     # Use all points every step (no subsampling of queries)
