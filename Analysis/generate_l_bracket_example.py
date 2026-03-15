@@ -249,7 +249,7 @@ with h5py.File(output_filename, 'w') as hf:
     for i in range(num_samples):
         # --- A. Generate variable L-bracket Mesh ---
         # Per-sample fillet radius: uniform between sharp (0.01) and smooth (0.1)
-        fillet_radius = np.random.uniform(0.01, 0.1)
+        fillet_radius = np.random.uniform(0.02, 0.1)
 
         # Asymmetric bounding box parameters
         W        = np.random.uniform(0.8, 1.2)
@@ -293,7 +293,10 @@ with h5py.File(output_filename, 'w') as hf:
         # Assemble matrices
         K = asm(stiffness, basis)
         
-        traction_val = float(traction_load[1]) # y component is -15
+        # Dynamically scale traction based on the square of the horizontal leg thickness
+        # Anchored such that a thickness of 0.5 gets the baseline -15.0 load.
+        baseline_traction = float(traction_load[1])
+        traction_val = baseline_traction * ((yc_rel / 0.5) ** 2)
         
         x_quad = basis_right.global_coordinates().value 
         
