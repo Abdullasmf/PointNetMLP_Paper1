@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=Point++_DeepONet_noSDF_FFM_CAtt
-#SBATCH --output=PointNetMLP_Paper1/GPU7.log
-#SBATCH --error=PointNetMLP_Paper1/GPU7.log
+#SBATCH --output=PointNetMLP_Paper1/GPU8.log
+#SBATCH --error=PointNetMLP_Paper1/GPU8.log
 #SBATCH --time=24:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
