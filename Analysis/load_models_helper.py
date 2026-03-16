@@ -6,6 +6,7 @@ from pn_models import PointNetMLPJoint
 from benchmarks import (
     VanillaDeepONet, SpectralDeepONet, DenseNoFFT,
     ScaledDiagramDeepONet, PointDeepONet, ScaledDiagramDeepONetFFMCAtt,
+    ArGEnTDeepONet,
 )
 
 
@@ -102,12 +103,12 @@ def load_model_with_checkpoint(model_path, model_type, device='cpu'):
 
         posenc = preset.get('posenc', {'n_freqs': 4, 'scale': 1.0})
 
-        # Base encoder config (2-D coordinates only)
+        # Base encoder config (2-D coordinates only) – not used by ArGEnT models
         encoder_cfg = {
-            'latent_dim': preset['latent_dim'],
-            'pre_hidden': preset['pre_hidden'],
-            'sa_blocks': preset['sa_blocks'],
-            'gf_hidden': preset['gf_hidden'],
+            'latent_dim': preset.get('latent_dim'),
+            'pre_hidden': preset.get('pre_hidden'),
+            'sa_blocks': preset.get('sa_blocks'),
+            'gf_hidden': preset.get('gf_hidden'),
             'norm': preset.get('norm', 'batch'),
             'num_groups': preset.get('num_groups', 16),
             'pool': preset.get('pool', 'max'),
@@ -195,6 +196,30 @@ def load_model_with_checkpoint(model_path, model_type, device='cpu'):
                 norm=preset.get('norm', 'batch'),
                 num_groups=int(preset.get('num_groups', 16)),
             )
+
+        elif model_type in ('ArGEnTCrossWSD', 'ArGEnTSelfNoSDF'):
+            # ArGEnT DeepONet – Galerkin linear attention operator network.
+            # Prefer arch dict saved in checkpoint; fall back to preset fields.
+            if arch is not None:
+                model = ArGEnTDeepONet(
+                    hidden_dim=int(arch.get("hidden_dim", 128)),
+                    num_heads=int(arch.get("num_heads", 4)),
+                    num_layers=int(arch.get("num_layers", 2)),
+                    output_dim=int(arch.get("output_dim", 128)),
+                    attention_type=arch.get("attention_type", "cross"),
+                    use_sdf=bool(arch.get("use_sdf", model_type == 'ArGEnTCrossWSD')),
+                )
+            else:
+                attention_type = "cross" if model_type == 'ArGEnTCrossWSD' else "self"
+                use_sdf = (model_type == 'ArGEnTCrossWSD')
+                model = ArGEnTDeepONet(
+                    hidden_dim=int(preset.get("hidden_dim", 128)),
+                    num_heads=int(preset.get("num_heads", 4)),
+                    num_layers=int(preset.get("num_layers", 2)),
+                    output_dim=int(preset.get("output_dim", 128)),
+                    attention_type=attention_type,
+                    use_sdf=use_sdf,
+                )
 
         # ---- Legacy model types (kept for backward compatibility) ----
         elif model_type in ('SpectralDeepONet', 'VanillaDeepONet', 'DenseNoFFT',
