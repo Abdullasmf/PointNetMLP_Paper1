@@ -625,6 +625,8 @@ class _GalerkinAttentionLayer(nn.Module):
         kv_feat: torch.Tensor,
         q_coords: torch.Tensor,
         kv_coords: torch.Tensor,
+        kv_mask: Optional[torch.Tensor] = None,
+        q_mask: Optional[torch.Tensor] = None,
     ) -> torch.Tensor:
         """
         Args:
@@ -632,6 +634,8 @@ class _GalerkinAttentionLayer(nn.Module):
             kv_feat  : [B, S_kv, hidden_dim]
             q_coords : [B, S_q,  2]
             kv_coords: [B, S_kv, 2]
+            kv_mask  : [B, S_kv] bool, True=real point, False=zero-padded (optional)
+            q_mask   : [B, S_q]  bool, True=real point, False=zero-padded (optional)
         Returns: [B, S_q, hidden_dim]
         """
         B, S_q, _ = q_feat.shape
@@ -647,33 +651,62 @@ class _GalerkinAttentionLayer(nn.Module):
         Q = self._apply_rope_2d(Q, q_coords)
         K = self._apply_rope_2d(K, kv_coords)
 
+        # Zero out padded K and V positions before LayerNorm
+        if kv_mask is not None:
+            kv_mask_feat = kv_mask.unsqueeze(-1).unsqueeze(-1).to(K.dtype)  # [B, S_kv, 1, 1]
+            K = K * kv_mask_feat
+            V = V * kv_mask_feat
+
         # Galerkin: normalise K and V
         K_n = self.k_norm(K)  # [B, S_kv, H, D]
         V_n = self.v_norm(V)  # [B, S_kv, H, D]
+
+        # Zero out padded K_n and V_n positions after LayerNorm
+        if kv_mask is not None:
+            K_n = K_n * kv_mask_feat
+            V_n = V_n * kv_mask_feat
+
+        # Zero out padded Q positions
+        if q_mask is not None:
+            q_mask_feat = q_mask.unsqueeze(-1).unsqueeze(-1).to(Q.dtype)  # [B, S_q, 1, 1]
+            Q = Q * q_mask_feat
 
         # Reshape to [B*H, S, D] for batched matmul
         Q_bh = Q.permute(0, 2, 1, 3).reshape(B * H, S_q, D)
         K_bh = K_n.permute(0, 2, 1, 3).reshape(B * H, S_kv, D)
         V_bh = V_n.permute(0, 2, 1, 3).reshape(B * H, S_kv, D)
 
+        # True number of valid key/value positions per batch item
+        if kv_mask is not None:
+            n = kv_mask.sum(dim=1).float().clamp(min=1.0)  # [B]
+            # Expand to [B*H, 1, 1] for broadcasting over the D×D KV matrix
+            n_bh = n.unsqueeze(1).expand(B, H).reshape(B * H).view(B * H, 1, 1)
+        else:
+            n_bh = float(S_kv)
+
         # KV = Kᵀ V / n  →  [B*H, D, D]
-        KV = torch.bmm(K_bh.transpose(-2, -1), V_bh) / S_kv
+        KV = torch.bmm(K_bh.transpose(-2, -1), V_bh) / n_bh
 
         # out = Q KV  →  [B*H, S_q, D]
         out = torch.bmm(Q_bh, KV)
 
         # Merge heads → [B, S_q, hidden_dim]
         out = out.view(B, H, S_q, D).permute(0, 2, 1, 3).reshape(B, S_q, H * D)
-        return self.out_proj(out)
+        out = self.out_proj(out)
+
+        # Zero out padded output positions so they remain zero for the next layer
+        if q_mask is not None:
+            out = out * q_mask.unsqueeze(-1).to(out.dtype)  # [B, S_q, hidden_dim]
+
+        return out
 
 
 class ArGEnTDeepONet(nn.Module):
-    """ArGEnT DeepONet – Galerkin linear attention operator network.
+    """ArGEnT – Galerkin linear attention operator network (no branch network).
 
-    Global structure (DeepONet):
-        Branch : point-wise MLP + global max-pool → basis coefficients  [B, output_dim]
-        Trunk  : ArGEnT attention layers + residual output MLP          [B, Q, output_dim]
-        Output : inner product of Branch and Trunk outputs + bias        [B, Q, 1]
+    The model encodes query coordinates through the Trunk (ArGEnT attention
+    layers + residual output MLP) and projects the result to a scalar stress prediction.
+    There is no branch network and no DeepONet dot-product fusion.
 
     Variants
     --------
@@ -682,11 +715,9 @@ class ArGEnTDeepONet(nn.Module):
         Query coordinates (x, y, sdf) are projected as Queries.
     attention_type='self', use_sdf=False
         Query coordinates (x, y) only; Q = K = V from the same projected input.
-        Branch encodes geometry (x, y) via global max-pool.
 
     All projector MLPs: 4 hidden layers, hidden_dim neurons, ReLU.
     Residual output MLP: 3 hidden layers, hidden_dim neurons, ReLU.
-    Final per-path projection: Linear → Tanh → output_dim.
     No dropout or batch normalization anywhere.
     """
 
@@ -716,13 +747,6 @@ class ArGEnTDeepONet(nn.Module):
         in_ch_geom = 3 if (attention_type == "cross" and use_sdf) else 2
         in_ch_query = 3 if (attention_type == "cross" and use_sdf) else 2
 
-        # ── BRANCH: geometry → branch coefficients ─────────────────────────
-        self.branch_mlp = _PointwiseMLP(in_ch_geom, hidden_dim, n_hidden=4)
-        self.branch_proj = nn.Sequential(
-            nn.Linear(hidden_dim, output_dim),
-            nn.Tanh(),
-        )
-
         # ── TRUNK (ArGEnT) ──────────────────────────────────────────────────
         if attention_type == "cross":
             self.kv_mlp = _PointwiseMLP(in_ch_geom, hidden_dim, n_hidden=4)
@@ -741,11 +765,8 @@ class ArGEnTDeepONet(nn.Module):
             nn.Linear(hidden_dim, hidden_dim), nn.ReLU(),
         )
 
-        # Final projection: hidden_dim → output_dim with tanh
-        self.trunk_proj = nn.Sequential(
-            nn.Linear(hidden_dim, output_dim),
-            nn.Tanh(),
-        )
+        # Final projection: hidden_dim → scalar stress prediction
+        self.trunk_proj = nn.Linear(hidden_dim, 1)
 
         self.bias = nn.Parameter(torch.zeros(1))
 
@@ -764,38 +785,42 @@ class ArGEnTDeepONet(nn.Module):
         self,
         geom_points: torch.Tensor,   # [B, N, in_ch_geom]
         query_points: torch.Tensor,  # [B, Q, in_ch_query]
+        mask: Optional[torch.Tensor] = None,  # [B, N] bool: True=real, False=zero-padded
     ) -> torch.Tensor:
         """Returns [B, Q, 1]."""
         B, N, _ = geom_points.shape
-        Q = query_points.shape[1]
+        Q_len = query_points.shape[1]
 
         # Spatial (x, y) coordinates for RoPE
         geom_coords = geom_points[..., :2]   # [B, N, 2]
         query_coords = query_points[..., :2]  # [B, Q, 2]
 
-        # ── BRANCH ──────────────────────────────────────────────────────────
-        geom_feat = self.branch_mlp(geom_points)   # [B, N, hidden_dim]
-        b = geom_feat.max(dim=1).values             # [B, hidden_dim]
-        b = self.branch_proj(b)                     # [B, output_dim]
-
         # ── TRUNK ───────────────────────────────────────────────────────────
         if self.attention_type == "cross":
             kv = self.kv_mlp(geom_points)    # [B, N, hidden_dim]
             q = self.q_mlp(query_points)     # [B, Q, hidden_dim]
+            # Zero out padded positions at the start
+            if mask is not None:
+                kv = kv * mask.unsqueeze(-1).to(kv.dtype)
+                q = q * mask.unsqueeze(-1).to(q.dtype)
             for attn in self.attn_layers:
-                q = q + attn(q, kv, query_coords, geom_coords)
+                q = q + attn(q, kv, query_coords, geom_coords, kv_mask=mask, q_mask=mask)
         else:  # self-attention
             q = self.proj_mlp(query_points)  # [B, Q, hidden_dim]
+            if mask is not None:
+                q = q * mask.unsqueeze(-1).to(q.dtype)
             for attn in self.attn_layers:
-                q = q + attn(q, q, query_coords, query_coords)
+                q = q + attn(q, q, query_coords, query_coords, kv_mask=mask, q_mask=mask)
 
         # Residual output MLP
-        q = q + self.out_mlp(q.reshape(-1, self.hidden_dim)).view(B, Q, self.hidden_dim)
+        q_res = self.out_mlp(q.reshape(-1, self.hidden_dim)).view(B, Q_len, self.hidden_dim)
+        if mask is not None:
+            q_res = q_res * mask.unsqueeze(-1).to(q_res.dtype)
+        q = q + q_res
 
-        # Final projection
-        t = self.trunk_proj(q.reshape(-1, self.hidden_dim)).view(B, Q, self.output_dim)
-
-        # ── DEEPONET DOT PRODUCT ────────────────────────────────────────────
-        b_exp = b.unsqueeze(1)  # [B, 1, output_dim]
-        out = (b_exp * t).sum(dim=-1, keepdim=True) + self.bias  # [B, Q, 1]
+        # Final projection to scalar stress value
+        out = self.trunk_proj(q.reshape(-1, self.hidden_dim)).view(B, Q_len, 1) + self.bias
+        # Zero out padded positions in the final output
+        if mask is not None:
+            out = out * mask.unsqueeze(-1).to(out.dtype)
         return out
