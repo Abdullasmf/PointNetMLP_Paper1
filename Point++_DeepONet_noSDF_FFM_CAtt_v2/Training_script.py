@@ -237,7 +237,7 @@ class AllNodesPadCollate:
             C = pts.shape[1]
             if N < maxN:
                 pad = maxN - N
-                pts_padded = torch.cat([pts, torch.zeros(pad, C, dtype=pts.dtype)], dim=0)
+                pts_padded = torch.cat([pts, torch.full((pad, C), 1e5, dtype=pts.dtype)], dim=0)
                 s_padded = torch.cat([s, torch.zeros(pad, 1, dtype=s.dtype)], dim=0)
             else:
                 pts_padded = pts
