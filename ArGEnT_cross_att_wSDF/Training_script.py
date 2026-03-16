@@ -291,41 +291,43 @@ class DualSamplerCollate:
 class AllNodesPadCollate:
     """Pickle-safe collate that uses ALL nodes per geometry.
 
-    Pads each geometry in the batch to the maximum node count by repeating valid indices
-    (no zero-padding), and returns a dual-set dict compatible with the model forward:
+    Pads smaller point clouds in the batch with zeros up to maxN and returns a
+    boolean mask of shape [B, maxN] (True for real points, False for padded zeros):
       - 'geom_points': [B,maxN,C]  where C=3 (x,y,sdf) for wSDF
       - 'query_points': [B,maxN,C]
       - 'stress': [B,maxN,1]
+      - 'mask': [B,maxN] bool, True=real point, False=zero-padded
     """
 
     def __call__(self, batch: List[Dict[str, torch.Tensor]]) -> Dict[str, torch.Tensor]:
         Ns = [item["points"].shape[0] for item in batch]
         maxN = max(Ns)
+        C = batch[0]["points"].shape[1]
         gp_b: List[torch.Tensor] = []
         qp_b: List[torch.Tensor] = []
         s_b: List[torch.Tensor] = []
-        orig_idx_b: List[torch.Tensor] = []
+        mask_b: List[torch.Tensor] = []
         for item, N in zip(batch, Ns):
-            pts = item["points"]  # [N,2]
-            s = item["stress"]  # [N,1]
-            idx_all = torch.arange(N)
+            pts = item["points"]  # [N, C]
+            s = item["stress"]    # [N, 1]
             if N < maxN:
-                extra = torch.randint(0, N, (maxN - N,))
-                enc_idx = torch.cat([idx_all, extra], dim=0)
-                qry_idx = enc_idx
+                pad = maxN - N
+                pts_pad = torch.cat([pts, torch.zeros(pad, C, dtype=pts.dtype)], dim=0)
+                s_pad = torch.cat([s, torch.zeros(pad, 1, dtype=s.dtype)], dim=0)
             else:
-                enc_idx = idx_all
-                qry_idx = idx_all
-            gp_b.append(pts[enc_idx])
-            qp_b.append(pts[qry_idx])
-            s_b.append(s[qry_idx])
-            # Track original index per position for weighting duplicates
-            orig_idx_b.append(qry_idx)
+                pts_pad = pts
+                s_pad = s
+            m = torch.zeros(maxN, dtype=torch.bool)
+            m[:N] = True
+            gp_b.append(pts_pad)
+            qp_b.append(pts_pad)
+            s_b.append(s_pad)
+            mask_b.append(m)
         return {
             "geom_points": torch.stack(gp_b, dim=0),
             "query_points": torch.stack(qp_b, dim=0),
             "stress": torch.stack(s_b, dim=0),
-            "orig_idx": torch.stack(orig_idx_b, dim=0),  # [B,maxN]
+            "mask": torch.stack(mask_b, dim=0),  # [B, maxN] bool
         }
 
 
@@ -432,6 +434,7 @@ def train(
         for batch in train_loader:
             # default for duplicate-aware weighting (used in batched_all)
             weights: Optional[torch.Tensor] = None
+            pad_mask: Optional[torch.Tensor] = None
             if "geom_points" in batch:
                 # Dual-sampling batched mode
                 gp: torch.Tensor = batch["geom_points"].to(device)  # [B,Kenc,3] (x,y,sdf)
@@ -439,6 +442,9 @@ def train(
                 target: torch.Tensor = batch["stress"].to(device)  # [B,Kq,1]
                 B, Kq, _ = query_xy.shape
                 Bmul = B * Kq
+                # Extract zero-padding mask from batched_all collate
+                if "mask" in batch:
+                    pad_mask = batch["mask"].to(device)  # [B, maxN] bool
                 # Optional sample weights for batched_all to down-weight duplicates
                 if "orig_idx" in batch:
                     orig_idx = batch["orig_idx"]  # [B,Kq] on CPU
@@ -502,7 +508,7 @@ def train(
             with torch.amp.autocast(
                 "cuda", enabled=(device.type == "cuda" and use_amp)
             ):
-                pred = model(gp, query_xy)  # [B,Kq,1]
+                pred = model(gp, query_xy, pad_mask)  # [B,Kq,1]
                 # Calculate stress-weighted loss
                 # Weight higher stress values more heavily (per-sample normalization for batch consistency)
                 target_stress = target.abs()  # [B,Kq,1]
