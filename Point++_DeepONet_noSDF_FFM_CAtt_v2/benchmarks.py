@@ -443,11 +443,12 @@ class ScaledDiagramDeepONet(nn.Module):
         self.basis_dim = basis_dim
         self.bias = nn.Parameter(torch.zeros(1))
 
-    def forward(self, geom_points: torch.Tensor, query_points: torch.Tensor) -> torch.Tensor:
+    def forward(self, geom_points: torch.Tensor, query_points: torch.Tensor, padding_mask: Optional[torch.Tensor] = None) -> torch.Tensor:
         """
         Args:
             geom_points:  [B, N, 2+sdf_ch]  – geometry point cloud with optional SDF
             query_points: [B, Q, 2+sdf_ch]  – query locations (x, y[, sdf])
+            padding_mask: [B, N] bool, True indicates a padded key position (optional)
 
         Returns:
             [B, Q, 1]  – predicted scalar stress at each query point
@@ -500,7 +501,7 @@ class ScaledDiagramDeepONet(nn.Module):
         Q_scaled = t_beta / self.attn_temp                               # [B, Q, basis_dim]
 
         # cross_attn(query, key, value) with batch_first=True
-        attended, _ = self.cross_attn(Q_scaled, K, V)                   # [B, Q, basis_dim]
+        attended, _ = self.cross_attn(Q_scaled, K, V, key_padding_mask=padding_mask)   # [B, Q, basis_dim]
 
         # Post-attention MLP: produces B^beta
         attended_flat = attended.reshape(B * Q, -1)                      # [B*Q, basis_dim]

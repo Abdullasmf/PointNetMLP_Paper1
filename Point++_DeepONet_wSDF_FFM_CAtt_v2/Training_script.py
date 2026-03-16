@@ -291,11 +291,12 @@ class DualSamplerCollate:
 class AllNodesPadCollate:
     """Pickle-safe collate that uses ALL nodes per geometry.
 
-    Pads each geometry in the batch to the maximum node count by repeating valid indices
-    (no zero-padding), and returns a dual-set dict compatible with the model forward:
+    Pads each geometry in the batch to the maximum node count using zeros,
+    and returns a dual-set dict compatible with the model forward:
       - 'geom_points': [B,maxN,C]  where C=3 (x,y,sdf) for wSDF
       - 'query_points': [B,maxN,C]
       - 'stress': [B,maxN,1]
+      - 'padding_mask': [B,maxN] bool, True indicates a padded position
     """
 
     def __call__(self, batch: List[Dict[str, torch.Tensor]]) -> Dict[str, torch.Tensor]:
@@ -304,28 +305,29 @@ class AllNodesPadCollate:
         gp_b: List[torch.Tensor] = []
         qp_b: List[torch.Tensor] = []
         s_b: List[torch.Tensor] = []
-        orig_idx_b: List[torch.Tensor] = []
+        mask_b: List[torch.Tensor] = []
         for item, N in zip(batch, Ns):
-            pts = item["points"]  # [N,2]
+            pts = item["points"]  # [N,C]
             s = item["stress"]  # [N,1]
-            idx_all = torch.arange(N)
+            C = pts.shape[1]
             if N < maxN:
-                extra = torch.randint(0, N, (maxN - N,))
-                enc_idx = torch.cat([idx_all, extra], dim=0)
-                qry_idx = enc_idx
+                pad = maxN - N
+                pts_padded = torch.cat([pts, torch.zeros(pad, C, dtype=pts.dtype)], dim=0)
+                s_padded = torch.cat([s, torch.zeros(pad, 1, dtype=s.dtype)], dim=0)
             else:
-                enc_idx = idx_all
-                qry_idx = idx_all
-            gp_b.append(pts[enc_idx])
-            qp_b.append(pts[qry_idx])
-            s_b.append(s[qry_idx])
-            # Track original index per position for weighting duplicates
-            orig_idx_b.append(qry_idx)
+                pts_padded = pts
+                s_padded = s
+            mask = torch.zeros(maxN, dtype=torch.bool)
+            mask[N:] = True  # True = padded position
+            gp_b.append(pts_padded)
+            qp_b.append(pts_padded)
+            s_b.append(s_padded)
+            mask_b.append(mask)
         return {
             "geom_points": torch.stack(gp_b, dim=0),
             "query_points": torch.stack(qp_b, dim=0),
             "stress": torch.stack(s_b, dim=0),
-            "orig_idx": torch.stack(orig_idx_b, dim=0),  # [B,maxN]
+            "padding_mask": torch.stack(mask_b, dim=0),  # [B,maxN]
         }
 
 
@@ -430,33 +432,19 @@ def train(
         train_loss = 0.0
         ntrain = 0
         for batch in train_loader:
-            # default for duplicate-aware weighting (used in batched_all)
-            weights: Optional[torch.Tensor] = None
+            padding_mask_dev: Optional[torch.Tensor] = None
             if "geom_points" in batch:
                 # Dual-sampling batched mode
                 gp: torch.Tensor = batch["geom_points"].to(device)  # [B,Kenc,3] (x,y,sdf)
                 query_xy: torch.Tensor = batch["query_points"].to(device)  # [B,Kq,3] (x,y,sdf)
                 target: torch.Tensor = batch["stress"].to(device)  # [B,Kq,1]
                 B, Kq, _ = query_xy.shape
-                Bmul = B * Kq
-                # Optional sample weights for batched_all to down-weight duplicates
-                if "orig_idx" in batch:
-                    orig_idx = batch["orig_idx"]  # [B,Kq] on CPU
-                    # Build weights inversely proportional to replication counts per geometry
-                    ws = []
-                    for b in range(orig_idx.shape[0]):
-                        idx_b = orig_idx[b]
-                        # counts per original index value
-                        max_idx = int(idx_b.max().item()) + 1
-                        counts = torch.bincount(idx_b, minlength=max_idx)
-                        counts[counts == 0] = 1  # avoid div by zero
-                        w_b = 1.0 / counts[idx_b]
-                        # normalize per-geometry to mean 1
-                        w_b = w_b / w_b.mean()
-                        ws.append(w_b)
-                    weights = (
-                        torch.stack(ws, dim=0).to(device).unsqueeze(-1)
-                    )  # [B,Kq,1]
+                # Extract padding mask and count only real (non-padded) positions
+                if "padding_mask" in batch:
+                    padding_mask_dev = batch["padding_mask"].to(device)  # [B, maxN]
+                    Bmul = int((~padding_mask_dev).sum().item())
+                else:
+                    Bmul = B * Kq
             else:
                 # Full-geometry single/batched mode from earlier
                 pts: torch.Tensor = batch["points"].to(device)  # [N,2] or [B,K,2] — fallback path (train_mode != batched_all)
@@ -502,21 +490,20 @@ def train(
             with torch.amp.autocast(
                 "cuda", enabled=(device.type == "cuda" and use_amp)
             ):
-                pred = model(gp, query_xy)  # [B,Kq,1]
+                pred = model(gp, query_xy, padding_mask=padding_mask_dev)  # [B,Kq,1]
                 # Calculate stress-weighted loss
                 # Weight higher stress values more heavily (per-sample normalization for batch consistency)
                 target_stress = target.abs()  # [B,Kq,1]
                 # Compute max per sample in batch dimension
                 max_per_sample = target_stress.view(target_stress.shape[0], -1).max(dim=1, keepdim=True).values.unsqueeze(-1)  # [B,1,1]
                 stress_weights = 1.0 + 5.0 * (target_stress / (max_per_sample + 1e-8))  # [B,Kq,1]
-                
-                # Combine with duplicate weights if provided (batched_all duplicate adjustment)
-                if isinstance(weights, torch.Tensor):
-                    combined_weights = weights * stress_weights
-                    diff2 = (pred - target) ** 2
-                    loss = (diff2 * combined_weights).mean()
+
+                diff2 = (pred - target) ** 2
+                if padding_mask_dev is not None:
+                    # Mask out padded positions from loss
+                    real_mask = (~padding_mask_dev).unsqueeze(-1).float()  # [B, maxN, 1]
+                    loss = (diff2 * stress_weights * real_mask).sum() / real_mask.sum().clamp(min=1)
                 else:
-                    diff2 = (pred - target) ** 2
                     loss = (diff2 * stress_weights).mean()
 
             scaler.scale(loss).backward()
