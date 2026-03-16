@@ -293,10 +293,29 @@ with h5py.File(output_filename, 'w') as hf:
         # Assemble matrices
         K = asm(stiffness, basis)
         
-        # Dynamically scale traction based on the square of the horizontal leg thickness
-        # Anchored such that a thickness of 0.5 gets the baseline -15.0 load.
-        baseline_traction = float(traction_load[1])
-        traction_val = baseline_traction * ((yc_rel / 0.5) ** 2)
+        # --- Dynamic Traction Scaling (Dual-Leg Bending Protection) ---
+        # Bending stress scales proportionally to Lever_Arm / Thickness^2.
+        # We calculate this vulnerability factor for BOTH legs.
+        
+        # 1. Horizontal Leg Vulnerability: Lever arm is roughly (W - xc_rel). Thickness is yc_rel.
+        S_h = (W - xc_rel) / (yc_rel ** 2)
+        
+        # 2. Vertical Leg Vulnerability: Lever arm is roughly (W - xc_rel/2). Thickness is xc_rel.
+        S_v = (W - (xc_rel / 2)) / (xc_rel ** 2)
+        
+        # Find the weakest geometric link
+        S_max = max(S_h, S_v)
+        
+        # In the baseline geometry (W=1, xc=0.5, yc=0.5), S_max is 3.0.
+        # Baseline total force is -7.5 (traction -15.0 * boundary length 0.5).
+        # Target constant = Force * S_max = -7.5 * 3.0 = -22.5
+        target_moment_capacity = -22.5
+        
+        # Calculate the maximum safe total force for this specific randomized geometry
+        safe_total_force = target_moment_capacity / S_max
+        
+        # Convert total force back to distributed traction (Force / boundary length)
+        traction_val = safe_total_force / yc_rel
         
         x_quad = basis_right.global_coordinates().value 
         
