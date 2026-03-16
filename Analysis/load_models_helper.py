@@ -101,106 +101,10 @@ def load_model_with_checkpoint(model_path, model_type, device='cpu'):
 
         preset = _find_preset_for_checkpoint(model_path, presets)
 
-        posenc = preset.get('posenc', {'n_freqs': 4, 'scale': 1.0})
-
-        # Base encoder config (2-D coordinates only) – not used by ArGEnT models
-        encoder_cfg = {
-            'latent_dim': preset.get('latent_dim'),
-            'pre_hidden': preset.get('pre_hidden'),
-            'sa_blocks': preset.get('sa_blocks'),
-            'gf_hidden': preset.get('gf_hidden'),
-            'norm': preset.get('norm', 'batch'),
-            'num_groups': preset.get('num_groups', 16),
-            'pool': preset.get('pool', 'max'),
-            'posenc': posenc,
-        }
-
-        if model_type in ('Pn2NoSDF', 'Pn2wSDF'):
-            # ScaledDiagramDeepONet (PointNet++ branch, SIREN trunk)
-            if model_type == 'Pn2wSDF':
-                encoder_cfg['sdf_ch'] = 1  # encoder receives (x, y, sdf)
-            basis_dim = int(preset.get('basis_dim', preset['head_hidden'][-1]))
-            head_hidden = list(preset.get('post_mlp_hidden', preset['head_hidden']))
-            siren_hidden = list(preset.get('siren_hidden', [256, 256]))
-            model = ScaledDiagramDeepONet(
-                latent_dim=preset['latent_dim'],
-                basis_dim=basis_dim,
-                head_hidden=head_hidden,
-                siren_hidden=siren_hidden,
-                encoder_cfg=encoder_cfg,
-            )
-
-        elif model_type in ('Pn2NoSDF_FFM_CAtt', 'Pn2wSDF_FFM_CAtt'):
-            # ScaledDiagramDeepONetFFMCAtt (PointNet++ branch, FFM trunk, cross-attention)
-            if model_type == 'Pn2wSDF_FFM_CAtt':
-                encoder_cfg['sdf_ch'] = 1  # encoder receives (x, y, sdf)
-            basis_dim = int(preset.get('basis_dim', preset['head_hidden'][-1]))
-            head_hidden = list(preset.get('head_hidden', [256, 256, 128]))
-            ffm_mapping_size = int(preset.get('ffm_mapping_size', 128))
-            ffm_sigma_init = float(preset.get('ffm_sigma_init', 2.0))
-            cross_attention_heads = int(preset.get('cross_attention_heads', 4))
-            attn_temp = float(preset.get('attn_temp', 0.1))
-            model = ScaledDiagramDeepONetFFMCAtt(
-                latent_dim=preset['latent_dim'],
-                basis_dim=basis_dim,
-                head_hidden=head_hidden,
-                ffm_mapping_size=ffm_mapping_size,
-                ffm_sigma_init=ffm_sigma_init,
-                cross_attention_heads=cross_attention_heads,
-                attn_temp=attn_temp,
-                encoder_cfg=encoder_cfg,
-            )
-
-        elif model_type == 'PointDeepONet':
-            # PointDeepONet (VanillaPointNet branch, SIREN trunk, uses SDF)
-            basis_dim = int(preset.get('basis_dim', preset['head_hidden'][-1]))
-            head_hidden = preset['head_hidden']
-            branch_hidden = list(
-                preset.get(
-                    'branch_hidden',
-                    head_hidden[:-1] if len(head_hidden) > 1 else [64, 128, 256],
-                )
-            )
-            siren_hidden = list(preset.get('siren_hidden', [256, 256]))
-            post_mlp_hidden = list(preset.get('post_mlp_hidden', head_hidden))
-            model = PointDeepONet(
-                in_ch=3,  # x, y, sdf
-                latent_dim=preset['latent_dim'],
-                basis_dim=basis_dim,
-                branch_hidden=branch_hidden,
-                siren_hidden=siren_hidden,
-                post_mlp_hidden=post_mlp_hidden,
-                norm=preset.get('norm', 'batch'),
-                num_groups=int(preset.get('num_groups', 16)),
-            )
-
-        elif model_type == 'PointDeepONetNoSDF':
-            # PointDeepONet without SDF (VanillaPointNet branch, SIREN trunk, x,y only)
-            basis_dim = int(preset.get('basis_dim', preset['head_hidden'][-1]))
-            head_hidden = preset['head_hidden']
-            branch_hidden = list(
-                preset.get(
-                    'branch_hidden',
-                    head_hidden[:-1] if len(head_hidden) > 1 else [64, 128, 256],
-                )
-            )
-            siren_hidden = list(preset.get('siren_hidden', [256, 256]))
-            post_mlp_hidden = list(preset.get('post_mlp_hidden', head_hidden))
-            model = PointDeepONet(
-                in_ch=2,  # x, y only — no SDF
-                latent_dim=preset['latent_dim'],
-                basis_dim=basis_dim,
-                branch_hidden=branch_hidden,
-                siren_hidden=siren_hidden,
-                post_mlp_hidden=post_mlp_hidden,
-                norm=preset.get('norm', 'batch'),
-                num_groups=int(preset.get('num_groups', 16)),
-            )
-
-        elif model_type in ('ArGEnTCrossWSD', 'ArGEnTSelfNoSDF'):
-            # ArGEnT DeepONet – Galerkin linear attention operator network.
-            # Prefer arch dict saved in checkpoint; fall back to preset fields.
+        # ---- ArGEnT models are handled first since they use different preset fields ----
+        if model_type in ('ArGEnTCrossWSD', 'ArGEnTSelfNoSDF'):
             if arch is not None:
+                # Prefer arch dict saved in checkpoint (most accurate)
                 model = ArGEnTDeepONet(
                     hidden_dim=int(arch.get("hidden_dim", 128)),
                     num_heads=int(arch.get("num_heads", 4)),
@@ -210,6 +114,7 @@ def load_model_with_checkpoint(model_path, model_type, device='cpu'):
                     use_sdf=bool(arch.get("use_sdf", model_type == 'ArGEnTCrossWSD')),
                 )
             else:
+                # Fallback: reconstruct from preset
                 attention_type = "cross" if model_type == 'ArGEnTCrossWSD' else "self"
                 use_sdf = (model_type == 'ArGEnTCrossWSD')
                 model = ArGEnTDeepONet(
@@ -221,55 +126,153 @@ def load_model_with_checkpoint(model_path, model_type, device='cpu'):
                     use_sdf=use_sdf,
                 )
 
-        # ---- Legacy model types (kept for backward compatibility) ----
-        elif model_type in ('SpectralDeepONet', 'VanillaDeepONet', 'DenseNoFFT',
-                            'Point_DeepONet'):
-            head_posenc = preset.get('head_posenc', {'n_freqs': 4, 'scale': 1.0})
-            head_hidden = preset['head_hidden']
-            if len(head_hidden) > 1:
-                do_branch_hidden = head_hidden[:-1]
-                do_basis_dim = head_hidden[-1]
-            else:
-                do_branch_hidden = [256, 256]
-                do_basis_dim = 128
-            do_trunk_hidden = do_branch_hidden
+        else:
+            # All other models use PointNet++ encoder config from preset
+            posenc = preset.get('posenc', {'n_freqs': 4, 'scale': 1.0})
 
-            if model_type == 'SpectralDeepONet':
-                n_freqs = head_posenc.get('n_freqs', 10)
-                scale = head_posenc.get('scale', 2.0)
-                model = SpectralDeepONet(
-                    latent_dim=preset['latent_dim'],
-                    basis_dim=do_basis_dim,
-                    branch_hidden=do_branch_hidden,
-                    trunk_hidden=do_trunk_hidden,
-                    n_freqs=n_freqs,
-                    scale=scale,
-                    encoder_cfg=encoder_cfg,
-                )
-            elif model_type == 'VanillaDeepONet':
-                model = VanillaDeepONet(
-                    latent_dim=preset['latent_dim'],
-                    basis_dim=do_basis_dim,
-                    branch_hidden=do_branch_hidden,
-                    trunk_hidden=do_trunk_hidden,
-                    encoder_cfg=encoder_cfg,
-                )
-            elif model_type == 'DenseNoFFT':
-                model = DenseNoFFT(
-                    latent_dim=preset['latent_dim'],
-                    mlp_hidden=head_hidden,
-                    encoder_cfg=encoder_cfg,
-                )
-            else:  # Point_DeepONet (legacy)
-                basis_dim = head_hidden[-1] if head_hidden else 128
+            # Base encoder config (2-D coordinates only)
+            encoder_cfg = {
+                'latent_dim': preset['latent_dim'],
+                'pre_hidden': preset['pre_hidden'],
+                'sa_blocks': preset['sa_blocks'],
+                'gf_hidden': preset['gf_hidden'],
+                'norm': preset.get('norm', 'batch'),
+                'num_groups': preset.get('num_groups', 16),
+                'pool': preset.get('pool', 'max'),
+                'posenc': posenc,
+            }
+
+            if model_type in ('Pn2NoSDF', 'Pn2wSDF'):
+                # ScaledDiagramDeepONet (PointNet++ branch, SIREN trunk)
+                if model_type == 'Pn2wSDF':
+                    encoder_cfg['sdf_ch'] = 1  # encoder receives (x, y, sdf)
+                basis_dim = int(preset.get('basis_dim', preset['head_hidden'][-1]))
+                head_hidden = list(preset.get('post_mlp_hidden', preset['head_hidden']))
+                siren_hidden = list(preset.get('siren_hidden', [256, 256]))
                 model = ScaledDiagramDeepONet(
                     latent_dim=preset['latent_dim'],
                     basis_dim=basis_dim,
                     head_hidden=head_hidden,
+                    siren_hidden=siren_hidden,
                     encoder_cfg=encoder_cfg,
                 )
-        else:
-            raise ValueError(f"Unknown model type: {model_type}")
+
+            elif model_type in ('Pn2NoSDF_FFM_CAtt', 'Pn2wSDF_FFM_CAtt'):
+                # ScaledDiagramDeepONetFFMCAtt (PointNet++ branch, FFM trunk, cross-attention)
+                if model_type == 'Pn2wSDF_FFM_CAtt':
+                    encoder_cfg['sdf_ch'] = 1  # encoder receives (x, y, sdf)
+                basis_dim = int(preset.get('basis_dim', preset['head_hidden'][-1]))
+                head_hidden = list(preset.get('head_hidden', [256, 256, 128]))
+                ffm_mapping_size = int(preset.get('ffm_mapping_size', 128))
+                ffm_sigma_init = float(preset.get('ffm_sigma_init', 2.0))
+                cross_attention_heads = int(preset.get('cross_attention_heads', 4))
+                attn_temp = float(preset.get('attn_temp', 0.1))
+                model = ScaledDiagramDeepONetFFMCAtt(
+                    latent_dim=preset['latent_dim'],
+                    basis_dim=basis_dim,
+                    head_hidden=head_hidden,
+                    ffm_mapping_size=ffm_mapping_size,
+                    ffm_sigma_init=ffm_sigma_init,
+                    cross_attention_heads=cross_attention_heads,
+                    attn_temp=attn_temp,
+                    encoder_cfg=encoder_cfg,
+                )
+
+            elif model_type == 'PointDeepONet':
+                # PointDeepONet (VanillaPointNet branch, SIREN trunk, uses SDF)
+                basis_dim = int(preset.get('basis_dim', preset['head_hidden'][-1]))
+                head_hidden = preset['head_hidden']
+                branch_hidden = list(
+                    preset.get(
+                        'branch_hidden',
+                        head_hidden[:-1] if len(head_hidden) > 1 else [64, 128, 256],
+                    )
+                )
+                siren_hidden = list(preset.get('siren_hidden', [256, 256]))
+                post_mlp_hidden = list(preset.get('post_mlp_hidden', head_hidden))
+                model = PointDeepONet(
+                    in_ch=3,  # x, y, sdf
+                    latent_dim=preset['latent_dim'],
+                    basis_dim=basis_dim,
+                    branch_hidden=branch_hidden,
+                    siren_hidden=siren_hidden,
+                    post_mlp_hidden=post_mlp_hidden,
+                    norm=preset.get('norm', 'batch'),
+                    num_groups=int(preset.get('num_groups', 16)),
+                )
+
+            elif model_type == 'PointDeepONetNoSDF':
+                # PointDeepONet without SDF (VanillaPointNet branch, SIREN trunk, x,y only)
+                basis_dim = int(preset.get('basis_dim', preset['head_hidden'][-1]))
+                head_hidden = preset['head_hidden']
+                branch_hidden = list(
+                    preset.get(
+                        'branch_hidden',
+                        head_hidden[:-1] if len(head_hidden) > 1 else [64, 128, 256],
+                    )
+                )
+                siren_hidden = list(preset.get('siren_hidden', [256, 256]))
+                post_mlp_hidden = list(preset.get('post_mlp_hidden', head_hidden))
+                model = PointDeepONet(
+                    in_ch=2,  # x, y only — no SDF
+                    latent_dim=preset['latent_dim'],
+                    basis_dim=basis_dim,
+                    branch_hidden=branch_hidden,
+                    siren_hidden=siren_hidden,
+                    post_mlp_hidden=post_mlp_hidden,
+                    norm=preset.get('norm', 'batch'),
+                    num_groups=int(preset.get('num_groups', 16)),
+                )
+
+            # ---- Legacy model types (kept for backward compatibility) ----
+            elif model_type in ('SpectralDeepONet', 'VanillaDeepONet', 'DenseNoFFT',
+                                'Point_DeepONet'):
+                head_posenc = preset.get('head_posenc', {'n_freqs': 4, 'scale': 1.0})
+                head_hidden = preset['head_hidden']
+                if len(head_hidden) > 1:
+                    do_branch_hidden = head_hidden[:-1]
+                    do_basis_dim = head_hidden[-1]
+                else:
+                    do_branch_hidden = [256, 256]
+                    do_basis_dim = 128
+                do_trunk_hidden = do_branch_hidden
+
+                if model_type == 'SpectralDeepONet':
+                    n_freqs = head_posenc.get('n_freqs', 10)
+                    scale = head_posenc.get('scale', 2.0)
+                    model = SpectralDeepONet(
+                        latent_dim=preset['latent_dim'],
+                        basis_dim=do_basis_dim,
+                        branch_hidden=do_branch_hidden,
+                        trunk_hidden=do_trunk_hidden,
+                        n_freqs=n_freqs,
+                        scale=scale,
+                        encoder_cfg=encoder_cfg,
+                    )
+                elif model_type == 'VanillaDeepONet':
+                    model = VanillaDeepONet(
+                        latent_dim=preset['latent_dim'],
+                        basis_dim=do_basis_dim,
+                        branch_hidden=do_branch_hidden,
+                        trunk_hidden=do_trunk_hidden,
+                        encoder_cfg=encoder_cfg,
+                    )
+                elif model_type == 'DenseNoFFT':
+                    model = DenseNoFFT(
+                        latent_dim=preset['latent_dim'],
+                        mlp_hidden=head_hidden,
+                        encoder_cfg=encoder_cfg,
+                    )
+                else:  # Point_DeepONet (legacy)
+                    basis_dim = head_hidden[-1] if head_hidden else 128
+                    model = ScaledDiagramDeepONet(
+                        latent_dim=preset['latent_dim'],
+                        basis_dim=basis_dim,
+                        head_hidden=head_hidden,
+                        encoder_cfg=encoder_cfg,
+                    )
+            else:
+                raise ValueError(f"Unknown model type: {model_type}")
 
     # Load state dict
     model.load_state_dict(ckpt['model_state'])
