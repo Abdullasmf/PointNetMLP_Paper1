@@ -326,6 +326,7 @@ def train(
     t0 = time.time()
     epochs_since_improve = 0
     start_epoch = 1
+    train_history: list = []
 
     # Resume from checkpoint if the file already exists
     if save_path is not None and Path(save_path).exists():
@@ -345,6 +346,7 @@ def train(
             f"Resumed: best_val={best_val:.6f}, start_epoch={start_epoch}, "
             f"epochs_since_improve={epochs_since_improve}"
         )
+        train_history = resume_ckpt.get("train_history", [])
 
     for epoch in range(start_epoch, epochs + 1):
         epoch_t0 = time.time()
@@ -486,6 +488,8 @@ def train(
             f"Epoch {epoch:03d} | train MSE: {train_loss:.6f} | val MSE: {val_loss:.6f} | val MSE(MPa^2): {val_loss_mpa:.3f} | R2(MPa): {r2_mpa:.4f} | lr: {scheduler.get_last_lr()[0]:.2e} | epoch: {epoch_dt:.1f}s"
         )
 
+        train_history.append({"epoch": epoch, "train_loss": train_loss, "val_loss": val_loss})
+
         # Checkpoint best
         if val_loss < (best_val - early_stopping_min_delta):
             best_val = val_loss
@@ -502,6 +506,7 @@ def train(
                     "stress_mean": stress_mean.cpu(),
                     "stress_std": stress_std.cpu(),
                     "epochs_since_improve": epochs_since_improve,
+                    "train_history": train_history,
                     "config": {
                         "epochs_trained": epoch,
                         "best_val": best_val,
