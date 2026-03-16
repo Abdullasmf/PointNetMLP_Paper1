@@ -15,7 +15,7 @@ import torch.optim as optim
 from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset, DataLoader
 
-from benchmarks import ScaledDiagramDeepONet
+from benchmarks import ArGEnTDeepONet
 
 project_dir = (
     os.path.dirname(os.path.abspath(__file__))
@@ -681,47 +681,28 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
     # Early stopping
     early_stopping_patience: int = 200
     early_stopping_min_delta: float = 0.0
-    # Architecture
-    latent_dim: int = int(_cfg["latent_dim"])  # encoder latent size
-    pre_hidden: List[int] = list(_cfg["pre_hidden"])  # pre-MLP on coords
-    sa_blocks: List[dict] = list(_cfg["sa_blocks"])  # set abstraction blocks
-    gf_hidden: List[int] = list(_cfg["gf_hidden"])  # global feature head
-    head_hidden: List[int] = list(_cfg["head_hidden"])  # MLP head sizes
+    # Architecture – ArGEnT DeepONet parameters
+    hidden_dim: int = int(_cfg.get("hidden_dim", 128))
+    num_heads: int = int(_cfg.get("num_heads", 4))
+    num_layers: int = int(_cfg.get("num_layers", 2))
+    output_dim: int = int(_cfg.get("output_dim", 128))
     # Optional human-readable model name (prefix for the file); set to None to use default
     model_name: Optional[str] = _cfg.get("model_name")
 
-    # Fourier positional encodings to enhance spatial/detail sensitivity
-    # Allow overriding positional encodings per preset; default to 4 freqs if unspecified
-    posenc = _cfg.get("posenc", {"n_freqs": 4, "scale": 1.0})
-    head_posenc = _cfg.get("head_posenc", {"n_freqs": 4, "scale": 1.0})
-
-    # Normalization/pooling flags (encoder + head). Defaults keep backward compatibility
-    enc_norm: str = str(_cfg.get("norm", "batch"))
-    enc_num_groups: int = int(_cfg.get("num_groups", 16))
-    enc_pool: str = str(_cfg.get("pool", "max"))  # 'max' | 'max+mean'
-    head_norm: str = str(_cfg.get("head_norm", "batch"))
-    head_dropout: float = float(_cfg.get("head_dropout", 0.0))
-
     # Save path (unique per-architecture; overwrites across runs for the same arch)
     arch_for_hash = {
-        "latent_dim": latent_dim,
-        "pre_hidden": pre_hidden,
-        "sa_blocks": sa_blocks,
-        "gf_hidden": gf_hidden,
-        "head_hidden": head_hidden,
-        "posenc": posenc,
-        "head_posenc": head_posenc,
-        "norm": enc_norm,
-        "num_groups": enc_num_groups,
-        "pool": enc_pool,
-        "head_norm": head_norm,
-        "head_dropout": head_dropout,
+        "hidden_dim": hidden_dim,
+        "num_heads": num_heads,
+        "num_layers": num_layers,
+        "output_dim": output_dim,
+        "attention_type": "cross",
+        "use_sdf": True,
     }
     arch_hash = hashlib.md5(
         json.dumps(arch_for_hash, sort_keys=True).encode("utf-8")
     ).hexdigest()[:8]
     save_dir = Path(project_dir, "Trained_models")
-    base_name = model_name if model_name else "pnmlp"
+    base_name = model_name if model_name else "argent_cross_wsdf"
     save_path = save_dir / f"{geom_prefix}{base_name}_{arch_hash}.pt"
 
     set_seed(42)
@@ -811,47 +792,19 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
     )
 
     # Build architecture config from flags
-    encoder_cfg = {
-        "latent_dim": latent_dim,
-        "pre_hidden": pre_hidden,
-        "sa_blocks": sa_blocks,
-        "gf_hidden": gf_hidden,
-        "posenc": posenc,
-        "head_posenc": head_posenc,
-        # new flags
-        "norm": enc_norm,
-        "num_groups": enc_num_groups,
-        "pool": enc_pool,
-        # SDF channel: PointNet++ branch and SIREN trunk both receive (x, y, sdf)
-        "sdf_ch": 1,
-    }
-
-
-# DeepONet Config extraction directly from JSON (_cfg)
-    default_basis_dim = head_hidden[-1] if len(head_hidden) > 0 else 128
-    do_basis_dim = int(_cfg.get("basis_dim", default_basis_dim))
-    do_post_mlp_hidden = list(_cfg.get("post_mlp_hidden", head_hidden))
-    
-    # Extract new FFM and Cross-Attention parameters
-    ffm_map_size = int(_cfg.get("ffm_mapping_size", 128))
-    ffm_sigma = float(_cfg.get("ffm_sigma_init", 2.0))
-    attn_heads = int(_cfg.get("cross_attention_heads", 4))
-    attn_temp = float(_cfg.get("attn_temp", 0.1))
-
     print(
-        "Building ScaledDiagramDeepONet with PointNet++ branch + SDF "
-        f"(ffm_size={ffm_map_size}, basis_dim={do_basis_dim}, heads={attn_heads}, attn_temp={attn_temp})."
+        f"Building ArGEnTDeepONet (cross-attention, with SDF): "
+        f"hidden_dim={hidden_dim}, num_heads={num_heads}, "
+        f"num_layers={num_layers}, output_dim={output_dim}."
     )
 
-    model = ScaledDiagramDeepONet(
-        latent_dim=latent_dim,
-        basis_dim=do_basis_dim,
-        head_hidden=do_post_mlp_hidden,
-        ffm_mapping_size=ffm_map_size,
-        ffm_sigma_init=ffm_sigma,
-        cross_attention_heads=attn_heads,
-        attn_temp=attn_temp,
-        encoder_cfg=encoder_cfg,
+    model = ArGEnTDeepONet(
+        hidden_dim=hidden_dim,
+        num_heads=num_heads,
+        num_layers=num_layers,
+        output_dim=output_dim,
+        attention_type="cross",
+        use_sdf=True,
     )
 
     n_param = sum(p.numel() for p in model.parameters())

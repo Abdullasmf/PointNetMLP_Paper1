@@ -517,3 +517,285 @@ class ScaledDiagramDeepONet(nn.Module):
         out = torch.sum(b_beta * t_beta, dim=-1, keepdim=True) + self.bias  # [B, Q, 1]
 
         return out
+
+# ===========================================================================
+# ArGEnT DeepONet  –  Galerkin linear attention operator network
+# Supports two variants:
+#   attention_type='cross', use_sdf=True   (ArGEnT cross-attention with SDF)
+#   attention_type='self',  use_sdf=False  (ArGEnT self-attention, no SDF)
+# ===========================================================================
+
+class _PointwiseMLP(nn.Module):
+    """Point-wise MLP: n_hidden hidden layers, hidden_dim neurons each, ReLU.
+
+    No batch normalization, no dropout.
+    Input: [..., in_dim]  →  Output: [..., hidden_dim]
+    """
+
+    def __init__(self, in_dim: int, hidden_dim: int, n_hidden: int = 4) -> None:
+        super().__init__()
+        layers: List[nn.Module] = [nn.Linear(in_dim, hidden_dim), nn.ReLU()]
+        for _ in range(n_hidden - 1):
+            layers.append(nn.Linear(hidden_dim, hidden_dim))
+            layers.append(nn.ReLU())
+        self.net = nn.Sequential(*layers)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        orig_shape = x.shape
+        out = self.net(x.reshape(-1, orig_shape[-1]))
+        return out.reshape(*orig_shape[:-1], out.shape[-1])
+
+
+class _GalerkinAttentionLayer(nn.Module):
+    """Single Galerkin-type linear attention layer with 2-D RoPE.
+
+    Formulation (per head):
+        K̃ = LayerNorm(K),  Ṽ = LayerNorm(V)
+        out = Q (K̃ᵀ Ṽ) / n
+    where n is the number of key / value elements.
+
+    Rotary Position Embeddings (RoPE) are applied to Q and K before attention.
+    No dropout anywhere.
+    """
+
+    def __init__(self, hidden_dim: int, num_heads: int) -> None:
+        super().__init__()
+        assert hidden_dim % num_heads == 0, (
+            f"hidden_dim ({hidden_dim}) must be divisible by num_heads ({num_heads})"
+        )
+        head_dim = hidden_dim // num_heads
+        assert head_dim % 4 == 0, (
+            f"head_dim ({head_dim}) must be divisible by 4 for 2-D RoPE"
+        )
+        self.hidden_dim = hidden_dim
+        self.num_heads = num_heads
+        self.head_dim = head_dim
+
+        self.q_proj = nn.Linear(hidden_dim, hidden_dim, bias=False)
+        self.k_proj = nn.Linear(hidden_dim, hidden_dim, bias=False)
+        self.v_proj = nn.Linear(hidden_dim, hidden_dim, bias=False)
+        self.out_proj = nn.Linear(hidden_dim, hidden_dim)
+
+        # Layer norms for Galerkin formulation (K̃, Ṽ)
+        self.k_norm = nn.LayerNorm(head_dim)
+        self.v_norm = nn.LayerNorm(head_dim)
+
+    def _apply_rope_2d(
+        self, x: torch.Tensor, coords: torch.Tensor
+    ) -> torch.Tensor:
+        """Apply 2-D Rotary Position Embeddings.
+
+        Args:
+            x      : [B, S, H, D]  (B=batch, S=seq len, H=heads, D=head_dim)
+            coords : [B, S, 2]     spatial (x, y) coordinates
+
+        Returns: rotated tensor of same shape.
+        """
+        B, S, H, D = x.shape
+        quarter_D = D // 4
+        device, dtype = x.device, x.dtype
+
+        i = torch.arange(quarter_D, device=device, dtype=dtype)
+        freq = 1.0 / (10000.0 ** (2.0 * i / quarter_D))  # [D/4]
+
+        # [B, S, D/4]
+        theta_x = coords[..., 0].unsqueeze(-1) * freq
+        theta_y = coords[..., 1].unsqueeze(-1) * freq
+
+        # [B, S, 1, D/4]  – broadcast over heads
+        cos_x, sin_x = theta_x.cos().unsqueeze(2), theta_x.sin().unsqueeze(2)
+        cos_y, sin_y = theta_y.cos().unsqueeze(2), theta_y.sin().unsqueeze(2)
+
+        # Split into four equal quarters
+        x1, x2 = x[..., :quarter_D], x[..., quarter_D: 2 * quarter_D]
+        x3, x4 = x[..., 2 * quarter_D: 3 * quarter_D], x[..., 3 * quarter_D:]
+
+        # First D/2: rotate with x-coordinate
+        x1_r = x1 * cos_x - x2 * sin_x
+        x2_r = x1 * sin_x + x2 * cos_x
+        # Second D/2: rotate with y-coordinate
+        x3_r = x3 * cos_y - x4 * sin_y
+        x4_r = x3 * sin_y + x4 * cos_y
+
+        return torch.cat([x1_r, x2_r, x3_r, x4_r], dim=-1)  # [B, S, H, D]
+
+    def forward(
+        self,
+        q_feat: torch.Tensor,
+        kv_feat: torch.Tensor,
+        q_coords: torch.Tensor,
+        kv_coords: torch.Tensor,
+    ) -> torch.Tensor:
+        """
+        Args:
+            q_feat   : [B, S_q,  hidden_dim]
+            kv_feat  : [B, S_kv, hidden_dim]
+            q_coords : [B, S_q,  2]
+            kv_coords: [B, S_kv, 2]
+        Returns: [B, S_q, hidden_dim]
+        """
+        B, S_q, _ = q_feat.shape
+        S_kv = kv_feat.shape[1]
+        H, D = self.num_heads, self.head_dim
+
+        # Project → [B, S, H, D]
+        Q = self.q_proj(q_feat).view(B, S_q, H, D)
+        K = self.k_proj(kv_feat).view(B, S_kv, H, D)
+        V = self.v_proj(kv_feat).view(B, S_kv, H, D)
+
+        # Apply 2-D RoPE to Q and K
+        Q = self._apply_rope_2d(Q, q_coords)
+        K = self._apply_rope_2d(K, kv_coords)
+
+        # Galerkin: normalise K and V
+        K_n = self.k_norm(K)  # [B, S_kv, H, D]
+        V_n = self.v_norm(V)  # [B, S_kv, H, D]
+
+        # Reshape to [B*H, S, D] for batched matmul
+        Q_bh = Q.permute(0, 2, 1, 3).reshape(B * H, S_q, D)
+        K_bh = K_n.permute(0, 2, 1, 3).reshape(B * H, S_kv, D)
+        V_bh = V_n.permute(0, 2, 1, 3).reshape(B * H, S_kv, D)
+
+        # KV = Kᵀ V / n  →  [B*H, D, D]
+        KV = torch.bmm(K_bh.transpose(-2, -1), V_bh) / S_kv
+
+        # out = Q KV  →  [B*H, S_q, D]
+        out = torch.bmm(Q_bh, KV)
+
+        # Merge heads → [B, S_q, hidden_dim]
+        out = out.view(B, H, S_q, D).permute(0, 2, 1, 3).reshape(B, S_q, H * D)
+        return self.out_proj(out)
+
+
+class ArGEnTDeepONet(nn.Module):
+    """ArGEnT DeepONet – Galerkin linear attention operator network.
+
+    Global structure (DeepONet):
+        Branch : point-wise MLP + global max-pool → basis coefficients  [B, output_dim]
+        Trunk  : ArGEnT attention layers + residual output MLP          [B, Q, output_dim]
+        Output : inner product of Branch and Trunk outputs + bias        [B, Q, 1]
+
+    Variants
+    --------
+    attention_type='cross', use_sdf=True
+        Geometric point cloud (x, y, sdf) provides Keys / Values.
+        Query coordinates (x, y, sdf) are projected as Queries.
+    attention_type='self', use_sdf=False
+        Query coordinates (x, y) only; Q = K = V from the same projected input.
+        Branch encodes geometry (x, y) via global max-pool.
+
+    All projector MLPs: 4 hidden layers, hidden_dim neurons, ReLU.
+    Residual output MLP: 3 hidden layers, hidden_dim neurons, ReLU.
+    Final per-path projection: Linear → Tanh → output_dim.
+    No dropout or batch normalization anywhere.
+    """
+
+    def __init__(
+        self,
+        hidden_dim: int = 128,
+        num_heads: int = 4,
+        num_layers: int = 2,
+        output_dim: int = 128,
+        attention_type: str = "cross",
+        use_sdf: bool = True,
+    ) -> None:
+        super().__init__()
+        assert hidden_dim % num_heads == 0
+        assert (hidden_dim // num_heads) % 4 == 0, (
+            f"head_dim ({hidden_dim // num_heads}) must be divisible by 4 for 2-D RoPE"
+        )
+
+        self.hidden_dim = hidden_dim
+        self.num_heads = num_heads
+        self.num_layers = num_layers
+        self.output_dim = output_dim
+        self.attention_type = attention_type
+        self.use_sdf = use_sdf
+
+        # Input channel counts
+        in_ch_geom = 3 if (attention_type == "cross" and use_sdf) else 2
+        in_ch_query = 3 if (attention_type == "cross" and use_sdf) else 2
+
+        # ── BRANCH: geometry → branch coefficients ─────────────────────────
+        self.branch_mlp = _PointwiseMLP(in_ch_geom, hidden_dim, n_hidden=4)
+        self.branch_proj = nn.Sequential(
+            nn.Linear(hidden_dim, output_dim),
+            nn.Tanh(),
+        )
+
+        # ── TRUNK (ArGEnT) ──────────────────────────────────────────────────
+        if attention_type == "cross":
+            self.kv_mlp = _PointwiseMLP(in_ch_geom, hidden_dim, n_hidden=4)
+            self.q_mlp = _PointwiseMLP(in_ch_query, hidden_dim, n_hidden=4)
+        else:  # self-attention
+            self.proj_mlp = _PointwiseMLP(in_ch_query, hidden_dim, n_hidden=4)
+
+        self.attn_layers = nn.ModuleList(
+            [_GalerkinAttentionLayer(hidden_dim, num_heads) for _ in range(num_layers)]
+        )
+
+        # Residual output MLP – 3 hidden layers
+        self.out_mlp = nn.Sequential(
+            nn.Linear(hidden_dim, hidden_dim), nn.ReLU(),
+            nn.Linear(hidden_dim, hidden_dim), nn.ReLU(),
+            nn.Linear(hidden_dim, hidden_dim), nn.ReLU(),
+        )
+
+        # Final projection: hidden_dim → output_dim with tanh
+        self.trunk_proj = nn.Sequential(
+            nn.Linear(hidden_dim, output_dim),
+            nn.Tanh(),
+        )
+
+        self.bias = nn.Parameter(torch.zeros(1))
+
+    # -----------------------------------------------------------------------
+    def get_arch(self) -> dict:
+        return {
+            "hidden_dim": self.hidden_dim,
+            "num_heads": self.num_heads,
+            "num_layers": self.num_layers,
+            "output_dim": self.output_dim,
+            "attention_type": self.attention_type,
+            "use_sdf": self.use_sdf,
+        }
+
+    def forward(
+        self,
+        geom_points: torch.Tensor,   # [B, N, in_ch_geom]
+        query_points: torch.Tensor,  # [B, Q, in_ch_query]
+    ) -> torch.Tensor:
+        """Returns [B, Q, 1]."""
+        B, N, _ = geom_points.shape
+        Q = query_points.shape[1]
+
+        # Spatial (x, y) coordinates for RoPE
+        geom_coords = geom_points[..., :2]   # [B, N, 2]
+        query_coords = query_points[..., :2]  # [B, Q, 2]
+
+        # ── BRANCH ──────────────────────────────────────────────────────────
+        geom_feat = self.branch_mlp(geom_points)   # [B, N, hidden_dim]
+        b = geom_feat.max(dim=1).values             # [B, hidden_dim]
+        b = self.branch_proj(b)                     # [B, output_dim]
+
+        # ── TRUNK ───────────────────────────────────────────────────────────
+        if self.attention_type == "cross":
+            kv = self.kv_mlp(geom_points)    # [B, N, hidden_dim]
+            q = self.q_mlp(query_points)     # [B, Q, hidden_dim]
+            for attn in self.attn_layers:
+                q = q + attn(q, kv, query_coords, geom_coords)
+        else:  # self-attention
+            q = self.proj_mlp(query_points)  # [B, Q, hidden_dim]
+            for attn in self.attn_layers:
+                q = q + attn(q, q, query_coords, query_coords)
+
+        # Residual output MLP
+        q = q + self.out_mlp(q.reshape(-1, self.hidden_dim)).view(B, Q, self.hidden_dim)
+
+        # Final projection
+        t = self.trunk_proj(q.reshape(-1, self.hidden_dim)).view(B, Q, self.output_dim)
+
+        # ── DEEPONET DOT PRODUCT ────────────────────────────────────────────
+        b_exp = b.unsqueeze(1)  # [B, 1, output_dim]
+        out = (b_exp * t).sum(dim=-1, keepdim=True) + self.bias  # [B, Q, 1]
+        return out
