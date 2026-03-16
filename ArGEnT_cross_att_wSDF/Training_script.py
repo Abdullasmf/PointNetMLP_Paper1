@@ -516,14 +516,20 @@ def train(
                 max_per_sample = target_stress.view(target_stress.shape[0], -1).max(dim=1, keepdim=True).values.unsqueeze(-1)  # [B,1,1]
                 stress_weights = 1.0 + 5.0 * (target_stress / (max_per_sample + 1e-8))  # [B,Kq,1]
                 
+                diff2 = (pred - target) ** 2
+
                 # Combine with duplicate weights if provided (batched_all duplicate adjustment)
                 if isinstance(weights, torch.Tensor):
                     combined_weights = weights * stress_weights
-                    diff2 = (pred - target) ** 2
-                    loss = (diff2 * combined_weights).mean()
+                    loss_unreduced = diff2 * combined_weights
                 else:
-                    diff2 = (pred - target) ** 2
-                    loss = (diff2 * stress_weights).mean()
+                    loss_unreduced = diff2 * stress_weights
+
+                # CRITICAL: Mask the loss to ignore padded nodes in the average
+                if pad_mask is not None:
+                    loss = (loss_unreduced * pad_mask.unsqueeze(-1)).sum() / pad_mask.sum().clamp(min=1)
+                else:
+                    loss = loss_unreduced.mean()
 
             scaler.scale(loss).backward()
             if grad_clip_norm is not None:
