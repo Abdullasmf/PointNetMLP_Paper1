@@ -7,6 +7,7 @@ from benchmarks import (
     VanillaDeepONet, SpectralDeepONet, DenseNoFFT,
     ScaledDiagramDeepONet, PointDeepONet, ScaledDiagramDeepONetFFMCAtt,
     ArGEnTDeepONet,
+    GINOT,
 )
 
 
@@ -124,6 +125,36 @@ def load_model_with_checkpoint(model_path, model_type, device='cpu'):
                     output_dim=int(preset.get("output_dim", 128)),
                     attention_type=attention_type,
                     use_sdf=use_sdf,
+                )
+
+        # ---- GINOT model ----
+        elif model_type == 'GINOT_noSDF':
+            if arch is not None:
+                # Use arch dict saved in checkpoint (most accurate)
+                model = GINOT(
+                    d_model=int(arch.get("d_model", 128)),
+                    num_encoder_cross_layers=int(arch.get("num_encoder_cross_layers", 2)),
+                    num_encoder_self_layers=int(arch.get("num_encoder_self_layers", 2)),
+                    num_decoder_layers=int(arch.get("num_decoder_layers", 2)),
+                    n_heads=int(arch.get("n_heads", 4)),
+                    n_s=int(arch.get("n_s", 128)),
+                    n_p=int(arch.get("n_p", 32)),
+                    radius=float(arch.get("radius", 0.15)),
+                    mlp_hidden_dims=list(arch.get("mlp_hidden_dims", [256, 256])),
+                )
+            else:
+                # Fallback: reconstruct from preset
+                d_model = int(preset.get("d_model", 128))
+                model = GINOT(
+                    d_model=d_model,
+                    num_encoder_cross_layers=int(preset.get("num_encoder_cross_layers", 2)),
+                    num_encoder_self_layers=int(preset.get("num_encoder_self_layers", 2)),
+                    num_decoder_layers=int(preset.get("num_decoder_layers", 2)),
+                    n_heads=int(preset.get("n_heads", 4)),
+                    n_s=int(preset.get("n_s", 128)),
+                    n_p=int(preset.get("n_p", 32)),
+                    radius=float(preset.get("radius", 0.15)),
+                    mlp_hidden_dims=list(preset.get("mlp_hidden_dims", [d_model * 2, d_model * 2])),
                 )
 
         else:
