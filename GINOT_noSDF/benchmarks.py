@@ -833,10 +833,10 @@ class ArGEnTDeepONet(nn.Module):
 
 
 class _GINOTAttentionBlock(nn.Module):
-    """Pre-norm Transformer block supporting both self- and cross-attention.
+    """Post-norm Transformer block supporting both self- and cross-attention.
 
-    For cross-attention, kv is provided externally (encoder output).
-    For self-attention, kv is None (uses q as kv).
+    For cross-attention, k and v are provided externally (encoder output).
+    For self-attention, k and v are None (uses q as both key and value).
 
     Uses standard softmax attention (not Galerkin linear attention) so that
     key_padding_mask can force padded positions to -inf.
@@ -859,19 +859,19 @@ class _GINOTAttentionBlock(nn.Module):
     def forward(
         self,
         q: torch.Tensor,                            # [B, Sq, d_model]
-        kv: Optional[torch.Tensor] = None,          # [B, Skv, d_model] or None (self-attn)
+        k: Optional[torch.Tensor] = None,           # [B, Skv, d_model] or None (self-attn)
+        v: Optional[torch.Tensor] = None,           # [B, Skv, d_model] or None (self-attn)
         key_padding_mask: Optional[torch.Tensor] = None,  # [B, Skv] True=ignore
     ) -> torch.Tensor:
         """Returns [B, Sq, d_model]."""
-        if kv is None:
-            kv = q  # self-attention
-        q_norm = self.norm1(q)
-        # For cross-attention the key and value come from kv; we use kv without
-        # additional normalisation so the encoder projections are preserved.
-        attn_out, _ = self.attn(q_norm, kv, kv, key_padding_mask=key_padding_mask)
-        q = q + attn_out
-        q = q + self.ff(self.norm2(q))
-        return q
+        if k is None:
+            k = q  # self-attention
+        if v is None:
+            v = q  # self-attention
+        attn_out, _ = self.attn(q, k, v, key_padding_mask=key_padding_mask)
+        x = self.norm1(q + attn_out)
+        x = self.norm2(x + self.ff(x))
+        return x
 
 
 class GINOTGeometryEncoder(nn.Module):
@@ -955,7 +955,6 @@ class GINOTGeometryEncoder(nn.Module):
     ) -> Tuple[torch.Tensor, torch.Tensor]:
         """Returns (enc_k, enc_v) each of shape [B, Ns, d_model]."""
         B, N, d = geom_points.shape
-        n_s = self.n_s
 
         # ------------------------------------------------------------------
         # 1. Global feature map via NeRF posenc + linear projection
@@ -965,14 +964,20 @@ class GINOTGeometryEncoder(nn.Module):
 
         # ------------------------------------------------------------------
         # 2. Farthest Point Sampling -> Ns centroid indices
+        #    Skip FPS when n_s <= 0 or n_s >= N (use all points as centroids)
         # ------------------------------------------------------------------
-        fps_idx = farthest_point_sampling(geom_points, n_s)  # [B, n_s]
-        # Gather centroid coordinates
-        centroids = torch.gather(
-            geom_points,
-            1,
-            fps_idx.unsqueeze(-1).expand(-1, -1, d),
-        )  # [B, n_s, d_in]
+        if self.n_s <= 0 or self.n_s >= N:
+            effective_n_s = N
+            centroids = geom_points  # [B, N, d_in]
+        else:
+            effective_n_s = self.n_s
+            fps_idx = farthest_point_sampling(geom_points, effective_n_s)  # [B, n_s]
+            # Gather centroid coordinates
+            centroids = torch.gather(
+                geom_points,
+                1,
+                fps_idx.unsqueeze(-1).expand(-1, -1, d),
+            )  # [B, n_s, d_in]
 
         # ------------------------------------------------------------------
         # 3. Ball-query grouping
@@ -984,7 +989,7 @@ class GINOTGeometryEncoder(nn.Module):
         # 4. Index global features + concat relative coords -> MLP -> max pool
         # ------------------------------------------------------------------
         # Expand global_feat for gathering: [B, N, d_model] -> [B, n_s, N, d_model]
-        gf_exp = global_feat.unsqueeze(1).expand(B, n_s, N, self.d_model)
+        gf_exp = global_feat.unsqueeze(1).expand(B, effective_n_s, N, self.d_model)
         # Gather neighbour features: [B, n_s, n_p, d_model]
         grouped_feat = torch.gather(
             gf_exp,
@@ -993,7 +998,7 @@ class GINOTGeometryEncoder(nn.Module):
         )
 
         # Gather neighbour coordinates for relative offset: [B, n_s, n_p, d_in]
-        gp_exp = geom_points.unsqueeze(1).expand(B, n_s, N, d)
+        gp_exp = geom_points.unsqueeze(1).expand(B, effective_n_s, N, d)
         grouped_xyz = torch.gather(
             gp_exp,
             2,
@@ -1005,9 +1010,9 @@ class GINOTGeometryEncoder(nn.Module):
         group_input = torch.cat([grouped_feat, rel_xyz], dim=-1)
 
         # Flatten, apply MLP, reshape
-        group_flat = group_input.reshape(B * n_s * self.n_p, self.d_model + d)
+        group_flat = group_input.reshape(B * effective_n_s * self.n_p, self.d_model + d)
         group_feat_out = self.group_mlp(group_flat)  # [B*n_s*n_p, d_model]
-        group_feat_out = group_feat_out.view(B, n_s, self.n_p, self.d_model)
+        group_feat_out = group_feat_out.view(B, effective_n_s, self.n_p, self.d_model)
 
         # Mask out invalid (padded) neighbours before max-pool
         knn_mask_exp = knn_mask.unsqueeze(-1)  # [B, n_s, n_p, 1]
@@ -1030,7 +1035,7 @@ class GINOTGeometryEncoder(nn.Module):
 
         x = local_feat  # [B, n_s, d_model]
         for block in self.cross_attn_blocks:
-            x = block(x, kv=global_feat, key_padding_mask=kv_pad_mask)
+            x = block(x, k=global_feat, v=global_feat, key_padding_mask=kv_pad_mask)
 
         # ------------------------------------------------------------------
         # 6. Self-attention blocks on the Ns centroid tokens
@@ -1122,16 +1127,11 @@ class GINOTDecoder(nn.Module):
 
         # ------------------------------------------------------------------
         # 2. Cross-attention blocks using encoder K and V
-        #    Each block: pre-norm -> attn(Q, enc_k, enc_v) -> residual -> FFN
+        #    Each block: (attn(Q, enc_k, enc_v) + residual) -> norm1 -> (FFN + residual) -> norm2
         # ------------------------------------------------------------------
         x = q
         for block in self.cross_attn_blocks:
-            # Pre-norm on the query side only
-            x_norm = block.norm1(x)
-            # Use separate enc_k and enc_v as key and value respectively
-            attn_out, _ = block.attn(x_norm, enc_k, enc_v)
-            x = x + attn_out
-            x = x + block.ff(block.norm2(x))
+            x = block(x, k=enc_k, v=enc_v)
 
         # ------------------------------------------------------------------
         # 3. Output MLP
