@@ -952,8 +952,8 @@ class GINOTGeometryEncoder(nn.Module):
         self,
         geom_points: torch.Tensor,           # [B, N, d_in]
         mask: Optional[torch.Tensor] = None, # [B, N] bool, True=real point
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
-        """Returns (enc_k, enc_v) each of shape [B, Ns, d_model]."""
+    ) -> Tuple[torch.Tensor, torch.Tensor, Optional[torch.Tensor]]:
+        """Returns (enc_k, enc_v, centroid_mask) each of shape [B, Ns, d_model] / [B, Ns]."""
         B, N, d = geom_points.shape
 
         # ------------------------------------------------------------------
@@ -979,14 +979,16 @@ class GINOTGeometryEncoder(nn.Module):
         if effective_n_s <= 0 or effective_n_s >= N:
             effective_n_s = N
             centroids = geom_points  # [B, N, d_in]
+            centroid_mask = mask
         else:
-            fps_idx = farthest_point_sampling(geom_points, effective_n_s)  # [B, n_s]
+            fps_idx = farthest_point_sampling(geom_points, effective_n_s, mask=mask)  # [B, n_s]
             # Gather centroid coordinates
             centroids = torch.gather(
                 geom_points,
                 1,
                 fps_idx.unsqueeze(-1).expand(-1, -1, d),
             )  # [B, n_s, d_in]
+            centroid_mask = torch.gather(mask, 1, fps_idx) if mask is not None else None
 
         # ------------------------------------------------------------------
         # 3. Ball-query grouping
@@ -1048,11 +1050,9 @@ class GINOTGeometryEncoder(nn.Module):
 
         # ------------------------------------------------------------------
         # 6. Self-attention blocks on the Ns centroid tokens
-        #    When FPS is bypassed (effective_n_s == N), the centroid tokens
-        #    include padded dummy points, so we must pass the mask to avoid
-        #    contaminating the latent space.
+        #    Use the centroid mask to avoid attending to padded centroid tokens.
         # ------------------------------------------------------------------
-        sa_pad_mask = kv_pad_mask if effective_n_s == N else None
+        sa_pad_mask = ~centroid_mask if centroid_mask is not None else None
         for block in self.self_attn_blocks:
             x = block(x, key_padding_mask=sa_pad_mask)
 
@@ -1062,7 +1062,7 @@ class GINOTGeometryEncoder(nn.Module):
         enc_k = self.k_out(x)  # [B, n_s, d_model]
         enc_v = self.v_out(x)  # [B, n_s, d_model]
 
-        return enc_k, enc_v
+        return enc_k, enc_v, centroid_mask
 
 
 class GINOTDecoder(nn.Module):
@@ -1292,7 +1292,7 @@ class GINOT(nn.Module):
         Tensor [B, Nq, d_out]
         """
         # Encode geometry
-        enc_k, enc_v = self.encoder(geom_points, mask=mask)  # [B, Ns, d_model] each
+        enc_k, enc_v, centroid_mask = self.encoder(geom_points, mask=mask)  # [B, Ns, d_model] each
 
         # Determine query mask: only applicable when geom and query are co-padded
         # (same sequence length), which is always the case in batched_all training.
@@ -1300,11 +1300,8 @@ class GINOT(nn.Module):
         if mask is not None and geom_points.shape[1] == query_points.shape[1]:
             query_mask = mask
 
-        # Only pass encoder key_padding_mask when encoder sequence length matches
-        # the original mask length (e.g. FPS bypass path using all points).
-        enc_pad_mask: Optional[torch.Tensor] = None
-        if mask is not None and enc_k.shape[1] == mask.shape[1]:
-            enc_pad_mask = ~mask  # True means "ignore this padded point"
+        # Build encoder key_padding_mask from the centroid mask returned by the encoder.
+        enc_pad_mask = ~centroid_mask if centroid_mask is not None else None
 
         # Decode at query locations
         out = self.decoder(
