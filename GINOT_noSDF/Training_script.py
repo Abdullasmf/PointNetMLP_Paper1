@@ -15,7 +15,7 @@ import torch.optim as optim
 from sklearn.model_selection import train_test_split
 from torch.utils.data import Dataset, DataLoader
 
-from benchmarks import ArGEnTDeepONet
+from benchmarks import GINOT
 
 project_dir = (
     os.path.dirname(os.path.abspath(__file__))
@@ -676,22 +676,30 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
     # Early stopping
     early_stopping_patience: int = 200
     early_stopping_min_delta: float = 0.0
-    # Architecture – ArGEnT DeepONet parameters
-    hidden_dim: int = int(_cfg.get("hidden_dim", 128))
-    num_heads: int = int(_cfg.get("num_heads", 4))
-    num_layers: int = int(_cfg.get("num_layers", 2))
-    output_dim: int = int(_cfg.get("output_dim", 128))
+    # Architecture – GINOT parameters
+    d_model: int = int(_cfg.get("d_model", 128))
+    num_encoder_cross_layers: int = int(_cfg.get("num_encoder_cross_layers", 2))
+    num_encoder_self_layers: int = int(_cfg.get("num_encoder_self_layers", 2))
+    num_decoder_layers: int = int(_cfg.get("num_decoder_layers", 2))
+    n_heads: int = int(_cfg.get("n_heads", 4))
+    n_s: int = int(_cfg.get("n_s", 128))
+    n_p: int = int(_cfg.get("n_p", 32))
+    radius: float = float(_cfg.get("radius", 0.1))
+    mlp_hidden_dims: List[int] = list(_cfg.get("mlp_hidden_dims", [d_model * 2, d_model * 2]))
     # Optional human-readable model name (prefix for the file); set to None to use default
     model_name: Optional[str] = _cfg.get("model_name")
 
     # Save path (unique per-architecture; overwrites across runs for the same arch)
     arch_for_hash = {
-        "hidden_dim": hidden_dim,
-        "num_heads": num_heads,
-        "num_layers": num_layers,
-        "output_dim": output_dim,
-        "attention_type": "self",
-        "use_sdf": False,
+        "d_model": d_model,
+        "num_encoder_cross_layers": num_encoder_cross_layers,
+        "num_encoder_self_layers": num_encoder_self_layers,
+        "num_decoder_layers": num_decoder_layers,
+        "n_heads": n_heads,
+        "n_s": n_s,
+        "n_p": n_p,
+        "radius": radius,
+        "mlp_hidden_dims": mlp_hidden_dims,
     }
     arch_hash = hashlib.md5(
         json.dumps(arch_for_hash, sort_keys=True).encode("utf-8")
@@ -785,18 +793,24 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
 
     # Build architecture config from flags
     print(
-        f"Building ArGEnTDeepONet (self-attention, no SDF): "
-        f"hidden_dim={hidden_dim}, num_heads={num_heads}, "
-        f"num_layers={num_layers}, output_dim={output_dim}."
+        f"Building GINOT: "
+        f"d_model={d_model}, n_heads={n_heads}, "
+        f"num_encoder_cross_layers={num_encoder_cross_layers}, "
+        f"num_encoder_self_layers={num_encoder_self_layers}, "
+        f"num_decoder_layers={num_decoder_layers}, "
+        f"n_s={n_s}, n_p={n_p}, radius={radius}."
     )
 
-    model = ArGEnTDeepONet(
-        hidden_dim=hidden_dim,
-        num_heads=num_heads,
-        num_layers=num_layers,
-        output_dim=output_dim,
-        attention_type="self",
-        use_sdf=False,
+    model = GINOT(
+        d_model=d_model,
+        num_encoder_cross_layers=num_encoder_cross_layers,
+        num_encoder_self_layers=num_encoder_self_layers,
+        num_decoder_layers=num_decoder_layers,
+        n_heads=n_heads,
+        n_s=n_s,
+        n_p=n_p,
+        radius=radius,
+        mlp_hidden_dims=mlp_hidden_dims,
     )
 
     n_param = sum(p.numel() for p in model.parameters())

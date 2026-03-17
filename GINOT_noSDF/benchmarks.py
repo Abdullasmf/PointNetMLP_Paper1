@@ -1,10 +1,10 @@
 import torch
 import torch.nn as nn
 import math
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Tuple
 
 # Import necessary components from pn_models
-from pn_models import PointNet2Encoder2D, MLP
+from pn_models import PointNet2Encoder2D, MLP, farthest_point_sampling, ball_query
 
 class FourierFeatures(nn.Module):
     """Fourier positional encoding for 2D inputs.
@@ -810,4 +810,482 @@ class ArGEnTDeepONet(nn.Module):
         # Zero out padded positions in the final output
         if mask is not None:
             out = out * mask.unsqueeze(-1).to(out.dtype)
+        return out
+
+
+# ===========================================================================
+# GINOT – Geometry-Informed Neural Operator with Transformers
+#
+# Architecture:
+#   1. GINOTGeometryEncoder: encodes boundary point cloud into latent K and V
+#      - FPS + ball query grouping
+#      - NeRF positional encoding + local feature aggregation
+#      - Cross-attention (local features as Q, global features as K/V)
+#      - Self-attention refinement
+#
+#   2. GINOTDecoder: decodes query points into solution field
+#      - NeRF positional encoding + MLP -> Q matrix
+#      - Cross-attention using encoder K and V
+#      - Output MLP -> scalar prediction
+#
+#   3. GINOT: top-level class combining encoder and decoder
+# ===========================================================================
+
+
+class _GINOTAttentionBlock(nn.Module):
+    """Pre-norm Transformer block supporting both self- and cross-attention.
+
+    For cross-attention, kv is provided externally (encoder output).
+    For self-attention, kv is None (uses q as kv).
+
+    Uses standard softmax attention (not Galerkin linear attention) so that
+    key_padding_mask can force padded positions to -inf.
+    """
+
+    def __init__(self, d_model: int, n_heads: int) -> None:
+        super().__init__()
+        assert d_model % n_heads == 0, (
+            f"d_model ({d_model}) must be divisible by n_heads ({n_heads})"
+        )
+        self.attn = nn.MultiheadAttention(d_model, n_heads, batch_first=True)
+        self.norm1 = nn.LayerNorm(d_model)
+        self.norm2 = nn.LayerNorm(d_model)
+        self.ff = nn.Sequential(
+            nn.Linear(d_model, d_model * 4),
+            nn.GELU(),
+            nn.Linear(d_model * 4, d_model),
+        )
+
+    def forward(
+        self,
+        q: torch.Tensor,                            # [B, Sq, d_model]
+        kv: Optional[torch.Tensor] = None,          # [B, Skv, d_model] or None (self-attn)
+        key_padding_mask: Optional[torch.Tensor] = None,  # [B, Skv] True=ignore
+    ) -> torch.Tensor:
+        """Returns [B, Sq, d_model]."""
+        if kv is None:
+            kv = q  # self-attention
+        q_norm = self.norm1(q)
+        # For cross-attention the key and value come from kv; we use kv without
+        # additional normalisation so the encoder projections are preserved.
+        attn_out, _ = self.attn(q_norm, kv, kv, key_padding_mask=key_padding_mask)
+        q = q + attn_out
+        q = q + self.ff(self.norm2(q))
+        return q
+
+
+class GINOTGeometryEncoder(nn.Module):
+    """GINOT Geometry Encoder.
+
+    Encodes a (possibly padded) boundary point cloud into latent KEY and VALUE
+    matrices of shape B x Ns x d_model for use by the decoder.
+
+    Steps
+    -----
+    1. Apply NeRF positional encoding + linear projection to every point
+       -> global feature map  [B, N, d_model]
+    2. Farthest Point Sampling -> Ns centroid indices  [B, Ns]
+    3. Ball-query grouping around each centroid -> [B, Ns, Np, ...]
+    4. Index global feature map with group indices, concatenate relative
+       coordinates, pass through MLP, max-pool over Np
+       -> local aggregated features  [B, Ns, d_model]
+    5. num_encoder_cross_layers Cross-Attention blocks:
+       Q = local features, K = V = global features
+       (padded global points masked out via key_padding_mask)
+    6. num_encoder_self_layers Self-Attention blocks on the result
+    7. Linear projections -> encoder K and V  [B, Ns, d_model]
+    """
+
+    def __init__(
+        self,
+        d_in: int = 2,
+        d_model: int = 128,
+        n_s: int = 128,
+        n_p: int = 32,
+        radius: float = 0.1,
+        n_heads: int = 4,
+        num_cross_layers: int = 2,
+        num_self_layers: int = 2,
+        n_freqs: int = 6,
+        mlp_hidden_dims: Optional[List[int]] = None,
+    ) -> None:
+        super().__init__()
+        if mlp_hidden_dims is None:
+            mlp_hidden_dims = [d_model * 2, d_model * 2]
+
+        self.n_s = n_s
+        self.n_p = n_p
+        self.radius = radius
+        self.d_model = d_model
+
+        # NeRF positional encoding (FourierFeatures already defined in this module)
+        self.posenc = FourierFeatures(n_freqs=n_freqs, scale=1.0, include_input=True)
+        posenc_dim = self.posenc.out_dim  # 2 + n_freqs * 4
+
+        # Linear projection: posenc_dim -> d_model  (global feature map)
+        self.feat_proj = nn.Linear(posenc_dim, d_model)
+
+        # MLP for group aggregation: (d_model + d_in) per neighbour -> d_model
+        self.group_mlp = MLP(
+            in_dim=d_model + d_in,
+            hidden=mlp_hidden_dims,
+            out_dim=d_model,
+            act=nn.GELU,
+            norm="layer",
+        )
+
+        # Cross-attention blocks: local features (Q) x global features (K, V)
+        self.cross_attn_blocks = nn.ModuleList(
+            [_GINOTAttentionBlock(d_model, n_heads) for _ in range(num_cross_layers)]
+        )
+
+        # Self-attention blocks on the Ns centroid tokens
+        self.self_attn_blocks = nn.ModuleList(
+            [_GINOTAttentionBlock(d_model, n_heads) for _ in range(num_self_layers)]
+        )
+
+        # Output linear projections -> encoder K and V
+        self.k_out = nn.Linear(d_model, d_model)
+        self.v_out = nn.Linear(d_model, d_model)
+
+    def forward(
+        self,
+        geom_points: torch.Tensor,           # [B, N, d_in]
+        mask: Optional[torch.Tensor] = None, # [B, N] bool, True=real point
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        """Returns (enc_k, enc_v) each of shape [B, Ns, d_model]."""
+        B, N, d = geom_points.shape
+        n_s = self.n_s
+
+        # ------------------------------------------------------------------
+        # 1. Global feature map via NeRF posenc + linear projection
+        # ------------------------------------------------------------------
+        posenc_out = self.posenc(geom_points)          # [B, N, posenc_dim]
+        global_feat = self.feat_proj(posenc_out)        # [B, N, d_model]
+
+        # ------------------------------------------------------------------
+        # 2. Farthest Point Sampling -> Ns centroid indices
+        # ------------------------------------------------------------------
+        fps_idx = farthest_point_sampling(geom_points, n_s)  # [B, n_s]
+        # Gather centroid coordinates
+        centroids = torch.gather(
+            geom_points,
+            1,
+            fps_idx.unsqueeze(-1).expand(-1, -1, d),
+        )  # [B, n_s, d_in]
+
+        # ------------------------------------------------------------------
+        # 3. Ball-query grouping
+        # ------------------------------------------------------------------
+        # knn_idx: [B, n_s, n_p]  knn_mask: [B, n_s, n_p] True=valid
+        knn_idx, knn_mask = ball_query(geom_points, centroids, self.radius, self.n_p)
+
+        # ------------------------------------------------------------------
+        # 4. Index global features + concat relative coords -> MLP -> max pool
+        # ------------------------------------------------------------------
+        # Expand global_feat for gathering: [B, N, d_model] -> [B, n_s, N, d_model]
+        gf_exp = global_feat.unsqueeze(1).expand(B, n_s, N, self.d_model)
+        # Gather neighbour features: [B, n_s, n_p, d_model]
+        grouped_feat = torch.gather(
+            gf_exp,
+            2,
+            knn_idx.unsqueeze(-1).expand(-1, -1, -1, self.d_model),
+        )
+
+        # Gather neighbour coordinates for relative offset: [B, n_s, n_p, d_in]
+        gp_exp = geom_points.unsqueeze(1).expand(B, n_s, N, d)
+        grouped_xyz = torch.gather(
+            gp_exp,
+            2,
+            knn_idx.unsqueeze(-1).expand(-1, -1, -1, d),
+        )
+        rel_xyz = grouped_xyz - centroids.unsqueeze(2)  # [B, n_s, n_p, d_in]
+
+        # Concatenate: [B, n_s, n_p, d_model + d_in]
+        group_input = torch.cat([grouped_feat, rel_xyz], dim=-1)
+
+        # Flatten, apply MLP, reshape
+        group_flat = group_input.reshape(B * n_s * self.n_p, self.d_model + d)
+        group_feat_out = self.group_mlp(group_flat)  # [B*n_s*n_p, d_model]
+        group_feat_out = group_feat_out.view(B, n_s, self.n_p, self.d_model)
+
+        # Mask out invalid (padded) neighbours before max-pool
+        knn_mask_exp = knn_mask.unsqueeze(-1)  # [B, n_s, n_p, 1]
+        group_feat_out = group_feat_out.masked_fill(~knn_mask_exp, float("-inf"))
+
+        # Max-pool over Np dimension -> [B, n_s, d_model]
+        local_feat = group_feat_out.max(dim=2).values
+
+        # Guard against all-invalid groups (shouldn't happen in practice)
+        local_feat = torch.nan_to_num(local_feat, nan=0.0, posinf=0.0, neginf=0.0)
+
+        # ------------------------------------------------------------------
+        # 5. Cross-attention blocks: Q=local_feat, K=V=global_feat
+        #    key_padding_mask: True for padded positions (format expected by
+        #    nn.MultiheadAttention with key_padding_mask)
+        # ------------------------------------------------------------------
+        kv_pad_mask: Optional[torch.Tensor] = None
+        if mask is not None:
+            kv_pad_mask = ~mask  # [B, N] True = padded = should be ignored
+
+        x = local_feat  # [B, n_s, d_model]
+        for block in self.cross_attn_blocks:
+            x = block(x, kv=global_feat, key_padding_mask=kv_pad_mask)
+
+        # ------------------------------------------------------------------
+        # 6. Self-attention blocks on the Ns centroid tokens
+        # ------------------------------------------------------------------
+        for block in self.self_attn_blocks:
+            x = block(x)  # no key_padding_mask; centroids are never padded
+
+        # ------------------------------------------------------------------
+        # 7. Output projections -> encoder K and V
+        # ------------------------------------------------------------------
+        enc_k = self.k_out(x)  # [B, n_s, d_model]
+        enc_v = self.v_out(x)  # [B, n_s, d_model]
+
+        return enc_k, enc_v
+
+
+class GINOTDecoder(nn.Module):
+    """GINOT Solution Decoder.
+
+    Decodes query point locations into solution values using the latent
+    KEY and VALUE matrices produced by GINOTGeometryEncoder.
+
+    Steps
+    -----
+    1. NeRF positional encoding + MLP -> Q matrix  [B, Nq, d_model]
+    2. num_decoder_layers Cross-Attention blocks using encoder K and V
+    3. Output MLP -> solution field  [B, Nq, d_out]
+    """
+
+    def __init__(
+        self,
+        d_in: int = 2,
+        d_model: int = 128,
+        d_out: int = 1,
+        n_heads: int = 4,
+        num_layers: int = 2,
+        n_freqs: int = 6,
+        mlp_hidden_dims: Optional[List[int]] = None,
+    ) -> None:
+        super().__init__()
+        if mlp_hidden_dims is None:
+            mlp_hidden_dims = [d_model * 2, d_model * 2]
+
+        self.d_model = d_model
+
+        # NeRF positional encoding for query points
+        self.posenc = FourierFeatures(n_freqs=n_freqs, scale=1.0, include_input=True)
+        posenc_dim = self.posenc.out_dim
+
+        # MLP: posenc_dim -> d_model  (query projection)
+        self.query_mlp = MLP(
+            in_dim=posenc_dim,
+            hidden=mlp_hidden_dims,
+            out_dim=d_model,
+            act=nn.GELU,
+            norm="layer",
+        )
+
+        # Cross-attention blocks
+        self.cross_attn_blocks = nn.ModuleList(
+            [_GINOTAttentionBlock(d_model, n_heads) for _ in range(num_layers)]
+        )
+
+        # Output MLP: d_model -> d_out
+        self.out_mlp = MLP(
+            in_dim=d_model,
+            hidden=mlp_hidden_dims,
+            out_dim=d_out,
+            act=nn.GELU,
+            norm="layer",
+        )
+
+    def forward(
+        self,
+        query_points: torch.Tensor,          # [B, Nq, d_in]
+        enc_k: torch.Tensor,                 # [B, Ns, d_model]  encoder K
+        enc_v: torch.Tensor,                 # [B, Ns, d_model]  encoder V
+        query_mask: Optional[torch.Tensor] = None,  # [B, Nq] True=real
+    ) -> torch.Tensor:
+        """Returns [B, Nq, d_out]."""
+        B, Nq, _ = query_points.shape
+
+        # ------------------------------------------------------------------
+        # 1. Query projection: posenc + MLP -> Q matrix
+        # ------------------------------------------------------------------
+        posenc_out = self.posenc(query_points)           # [B, Nq, posenc_dim]
+        q_flat = posenc_out.reshape(B * Nq, -1)
+        q = self.query_mlp(q_flat).view(B, Nq, self.d_model)  # [B, Nq, d_model]
+
+        # ------------------------------------------------------------------
+        # 2. Cross-attention blocks using encoder K and V
+        #    Each block: pre-norm -> attn(Q, enc_k, enc_v) -> residual -> FFN
+        # ------------------------------------------------------------------
+        x = q
+        for block in self.cross_attn_blocks:
+            # Pre-norm on the query side only
+            x_norm = block.norm1(x)
+            # Use separate enc_k and enc_v as key and value respectively
+            attn_out, _ = block.attn(x_norm, enc_k, enc_v)
+            x = x + attn_out
+            x = x + block.ff(block.norm2(x))
+
+        # ------------------------------------------------------------------
+        # 3. Output MLP
+        # ------------------------------------------------------------------
+        x_flat = x.reshape(B * Nq, -1)
+        out = self.out_mlp(x_flat).view(B, Nq, -1)  # [B, Nq, d_out]
+
+        # Zero out padded query positions in the output
+        if query_mask is not None:
+            out = out * query_mask.unsqueeze(-1).to(out.dtype)
+
+        return out
+
+
+class GINOT(nn.Module):
+    """Geometry-Informed Neural Operator with Transformers (GINOT).
+
+    Combines GINOTGeometryEncoder and GINOTDecoder.
+
+    Parameters
+    ----------
+    d_model : int
+        Model/hidden dimension (used throughout encoder and decoder).
+    num_encoder_cross_layers : int
+        Number of cross-attention blocks in the geometry encoder.
+    num_encoder_self_layers : int
+        Number of self-attention blocks in the geometry encoder.
+    num_decoder_layers : int
+        Number of cross-attention blocks in the solution decoder.
+    n_heads : int
+        Number of attention heads.
+    n_s : int
+        Number of FPS centroids (encoder output tokens).
+    n_p : int
+        Maximum number of neighbours per centroid (ball query).
+    radius : float
+        Ball-query radius.
+    mlp_hidden_dims : list of int, optional
+        Hidden dimensions for all internal MLPs.  Defaults to
+        [d_model*2, d_model*2] when None.
+    d_in : int
+        Spatial dimension of the input point cloud (default 2 for 2-D).
+    d_out : int
+        Output solution dimension (default 1 for scalar stress).
+    n_freqs : int
+        Number of NeRF positional encoding frequency bands.
+    """
+
+    def __init__(
+        self,
+        d_model: int = 128,
+        num_encoder_cross_layers: int = 2,
+        num_encoder_self_layers: int = 2,
+        num_decoder_layers: int = 2,
+        n_heads: int = 4,
+        n_s: int = 128,
+        n_p: int = 32,
+        radius: float = 0.1,
+        mlp_hidden_dims: Optional[List[int]] = None,
+        d_in: int = 2,
+        d_out: int = 1,
+        n_freqs: int = 6,
+    ) -> None:
+        super().__init__()
+        if mlp_hidden_dims is None:
+            mlp_hidden_dims = [d_model * 2, d_model * 2]
+
+        # Store all hyperparameters for get_arch()
+        self._d_model = d_model
+        self._num_encoder_cross_layers = num_encoder_cross_layers
+        self._num_encoder_self_layers = num_encoder_self_layers
+        self._num_decoder_layers = num_decoder_layers
+        self._n_heads = n_heads
+        self._n_s = n_s
+        self._n_p = n_p
+        self._radius = radius
+        self._mlp_hidden_dims = list(mlp_hidden_dims)
+        self._d_in = d_in
+        self._d_out = d_out
+        self._n_freqs = n_freqs
+
+        self.encoder = GINOTGeometryEncoder(
+            d_in=d_in,
+            d_model=d_model,
+            n_s=n_s,
+            n_p=n_p,
+            radius=radius,
+            n_heads=n_heads,
+            num_cross_layers=num_encoder_cross_layers,
+            num_self_layers=num_encoder_self_layers,
+            n_freqs=n_freqs,
+            mlp_hidden_dims=mlp_hidden_dims,
+        )
+
+        self.decoder = GINOTDecoder(
+            d_in=d_in,
+            d_model=d_model,
+            d_out=d_out,
+            n_heads=n_heads,
+            num_layers=num_decoder_layers,
+            n_freqs=n_freqs,
+            mlp_hidden_dims=mlp_hidden_dims,
+        )
+
+    def get_arch(self) -> dict:
+        return {
+            "d_model": self._d_model,
+            "num_encoder_cross_layers": self._num_encoder_cross_layers,
+            "num_encoder_self_layers": self._num_encoder_self_layers,
+            "num_decoder_layers": self._num_decoder_layers,
+            "n_heads": self._n_heads,
+            "n_s": self._n_s,
+            "n_p": self._n_p,
+            "radius": self._radius,
+            "mlp_hidden_dims": self._mlp_hidden_dims,
+            "d_in": self._d_in,
+            "d_out": self._d_out,
+            "n_freqs": self._n_freqs,
+        }
+
+    def forward(
+        self,
+        geom_points: torch.Tensor,           # [B, N, d_in]
+        query_points: torch.Tensor,          # [B, Nq, d_in]
+        mask: Optional[torch.Tensor] = None, # [B, N] bool, True=real point
+    ) -> torch.Tensor:
+        """Predict solution field at query locations.
+
+        Parameters
+        ----------
+        geom_points : Tensor [B, N, d_in]
+            Boundary point cloud, possibly zero-padded.
+        query_points : Tensor [B, Nq, d_in]
+            Query locations.
+        mask : BoolTensor [B, N], optional
+            True for real geometry points, False for zero-padded dummy points.
+            When geom_points and query_points have the same sequence length
+            (e.g. batched_all training mode), the mask is also applied to the
+            decoder output to zero out padded query positions.
+
+        Returns
+        -------
+        Tensor [B, Nq, d_out]
+        """
+        # Encode geometry
+        enc_k, enc_v = self.encoder(geom_points, mask=mask)  # [B, Ns, d_model] each
+
+        # Determine query mask: only applicable when geom and query are co-padded
+        # (same sequence length), which is always the case in batched_all training.
+        query_mask: Optional[torch.Tensor] = None
+        if mask is not None and geom_points.shape[1] == query_points.shape[1]:
+            query_mask = mask
+
+        # Decode at query locations
+        out = self.decoder(query_points, enc_k, enc_v, query_mask=query_mask)  # [B, Nq, d_out]
+
         return out
