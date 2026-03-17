@@ -292,7 +292,7 @@ class AllNodesPadCollate:
             s = item["stress"]    # [N, 1]
             if N < maxN:
                 pad = maxN - N
-                pts_pad = torch.cat([pts, torch.zeros(pad, C, dtype=pts.dtype)], dim=0)
+                pts_pad = torch.cat([pts, torch.full((pad, C), 20.0, dtype=pts.dtype)], dim=0)
                 s_pad = torch.cat([s, torch.zeros(pad, 1, dtype=s.dtype)], dim=0)
             else:
                 pts_pad = pts

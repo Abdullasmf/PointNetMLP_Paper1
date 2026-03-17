@@ -237,7 +237,7 @@ class AllNodesPadCollate:
             C = pts.shape[1]
             if N < maxN:
                 pad = maxN - N
-                pts_padded = torch.cat([pts, torch.full((pad, C), 1e5, dtype=pts.dtype)], dim=0)
+                pts_padded = torch.cat([pts, torch.full((pad, C), 20, dtype=pts.dtype)], dim=0)
                 s_padded = torch.cat([s, torch.zeros(pad, 1, dtype=s.dtype)], dim=0)
             else:
                 pts_padded = pts
@@ -420,12 +420,17 @@ def train(
                 max_per_sample = target_stress.view(target_stress.shape[0], -1).max(dim=1, keepdim=True).values.unsqueeze(-1)  # [B,1,1]
                 stress_weights = 1.0 + 5.0 * (target_stress / (max_per_sample + 1e-8))  # [B,Kq,1]
 
-                diff2 = (pred - target) ** 2
+                diff = pred - target
+
                 if padding_mask_dev is not None:
-                    # Mask out padded positions from loss
-                    real_mask = (~padding_mask_dev).unsqueeze(-1).float()  # [B, maxN, 1]
+                    # Zero out padded positions in the diff BEFORE squaring
+                    real_mask = (~padding_mask_dev).unsqueeze(-1).float()
+                    diff = torch.where(padding_mask_dev.unsqueeze(-1), torch.zeros_like(diff), diff)
+                    
+                    diff2 = diff ** 2
                     loss = (diff2 * stress_weights * real_mask).sum() / real_mask.sum().clamp(min=1)
                 else:
+                    diff2 = diff ** 2
                     loss = (diff2 * stress_weights).mean()
 
             scaler.scale(loss).backward()
