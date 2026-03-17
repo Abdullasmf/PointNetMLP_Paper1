@@ -8,21 +8,39 @@ import torch.nn.functional as F
 __all__ = ["PointNetMLPJoint", "PointNet2Encoder2D", "SetAbstraction", "MLP"]
 
 
-def farthest_point_sampling(xyz: torch.Tensor, n_samples: int) -> torch.Tensor:
+def farthest_point_sampling(xyz: torch.Tensor, n_samples: int, mask: Optional[torch.Tensor] = None) -> torch.Tensor:
+    """Farthest Point Sampling (FPS) indices.
+
+    Args:
+        xyz: [B, N, C] point cloud coordinates.
+        n_samples: number of centroids to select.
+        mask: optional [B, N] bool tensor where True marks a real (valid) point
+              and False marks a padded dummy point. When provided, sampling is
+              guaranteed to start from a valid node and padded nodes are never
+              selected as centroids.
+
+    Returns:
+        idx: [B, n_samples] long tensor of centroid indices.
+    """
     # Farthest Point Sampling (FPS) indices
     device = xyz.device
     B, N, _ = xyz.shape
     n_samples = min(n_samples, N)
     idx = torch.zeros(B, n_samples, dtype=torch.long, device=device)
     distances = torch.full((B, N), 1e10, device=device)
-    farthest = torch.randint(0, N, (B,), dtype=torch.long, device=device)
+    if mask is not None:
+        farthest = mask.int().argmax(dim=1)
+    else:
+        farthest = torch.randint(0, N, (B,), dtype=torch.long, device=device)
     batch_indices = torch.arange(B, device=device)
     for i in range(n_samples):
         idx[:, i] = farthest
         centroid = xyz[batch_indices, farthest, :].unsqueeze(1)  # [B,1,2]
         dist = torch.sum((xyz - centroid) ** 2, dim=-1)  # [B,N]
-        mask = dist < distances
-        distances[mask] = dist[mask]
+        upd = dist < distances
+        distances[upd] = dist[upd]
+        if mask is not None:
+            distances = distances.masked_fill(~mask, -1.0)
         farthest = torch.max(distances, dim=1).indices
     return idx
 
