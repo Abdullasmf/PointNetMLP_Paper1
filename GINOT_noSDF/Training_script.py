@@ -816,6 +816,7 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
 
     n_param = sum(p.numel() for p in model.parameters())
     print(f"Model parameter count: {n_param:,}")
+
     # Ensure save directory exists
     save_path.parent.mkdir(parents=True, exist_ok=True)
     print(f"Saving best checkpoint to: {save_path}")
@@ -844,7 +845,7 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
 if __name__ == "__main__":
     try:
         # Choose dataset: "L_bracket" for L-bracket geometry or "Plate_hole" for hole plate geometry
-        main("L", batch=8, dataset="L_bracket")
+        main("MS", batch=8, dataset="L_bracket")
     except Exception as e:
         print(f"Error during training: {e}")
         raise

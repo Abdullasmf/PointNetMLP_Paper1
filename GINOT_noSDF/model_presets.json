@@ -1,4 +1,30 @@
 {
+    "XS": {
+        "model_name": "ginot_xs",
+        "d_model": 64,
+        "n_heads": 4,
+        "num_encoder_cross_layers": 1,
+        "num_encoder_self_layers": 1,
+        "num_decoder_layers": 1,
+        "n_s": 0.25,
+        "n_p": 32,
+        "radius": 0.15,
+        "mlp_hidden_dims": [128, 128],
+        "train_batch_size": 8
+    },
+    "MS": {
+        "model_name": "ginot_ms",
+        "d_model": 96,
+        "n_heads": 4,
+        "num_encoder_cross_layers": 2,
+        "num_encoder_self_layers": 2,
+        "num_decoder_layers": 2,
+        "n_s": 0.25,
+        "n_p": 32,
+        "radius": 0.15,
+        "mlp_hidden_dims": [192, 192],
+        "train_batch_size": 6
+    },
     "S": {
         "model_name": "ginot_s",
         "d_model": 128,

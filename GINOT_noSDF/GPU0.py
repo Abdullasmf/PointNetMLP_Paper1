@@ -15,8 +15,8 @@ from Training_script import main as train_main  # noqa: E402
 
 
 PRESETS_GPU0 = [
-    ["M","L_bracket"],
-    ["M","Plate_hole"],
+    ["MS","L_bracket"],
+    ["MS","Plate_hole"],
 ]
 
 
@@ -25,6 +25,7 @@ def run_with_fallback(preset: str, initial_batch: int, geometry: str) -> bool:
     iterative = int(initial_batch *0.1)
     batch_plan = list(range(initial_batch, 0, -iterative))
     batch_plan.append(1)
+    batch_plan = [10]
     for b in batch_plan:
         try:
             print(f"\n[GPU0] Preset={preset} | Trying batch={b} | Geometry={geometry}")

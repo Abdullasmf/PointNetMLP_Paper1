@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=Point_DeepONet
+#SBATCH --job-name=Run0
 #SBATCH --output=PointNetMLP_Paper1/GPU0.log
 #SBATCH --error=PointNetMLP_Paper1/GPU0.log
 #SBATCH --time=24:00:00
