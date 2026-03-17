@@ -1114,6 +1114,7 @@ class GINOTDecoder(nn.Module):
         enc_k: torch.Tensor,                 # [B, Ns, d_model]  encoder K
         enc_v: torch.Tensor,                 # [B, Ns, d_model]  encoder V
         query_mask: Optional[torch.Tensor] = None,  # [B, Nq] True=real
+        enc_pad_mask: Optional[torch.Tensor] = None,  # [B, Ns] True=ignore (padded)
     ) -> torch.Tensor:
         """Returns [B, Nq, d_out]."""
         B, Nq, _ = query_points.shape
@@ -1131,7 +1132,7 @@ class GINOTDecoder(nn.Module):
         # ------------------------------------------------------------------
         x = q
         for block in self.cross_attn_blocks:
-            x = block(x, k=enc_k, v=enc_v)
+            x = block(x, k=enc_k, v=enc_v, key_padding_mask=enc_pad_mask)
 
         # ------------------------------------------------------------------
         # 3. Output MLP
@@ -1285,7 +1286,19 @@ class GINOT(nn.Module):
         if mask is not None and geom_points.shape[1] == query_points.shape[1]:
             query_mask = mask
 
+        # Only pass encoder key_padding_mask when encoder sequence length matches
+        # the original mask length (e.g. FPS bypass path using all points).
+        enc_pad_mask: Optional[torch.Tensor] = None
+        if mask is not None and enc_k.shape[1] == mask.shape[1]:
+            enc_pad_mask = ~mask  # True means "ignore this padded point"
+
         # Decode at query locations
-        out = self.decoder(query_points, enc_k, enc_v, query_mask=query_mask)  # [B, Nq, d_out]
+        out = self.decoder(
+            query_points,
+            enc_k,
+            enc_v,
+            query_mask=query_mask,
+            enc_pad_mask=enc_pad_mask,
+        )  # [B, Nq, d_out]
 
         return out
