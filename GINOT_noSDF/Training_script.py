@@ -1,7 +1,7 @@
 import random
 import json
 import hashlib
-from typing import List, Tuple, Dict, Optional
+from typing import List, Tuple, Dict, Optional, Union
 
 import h5py
 import numpy as np
@@ -682,7 +682,8 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
     num_encoder_self_layers: int = int(_cfg.get("num_encoder_self_layers", 2))
     num_decoder_layers: int = int(_cfg.get("num_decoder_layers", 2))
     n_heads: int = int(_cfg.get("n_heads", 4))
-    n_s: int = int(_cfg.get("n_s", 128))
+    _n_s_raw = _cfg.get("n_s", 128)
+    n_s: Union[int, float] = float(_n_s_raw) if float(_n_s_raw) <= 1.0 else int(_n_s_raw)
     n_p: int = int(_cfg.get("n_p", 32))
     radius: float = float(_cfg.get("radius", 0.1))
     mlp_hidden_dims: List[int] = list(_cfg.get("mlp_hidden_dims", [d_model * 2, d_model * 2]))

@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import math
-from typing import List, Dict, Any, Optional, Tuple
+from typing import List, Dict, Any, Optional, Tuple, Union
 
 # Import necessary components from pn_models
 from pn_models import PointNet2Encoder2D, MLP, farthest_point_sampling, ball_query
@@ -900,7 +900,7 @@ class GINOTGeometryEncoder(nn.Module):
         self,
         d_in: int = 2,
         d_model: int = 128,
-        n_s: int = 128,
+        n_s: Union[int, float] = 128,
         n_p: int = 32,
         radius: float = 0.1,
         n_heads: int = 4,
@@ -965,12 +965,21 @@ class GINOTGeometryEncoder(nn.Module):
         # ------------------------------------------------------------------
         # 2. Farthest Point Sampling -> Ns centroid indices
         #    Skip FPS when n_s <= 0 or n_s >= N (use all points as centroids)
+        #    If n_s is a float in (0.0, 1.0], treat it as a sampling ratio.
         # ------------------------------------------------------------------
-        if self.n_s <= 0 or self.n_s >= N:
+        if 0.0 < self.n_s <= 1.0:
+            if mask is not None:
+                max_valid = int(mask.sum(dim=1).max().item())
+            else:
+                max_valid = N
+            effective_n_s = max(1, int(self.n_s * max_valid))
+        else:
+            effective_n_s = int(self.n_s)
+
+        if effective_n_s <= 0 or effective_n_s >= N:
             effective_n_s = N
             centroids = geom_points  # [B, N, d_in]
         else:
-            effective_n_s = self.n_s
             fps_idx = farthest_point_sampling(geom_points, effective_n_s)  # [B, n_s]
             # Gather centroid coordinates
             centroids = torch.gather(
@@ -1039,9 +1048,13 @@ class GINOTGeometryEncoder(nn.Module):
 
         # ------------------------------------------------------------------
         # 6. Self-attention blocks on the Ns centroid tokens
+        #    When FPS is bypassed (effective_n_s == N), the centroid tokens
+        #    include padded dummy points, so we must pass the mask to avoid
+        #    contaminating the latent space.
         # ------------------------------------------------------------------
+        sa_pad_mask = kv_pad_mask if effective_n_s == N else None
         for block in self.self_attn_blocks:
-            x = block(x)  # no key_padding_mask; centroids are never padded
+            x = block(x, key_padding_mask=sa_pad_mask)
 
         # ------------------------------------------------------------------
         # 7. Output projections -> encoder K and V
@@ -1163,8 +1176,9 @@ class GINOT(nn.Module):
         Number of cross-attention blocks in the solution decoder.
     n_heads : int
         Number of attention heads.
-    n_s : int
-        Number of FPS centroids (encoder output tokens).
+    n_s : int or float
+        Number of FPS centroids (encoder output tokens), or a float ratio
+        in (0.0, 1.0] to dynamically compute the count per batch.
     n_p : int
         Maximum number of neighbours per centroid (ball query).
     radius : float
@@ -1187,7 +1201,7 @@ class GINOT(nn.Module):
         num_encoder_self_layers: int = 2,
         num_decoder_layers: int = 2,
         n_heads: int = 4,
-        n_s: int = 128,
+        n_s: Union[int, float] = 128,
         n_p: int = 32,
         radius: float = 0.1,
         mlp_hidden_dims: Optional[List[int]] = None,
