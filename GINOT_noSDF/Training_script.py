@@ -697,7 +697,7 @@ def main(preset_name: str = "S0", batch=8, dataset: str = "L_bracket") -> None:
         json.dumps(arch_for_hash, sort_keys=True).encode("utf-8")
     ).hexdigest()[:8]
     save_dir = Path(project_dir, "Trained_models")
-    base_name = model_name if model_name else "argent_self_nosdf"
+    base_name = model_name if model_name else "GINOT_nosdf"
     save_path = save_dir / f"{geom_prefix}{base_name}_{arch_hash}.pt"
 
     set_seed(42)
