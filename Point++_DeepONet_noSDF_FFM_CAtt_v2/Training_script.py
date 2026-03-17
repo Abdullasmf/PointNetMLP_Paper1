@@ -460,7 +460,12 @@ def train(
                     "cuda", enabled=(device.type == "cuda" and use_amp)
                 ):
                     pred = model(pts.unsqueeze(0), pts.unsqueeze(0)).squeeze(0)  # [N,1]
-                loss = mse(pred, stress)
+                # Apply same stress weighting as training
+                _target_stress = stress.abs()  # [N,1]
+                _max_val = _target_stress.max().clamp(min=1e-8)
+                _stress_w = 1.0 + 5.0 * (_target_stress / _max_val)
+                _diff2 = (pred - stress) ** 2
+                loss = (_diff2 * _stress_w).mean()
                 val_loss += loss.item() * N
                 # De-normalized MSE in MPa
                 pred_mpa = pred * stress_std_d + stress_mean_d
