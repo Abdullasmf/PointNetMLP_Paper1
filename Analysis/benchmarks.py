@@ -1,10 +1,11 @@
 import torch
 import torch.nn as nn
+import numpy as np
 import math
 from typing import List, Dict, Any, Optional, Tuple
 
 # Import necessary components from pn_models
-from pn_models import PointNet2Encoder2D, MLP, farthest_point_sampling, ball_query
+from pn_models import PointNet2Encoder2D, MLP, VanillaPointNetEncoder, farthest_point_sampling, ball_query
 
 class FourierFeatures(nn.Module):
     """Fourier positional encoding for 2D inputs.
@@ -319,7 +320,211 @@ class FourierFeatureMapping(nn.Module):
         return torch.cat([torch.cos(scaled), torch.sin(scaled)], dim=-1)  # [..., 2*ffm_mapping_size]
 
 
+class SineLayer(nn.Module):
+    def __init__(self, in_features, out_features, is_first=False, omega_0=30.0):
+        super().__init__()
+        self.omega_0 = omega_0
+        self.is_first = is_first
+        self.linear = nn.Linear(in_features, out_features)
+        self.init_weights()
+
+    def init_weights(self):
+        with torch.no_grad():
+            if self.is_first:
+                self.linear.weight.uniform_(-1 / self.linear.in_features, 1 / self.linear.in_features)
+            else:
+                self.linear.weight.uniform_(-np.sqrt(6 / self.linear.in_features) / self.omega_0,
+                                            np.sqrt(6 / self.linear.in_features) / self.omega_0)
+
+    def forward(self, x):
+        return torch.sin(self.omega_0 * self.linear(x))
+
+
 class ScaledDiagramDeepONet(nn.Module):
+    """
+    Architecture: Fair-scaled replica of the Point-DeepONet Diagram.
+    - Branch: PointNet++ with optional SDF features
+    - Trunk: Configurable SIREN Layers (input = x,y[,sdf])
+    - Fusion: Early Element-wise Multiplication -> MLP -> Dot Product
+    """
+    def __init__(
+        self,
+        latent_dim: int = 192,
+        basis_dim: int = 128,
+        head_hidden: List[int] = [512, 512, 256],
+        siren_hidden: List[int] = [256, 256],
+        encoder_cfg: Optional[Dict[str, Any]] = None,
+    ):
+        super().__init__()
+
+        # SDF channel count (0 = no SDF, 1 = SDF appended as 3rd per-point feature)
+        sdf_ch = int(encoder_cfg.get("sdf_ch", 0)) if encoder_cfg else 0
+        self.sdf_ch = sdf_ch
+        trunk_in_ch = 2 + sdf_ch  # SIREN input: (x, y) or (x, y, sdf)
+
+        # 1. Branch Network (PointNet++)
+        self.encoder = PointNet2Encoder2D(latent_dim=latent_dim, encoder_cfg=encoder_cfg)
+        eff_latent = self.encoder.latent_dim
+
+        # 2. Trunk Network (configurable SIREN Layers)
+        siren_layers: List[nn.Module] = [SineLayer(trunk_in_ch, siren_hidden[0], is_first=True)]
+        for i in range(len(siren_hidden) - 1):
+            siren_layers.append(SineLayer(siren_hidden[i], siren_hidden[i + 1]))
+        siren_layers.append(SineLayer(siren_hidden[-1], eff_latent))
+        self.siren = nn.Sequential(*siren_layers)
+
+        # 3. Post-Multiplication MLP
+        norm_type = str(encoder_cfg.get("norm", "batch")) if encoder_cfg else "batch"
+        num_groups = int(encoder_cfg.get("num_groups", 16)) if encoder_cfg else 16
+
+        self.post_mul_mlp = MLP(
+            in_dim=eff_latent,
+            hidden=head_hidden,
+            out_dim=basis_dim,
+            norm=norm_type,
+            num_groups=num_groups
+        )
+
+        # Projection to form T^beta for the final dot product
+        self.t_beta_proj = nn.Linear(eff_latent, basis_dim)
+
+        self.basis_dim = basis_dim
+        self.bias = nn.Parameter(torch.zeros(1))
+
+    def forward(self, geom_points, query_points):
+        B, Q, q_ch = query_points.shape
+
+        # --- BRANCH ---
+        b_alpha = self.encoder(geom_points)  # [B, eff_latent]
+
+        # --- TRUNK ---
+        q_flat = query_points.reshape(-1, q_ch)  # [B*Q, q_ch]
+        t_alpha = self.siren(q_flat).view(B, Q, -1)  # [B, Q, eff_latent]
+
+        # --- EARLY FUSION ---
+        b_alpha_exp = b_alpha.unsqueeze(1).expand(-1, Q, -1)  # [B, Q, eff_latent]
+        fused = b_alpha_exp * t_alpha
+
+        # --- LATE FUSION PREP ---
+        fused_flat = fused.reshape(-1, b_alpha.shape[-1])
+        b_beta = self.post_mul_mlp(fused_flat).view(B, Q, self.basis_dim)
+
+        t_alpha_flat = t_alpha.reshape(-1, b_alpha.shape[-1])
+        t_beta = self.t_beta_proj(t_alpha_flat).view(B, Q, self.basis_dim)
+
+        # --- TERMINAL DOT PRODUCT ---
+        out = torch.sum(b_beta * t_beta, dim=-1, keepdim=True) + self.bias
+
+        return out
+
+
+class PointDeepONet(nn.Module):
+    """Point-DeepONet: strict baseline benchmark (Park et al. architecture).
+
+    Branch Network (Vanilla PointNet)
+        - Input : geometry point cloud  [B, N, in_ch]  (x, y, sdf)
+        - Shared pointwise MLP + global max-pool  ->  B^alpha  [B, latent_dim]
+
+    Trunk Network (SIREN)
+        - Input : query coordinates + SDF  [B, Q, in_ch]  (x, y, sdf)
+        - SIREN layers (sin activations)  ->  T^alpha  [B, Q, latent_dim]
+
+    Early Spatial Modulation
+        - Fused = B^alpha (broadcast-expanded) * T^alpha   (element-wise multiply)
+
+    Deep Processing
+        - B^beta = deep_MLP(Fused)   ->  [B, Q, basis_dim]
+        - T^beta = linear(T^alpha)   ->  [B, Q, basis_dim]
+
+    Terminal Fusion (classical DeepONet dot product)
+        - output = sum(B^beta * T^beta) + bias  ->  [B, Q, 1]
+    """
+
+    def __init__(
+        self,
+        in_ch: int = 3,                         # x, y, sdf
+        latent_dim: int = 192,
+        basis_dim: int = 128,
+        branch_hidden: List[int] = [64, 128, 256],
+        siren_hidden: List[int] = [256, 256],
+        post_mlp_hidden: List[int] = [512, 512, 256],
+        norm: str = "batch",
+        num_groups: int = 16,
+    ):
+        super().__init__()
+
+        # 1. Branch Network: Vanilla PointNet (global max-pool only)
+        self.branch = VanillaPointNetEncoder(
+            in_ch=in_ch,
+            latent_dim=latent_dim,
+            hidden=branch_hidden,
+            norm=norm,
+            num_groups=num_groups,
+        )
+
+        # 2. Trunk Network: SIREN (sin activations, no ReLU)
+        siren_layers: List[nn.Module] = [
+            SineLayer(in_ch, siren_hidden[0], is_first=True)
+        ]
+        for i in range(len(siren_hidden) - 1):
+            siren_layers.append(SineLayer(siren_hidden[i], siren_hidden[i + 1]))
+        siren_layers.append(SineLayer(siren_hidden[-1], latent_dim))
+        self.siren = nn.Sequential(*siren_layers)
+
+        # 3. Post-Multiplication MLP: Fused -> B^beta
+        self.post_mul_mlp = MLP(
+            in_dim=latent_dim,
+            hidden=post_mlp_hidden,
+            out_dim=basis_dim,
+            norm=norm,
+            num_groups=num_groups,
+        )
+
+        # 4. T^beta projection: T^alpha -> T^beta
+        self.t_beta_proj = nn.Linear(latent_dim, basis_dim)
+
+        self.latent_dim = latent_dim
+        self.basis_dim = basis_dim
+        self.bias = nn.Parameter(torch.zeros(1))
+
+    def forward(
+        self, geom_points: torch.Tensor, query_points: torch.Tensor
+    ) -> torch.Tensor:
+        """
+        Args:
+            geom_points  : [B, N, in_ch] - geometry point cloud (x, y, sdf)
+            query_points : [B, Q, in_ch] - query locations      (x, y, sdf)
+
+        Returns:
+            [B, Q, 1]
+        """
+        B, Q, _ = query_points.shape
+
+        # --- BRANCH ---
+        b_alpha = self.branch(geom_points)           # [B, latent_dim]
+
+        # --- TRUNK ---
+        q_flat  = query_points.reshape(B * Q, -1)    # [B*Q, in_ch]
+        t_alpha = self.siren(q_flat).view(B, Q, -1)  # [B, Q, latent_dim]
+
+        # --- EARLY SPATIAL MODULATION (element-wise multiply) ---
+        b_alpha_exp = b_alpha.unsqueeze(1).expand(-1, Q, -1)  # [B, Q, latent_dim]
+        fused = b_alpha_exp * t_alpha                          # [B, Q, latent_dim]
+
+        # --- DEEP PROCESSING ---
+        fused_flat = fused.reshape(B * Q, self.latent_dim)
+        b_beta = self.post_mul_mlp(fused_flat).view(B, Q, self.basis_dim)
+
+        t_alpha_flat = t_alpha.reshape(B * Q, self.latent_dim)
+        t_beta = self.t_beta_proj(t_alpha_flat).view(B, Q, self.basis_dim)
+
+        # --- TERMINAL DOT PRODUCT (DeepONet: sum B^beta * T^beta) ---
+        out = torch.sum(b_beta * t_beta, dim=-1, keepdim=True) + self.bias
+
+        return out
+
+
+class ScaledDiagramDeepONetFFMCAtt(nn.Module):
     """Refactored ScaledDiagramDeepONet with FFM trunk and Cross-Attention bridge.
 
     Branch Mutation:
