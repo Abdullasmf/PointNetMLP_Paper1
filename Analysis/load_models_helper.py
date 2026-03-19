@@ -44,7 +44,33 @@ def _import_class_from_folder(folder_path, class_name):
     if folder_str not in sys.path:
         sys.path.insert(0, folder_str)
 
-    spec.loader.exec_module(module)
+    # Pre-load the training folder's pn_models.py under a unique name so that
+    # when the training folder's benchmarks.py does "from pn_models import …"
+    # it gets the correct (folder-specific) version rather than a stale cached
+    # entry from a previously imported Analysis/pn_models.py.
+    pn_models_file = folder_path / 'pn_models.py'
+    pn_module_name = f'_pn_models_{folder_path.name}'
+    if pn_module_name not in sys.modules and pn_models_file.exists():
+        pn_spec = importlib.util.spec_from_file_location(pn_module_name, str(pn_models_file))
+        pn_module = importlib.util.module_from_spec(pn_spec)
+        sys.modules[pn_module_name] = pn_module
+        pn_spec.loader.exec_module(pn_module)
+
+    # Temporarily register the folder-specific pn_models as the canonical
+    # 'pn_models' so that "from pn_models import …" inside the training
+    # folder's benchmarks.py resolves to the right module, overriding any
+    # previously cached version.
+    old_pn_models = sys.modules.get('pn_models')
+    if pn_module_name in sys.modules:
+        sys.modules['pn_models'] = sys.modules[pn_module_name]
+    try:
+        spec.loader.exec_module(module)
+    finally:
+        # Restore the original 'pn_models' entry (or remove it if absent before)
+        if old_pn_models is not None:
+            sys.modules['pn_models'] = old_pn_models
+        elif 'pn_models' in sys.modules:
+            del sys.modules['pn_models']
 
     return getattr(module, class_name)
 
