@@ -1,4 +1,6 @@
 import re
+import sys
+import importlib.util
 import torch
 import json
 from pathlib import Path
@@ -6,9 +8,45 @@ from pn_models import PointNetMLPJoint
 from benchmarks import (
     VanillaDeepONet, SpectralDeepONet, DenseNoFFT,
     ScaledDiagramDeepONet, PointDeepONet, ScaledDiagramDeepONetFFMCAtt,
-    ArGEnTDeepONet,
-    GINOT,
 )
+
+
+def _import_class_from_folder(folder_path, class_name):
+    """Dynamically import a class from the benchmarks.py in a training folder.
+
+    This ensures that GINOT and ArGEnT model classes are loaded from the exact
+    same source files used during training, rather than potentially diverged
+    copies in the Analysis folder.
+    """
+    folder_path = Path(folder_path).resolve()
+    benchmarks_file = folder_path / 'benchmarks.py'
+
+    if not benchmarks_file.exists():
+        raise FileNotFoundError(
+            f"Cannot find benchmarks.py in training folder: {folder_path}. "
+            "Expected path: " + str(benchmarks_file)
+        )
+
+    # Use a unique module name to avoid collisions with Analysis/benchmarks
+    module_name = f'_benchmarks_{folder_path.name}'
+
+    if module_name in sys.modules:
+        return getattr(sys.modules[module_name], class_name)
+
+    spec = importlib.util.spec_from_file_location(module_name, str(benchmarks_file))
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+
+    # Add the training folder to sys.path so its local imports (e.g. pn_models)
+    # resolve correctly.  The entry is kept for the lifetime of the process so
+    # that any deferred imports inside the loaded module continue to work.
+    folder_str = str(folder_path)
+    if folder_str not in sys.path:
+        sys.path.insert(0, folder_str)
+
+    spec.loader.exec_module(module)
+
+    return getattr(module, class_name)
 
 
 def _parse_n_s(value, default=128):
@@ -111,8 +149,12 @@ def load_model_with_checkpoint(model_path, model_type, device='cpu'):
 
         preset = _find_preset_for_checkpoint(model_path, presets)
 
-        # ---- ArGEnT models are handled first since they use different preset fields ----
+        # training_folder is the parent of Trained_models/ – it contains benchmarks.py
+        training_folder = Path(model_path).parent.parent
+
+        # ---- ArGEnT models – import class from the training folder ----
         if model_type in ('ArGEnTCrossWSD', 'ArGEnTSelfNoSDF'):
+            ArGEnTDeepONet = _import_class_from_folder(training_folder, 'ArGEnTDeepONet')
             if arch is not None:
                 # Prefer arch dict saved in checkpoint (most accurate)
                 model = ArGEnTDeepONet(
@@ -136,8 +178,9 @@ def load_model_with_checkpoint(model_path, model_type, device='cpu'):
                     use_sdf=use_sdf,
                 )
 
-        # ---- GINOT model ----
+        # ---- GINOT model – import class from the training folder ----
         elif model_type == 'GINOT_noSDF':
+            GINOT = _import_class_from_folder(training_folder, 'GINOT')
             if arch is not None:
                 # Use arch dict saved in checkpoint (most accurate)
                 model = GINOT(
