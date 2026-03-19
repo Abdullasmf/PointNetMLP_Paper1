@@ -11,6 +11,15 @@ from benchmarks import (
 )
 
 
+def _parse_n_s(value, default=128):
+    """Parse the n_s GINOT parameter, preserving float ratios in (0, 1]."""
+    if value is None:
+        return default
+    if isinstance(value, float) and 0.0 < value <= 1.0:
+        return value
+    return int(value)
+
+
 def _find_preset_for_checkpoint(model_path, presets):
     """Find the preset that matches the checkpoint filename by model_name field."""
     stem = Path(model_path).stem  # e.g. 'L-pn2_nosdf_m_febe42d8'
@@ -137,7 +146,7 @@ def load_model_with_checkpoint(model_path, model_type, device='cpu'):
                     num_encoder_self_layers=int(arch.get("num_encoder_self_layers", 2)),
                     num_decoder_layers=int(arch.get("num_decoder_layers", 2)),
                     n_heads=int(arch.get("n_heads", 4)),
-                    n_s=int(arch.get("n_s", 128)),
+                    n_s=_parse_n_s(arch.get("n_s", 128)),
                     n_p=int(arch.get("n_p", 32)),
                     radius=float(arch.get("radius", 0.15)),
                     mlp_hidden_dims=list(arch.get("mlp_hidden_dims", [256, 256])),
@@ -151,7 +160,7 @@ def load_model_with_checkpoint(model_path, model_type, device='cpu'):
                     num_encoder_self_layers=int(preset.get("num_encoder_self_layers", 2)),
                     num_decoder_layers=int(preset.get("num_decoder_layers", 2)),
                     n_heads=int(preset.get("n_heads", 4)),
-                    n_s=int(preset.get("n_s", 128)),
+                    n_s=_parse_n_s(preset.get("n_s", 128)),
                     n_p=int(preset.get("n_p", 32)),
                     radius=float(preset.get("radius", 0.15)),
                     mlp_hidden_dims=list(preset.get("mlp_hidden_dims", [d_model * 2, d_model * 2])),
